@@ -111,8 +111,4 @@ public class Product {
     public enum CurrencyType {
         USD, EUR, BRL
     }
-
-    public enum Rating {
-        LOW, MEDIUM, HIGH
-    }
 }
