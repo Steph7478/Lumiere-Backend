@@ -9,7 +9,7 @@ public class User {
     private String name;
     private String email;
 
-    public User(UUID id, UUID authId, String name, String email, Boolean isAdmin) {
+    public User(UUID id, UUID authId, String name, String email) {
         this.authId = authId;
         this.id = id == null ? UUID.randomUUID() : id;
         this.email = email;
