@@ -53,6 +53,12 @@
 			<artifactId>spring-boot-starter-security</artifactId>
 		</dependency>
 
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-crypto</artifactId>
+			<version>7.0.0-M3</version>
+		</dependency>
+
 		<!-- JPA + Hibernate -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -99,6 +105,13 @@
 			<groupId>org.hibernate.orm</groupId>
 			<artifactId>hibernate-community-dialects</artifactId>
 			<version>6.2.7.Final</version>
+		</dependency>
+
+		<!-- Auth -->
+		<dependency>
+			<groupId>com.nimbusds</groupId>
+			<artifactId>nimbus-jose-jwt</artifactId>
+			<version>10.5</version>
 		</dependency>
 	</dependencies>
 
