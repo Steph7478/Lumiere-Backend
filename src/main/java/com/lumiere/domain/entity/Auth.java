@@ -10,7 +10,10 @@ public class Auth {
     private String password;
     private boolean isAdmin;
 
-    public Auth(UUID id, String name, String email, String password, Boolean isAdmin) {
+    public Auth(UUID id, String name, String email, String password, boolean isAdmin) {
+        if (name == null || email == null || password == null) {
+            throw new IllegalArgumentException("name, email and password cannot be null");
+        }
         this.id = id != null ? id : UUID.randomUUID();
         this.name = name;
         this.email = email;
@@ -27,25 +30,21 @@ public class Auth {
         return name;
     }
 
-    public Boolean getisAdmin() {
-        return isAdmin;
+    public String getEmail() {
+        return email;
     }
 
     public String getPassword() {
         return password;
     }
 
-    public String getEmail() {
-        return email;
+    public boolean isAdmin() {
+        return isAdmin;
     }
 
     // Setters
     public void setName(String name) {
         this.name = name;
-    }
-
-    public void setisAdmin(Boolean isAdmin) {
-        this.isAdmin = isAdmin;
     }
 
     public void setEmail(String email) {
@@ -54,5 +53,9 @@ public class Auth {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public void setAdmin(boolean isAdmin) {
+        this.isAdmin = isAdmin;
     }
 }
