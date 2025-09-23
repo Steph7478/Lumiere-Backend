@@ -1,23 +1,21 @@
 package com.lumiere.domain.entity;
 
+import java.util.Objects;
 import java.util.UUID;
 
 public class Auth {
 
     private final UUID id;
-    private String name;
-    private String email;
-    private String password;
-    private boolean isAdmin;
+    private final String name;
+    private final String email;
+    private final String passwordHash;
+    private final boolean isAdmin;
 
-    public Auth(UUID id, String name, String email, String password, boolean isAdmin) {
-        if (name == null || email == null || password == null) {
-            throw new IllegalArgumentException("name, email and password cannot be null");
-        }
+    private Auth(UUID id, String name, String email, String passwordHash, boolean isAdmin) {
         this.id = id != null ? id : UUID.randomUUID();
-        this.name = name;
-        this.email = email;
-        this.password = password;
+        this.name = Objects.requireNonNull(name, "name cannot be null");
+        this.email = Objects.requireNonNull(email, "email cannot be null");
+        this.passwordHash = Objects.requireNonNull(passwordHash, "passwordHash cannot be null");
         this.isAdmin = isAdmin;
     }
 
@@ -34,28 +32,33 @@ public class Auth {
         return email;
     }
 
-    public String getPassword() {
-        return password;
+    public String getPasswordHash() {
+        return passwordHash;
     }
 
     public boolean isAdmin() {
         return isAdmin;
     }
 
-    // Setters
-    public void setName(String name) {
-        this.name = name;
+    public Auth updateName(String newName) {
+        return new Auth(this.id, Objects.requireNonNull(newName, "name cannot be null"),
+                this.email, this.passwordHash, this.isAdmin);
     }
 
-    public void setEmail(String email) {
-        this.email = email;
+    public Auth updateEmail(String newEmail) {
+        return new Auth(this.id, this.name,
+                Objects.requireNonNull(newEmail, "email cannot be null"),
+                this.passwordHash, this.isAdmin);
     }
 
-    public void setPassword(String password) {
-        this.password = password;
+    public Auth updatePassword(String passwordHash) {
+        return new Auth(this.id, this.name, this.email,
+                Objects.requireNonNull(passwordHash, "passwordHash cannot be null"), this.isAdmin);
     }
 
-    public void setAdmin(boolean isAdmin) {
-        this.isAdmin = isAdmin;
+    // from
+    public static Auth from(UUID id, String name, String email, String passwordHash, boolean isAdmin) {
+        return new Auth(id, name, email, passwordHash, isAdmin);
     }
+
 }

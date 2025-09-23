@@ -1,25 +1,26 @@
 package com.lumiere.domain.entity;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 public class Cart {
 
-    private UUID id;
-    private UUID userId;
-    private Coupon cupon;
-    private List<Product> cart;
+    private final UUID id;
+    private final UUID userId;
+    private final Coupon coupon;
+    private final List<Product> products;
 
-    public Cart(UUID id, UUID userId, Coupon cupon, List<Product> cart) {
+    public Cart(UUID id, UUID userId, Coupon coupon, List<Product> products) {
         this.id = id != null ? id : UUID.randomUUID();
-        this.userId = userId;
-        this.cupon = cupon;
-        this.cart = cart != null ? cart : new ArrayList<>();
+        this.userId = Objects.requireNonNull(userId, "User cannot be null");
+        this.coupon = coupon;
+        this.products = products != null ? new ArrayList<>(products) : new ArrayList<>();
     }
 
-    // getters
-
+    // Getters
     public UUID getId() {
         return id;
     }
@@ -28,32 +29,39 @@ public class Cart {
         return userId;
     }
 
-    public Coupon getCupon() {
-        return cupon;
+    public Coupon getCoupon() {
+        return coupon;
     }
 
-    public List<Product> getCart() {
-        return cart;
+    public List<Product> getProducts() {
+        return Collections.unmodifiableList(products);
     }
 
-    // setters
-
-    public void setCupon(Coupon cupon) {
-        this.cupon = cupon;
+    public Cart withCoupon(Coupon coupon) {
+        return new Cart(this.id, this.userId, coupon, this.products);
     }
 
-    // helper
-    public void addProduct(Product product) {
-        if (product != null) {
-            cart.add(product);
-        }
+    public Cart addProduct(Product product) {
+        if (product == null)
+            return this;
+
+        List<Product> newProducts = new ArrayList<>(this.products);
+        newProducts.add(product);
+
+        return new Cart(this.id, this.userId, this.coupon, newProducts);
     }
 
-    public void removeProduct(Product product) {
-        cart.remove(product);
+    public Cart removeProduct(Product product) {
+        if (product == null)
+            return this;
+
+        List<Product> newProducts = new ArrayList<>(this.products);
+        newProducts.remove(product);
+
+        return new Cart(this.id, this.userId, this.coupon, newProducts);
     }
 
-    // createDefault
+    // factory
     public static Cart createCart(UUID userId) {
         return new Cart(null, userId, null, new ArrayList<>());
     }

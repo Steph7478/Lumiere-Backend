@@ -2,41 +2,44 @@ package com.lumiere.domain.entity;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.Objects;
 import java.util.UUID;
 
 public class Order {
 
     private final UUID id;
-    private LocalDateTime orderDate;
-    private Status status;
-    private Cart cart;
-    private UUID paymentId;
-    private BigDecimal total;
+    private final LocalDateTime createdAt;
+    private final Cart cart;
+    private final Status status;
+    private final UUID paymentId;
+    private final BigDecimal total;
+    private final LocalDateTime orderDate;
 
-    public Order(UUID id, LocalDateTime orderDate, Status status, Cart cart, UUID paymentId, BigDecimal total) {
+    private Order(UUID id, Cart cart, Status status, UUID paymentId, BigDecimal total, LocalDateTime orderDate) {
         this.id = id != null ? id : UUID.randomUUID();
-        this.orderDate = orderDate;
-        this.status = status;
-        this.cart = cart;
+        this.cart = Objects.requireNonNull(cart, "cart cannot be null");
+        this.createdAt = LocalDateTime.now();
+        this.status = status != null ? status : Status.IN_PROGRESS;
         this.paymentId = paymentId;
-        this.total = total;
+        this.total = Objects.requireNonNull(total, "total cannot be null");
+        this.orderDate = orderDate;
     }
 
-    // getters
+    // Getters
     public UUID getId() {
         return id;
     }
 
-    public LocalDateTime getOrderDate() {
-        return orderDate;
-    }
-
-    public Status getStatus() {
-        return status;
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
     }
 
     public Cart getCart() {
         return cart;
+    }
+
+    public Status getStatus() {
+        return status;
     }
 
     public UUID getPaymentId() {
@@ -47,26 +50,28 @@ public class Order {
         return total;
     }
 
-    // setters
-    public void setOrderDate(LocalDateTime orderDate) {
-        if (this.status != Status.PAID) {
-            this.orderDate = null;
-        }
-
-        this.orderDate = LocalDateTime.now();
+    public LocalDateTime getOrderDate() {
+        return orderDate;
     }
 
-    public void setStatus(Status status) {
-        this.status = status;
+    public Order markAsPaid(UUID paymentId) {
+        return new Order(this.id, this.cart, Status.PAID, Objects.requireNonNull(paymentId, "paymentId cannot be null"),
+                this.total, LocalDateTime.now());
     }
 
-    public void setTotal(BigDecimal total) {
-        this.total = total;
+    public Order recalculateTotal(BigDecimal newTotal) {
+        return new Order(this.id, this.cart, this.status, this.paymentId,
+                Objects.requireNonNull(newTotal, "total cannot be null"), this.orderDate);
     }
 
-    // enums
+    // Enums
     public enum Status {
         IN_PROGRESS,
         PAID
+    }
+
+    // factory
+    public static Order createOrder(Cart cart, BigDecimal total) {
+        return new Order(null, cart, Status.IN_PROGRESS, null, total, null);
     }
 }

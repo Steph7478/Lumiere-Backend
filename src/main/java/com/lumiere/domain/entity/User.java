@@ -1,23 +1,25 @@
 package com.lumiere.domain.entity;
 
+import java.util.Objects;
 import java.util.UUID;
 
 public class User {
 
     private final UUID id;
-    private Auth auth;
+    private final Auth auth;
 
-    public User(UUID id, Auth auth) {
-        this.id = id == null ? UUID.randomUUID() : id;
-        if (auth == null) {
-            throw new IllegalArgumentException("Auth cannot be null");
-        }
-        this.auth = auth;
+    private User(UUID id, Auth auth) {
+        this.id = id != null ? id : UUID.randomUUID();
+        this.auth = Objects.requireNonNull(auth, "Auth cannot be null");
     }
 
     // Getters
     public UUID getId() {
         return id;
+    }
+
+    public Auth getAuth() {
+        return auth;
     }
 
     public String getName() {
@@ -27,4 +29,15 @@ public class User {
     public String getEmail() {
         return auth.getEmail();
     }
+
+    // from
+    public static User from(UUID id, Auth auth) {
+        return new User(id, auth);
+    }
+
+    // factory
+    public static User createUser(Auth auth) {
+        return new User(null, auth);
+    }
+
 }

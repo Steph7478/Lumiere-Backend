@@ -1,31 +1,38 @@
 package com.lumiere.domain.entity;
 
+import java.util.Objects;
 import java.util.UUID;
 
 public class Rating {
 
     private final UUID id;
     private final UUID productId;
-    private int rating;
-    private String comment;
     private final UUID orderId;
+    private final int rating;
+    private final String comment;
 
-    public Rating(UUID id, UUID productId, int rating, String comment, UUID orderId) {
-        this.id = id;
-        this.productId = productId;
+    private Rating(UUID id, UUID productId, int rating, String comment, UUID orderId) {
+        this.id = id != null ? id : UUID.randomUUID();
+        this.productId = Objects.requireNonNull(productId, "productId cannot be null");
+        this.orderId = Objects.requireNonNull(orderId, "orderId cannot be null");
+        if (rating < 0 || rating > 5) {
+            throw new IllegalArgumentException("Rating must be between 0 and 5");
+        }
         this.rating = rating;
-        this.comment = comment;
-        this.orderId = orderId;
+        this.comment = comment != null ? comment : "";
     }
 
-    // getters
-
+    // Getters
     public UUID getId() {
         return id;
     }
 
     public UUID getProductId() {
         return productId;
+    }
+
+    public UUID getOrderId() {
+        return orderId;
     }
 
     public int getRating() {
@@ -36,20 +43,16 @@ public class Rating {
         return comment;
     }
 
-    public UUID getOrderId() {
-        return orderId;
+    public Rating updateComment(String newComment) {
+        return new Rating(this.id, this.productId, this.rating, newComment, this.orderId);
     }
 
-    // setters
-
-    public void setComment(String comment) {
-        this.comment = comment;
+    public Rating updateRating(int newRating) {
+        return new Rating(this.id, this.productId, newRating, this.comment, this.orderId);
     }
 
-    public void setRating(int rating) {
-        if (rating < 0 || rating > 5) {
-            throw new IllegalArgumentException("Rating must be between 0 and 5");
-        }
-        this.rating = rating;
+    // factory
+    public static Rating createRating(UUID productId, int rating, String comment, UUID orderId) {
+        return new Rating(null, productId, rating, comment, orderId);
     }
 }
