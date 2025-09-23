@@ -56,7 +56,7 @@ public class Auth {
                 Objects.requireNonNull(passwordHash, "passwordHash cannot be null"), this.isAdmin);
     }
 
-    // from
+    // factory
     public static Auth from(UUID id, String name, String email, String passwordHash, boolean isAdmin) {
         return new Auth(id, name, email, passwordHash, isAdmin);
     }

@@ -30,12 +30,11 @@ public class User {
         return auth.getEmail();
     }
 
-    // from
+    // factory
     public static User from(UUID id, Auth auth) {
         return new User(id, auth);
     }
 
-    // factory
     public static User createUser(Auth auth) {
         return new User(null, auth);
     }
