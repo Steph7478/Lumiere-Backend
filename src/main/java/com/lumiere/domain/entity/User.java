@@ -5,14 +5,14 @@ import java.util.UUID;
 public class User {
 
     private final UUID id;
-    private final UUID authId;
-    private String name;
-    private String email;
+    private Auth auth;
 
-    public User(UUID id, UUID authId, String name, String email) {
-        this.authId = authId;
+    public User(UUID id, Auth auth) {
         this.id = id == null ? UUID.randomUUID() : id;
-        this.email = email;
+        if (auth == null) {
+            throw new IllegalArgumentException("Auth cannot be null");
+        }
+        this.auth = auth;
     }
 
     // Getters
@@ -20,25 +20,11 @@ public class User {
         return id;
     }
 
-    public UUID getAuthId() {
-        return authId;
-    }
-
     public String getName() {
-        return name;
+        return auth.getName();
     }
 
     public String getEmail() {
-        return email;
+        return auth.getEmail();
     }
-
-    // Setters
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
 }
