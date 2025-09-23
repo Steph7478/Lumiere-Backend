@@ -1,8 +1,7 @@
 package com.lumiere.domain.entity;
 
-import java.math.BigDecimal;
-import java.util.Objects;
-import java.util.UUID;
+import com.lumiere.domain.vo.Money;
+import java.util.*;
 
 public class Product {
 
@@ -11,29 +10,22 @@ public class Product {
     private final String description;
     private final Category category;
     private final SubCategory subCategory;
-    private final CurrencyType currency;
-    private Rating rating;
-    private BigDecimal price;
-    private int stock;
+    private final Money price;
+    private final List<Rating> ratings;
+    private final int stock;
 
     private Product(UUID id, String name, String description, Category category,
-            SubCategory subCategory, Rating rating, BigDecimal price,
-            CurrencyType currency, int stock) {
+            SubCategory subCategory, Money price, List<Rating> ratings, int stock) {
 
         this.id = id != null ? id : UUID.randomUUID();
         this.name = Objects.requireNonNull(name, "name cannot be null");
         this.description = Objects.requireNonNull(description, "description cannot be null");
         this.category = Objects.requireNonNull(category, "category cannot be null");
         this.subCategory = Objects.requireNonNull(subCategory, "subCategory cannot be null");
-        this.rating = rating;
         this.price = Objects.requireNonNull(price, "price cannot be null");
-        if (price.compareTo(BigDecimal.ZERO) < 0) {
-            throw new IllegalArgumentException("price cannot be negative");
-        }
-        this.currency = Objects.requireNonNull(currency, "currency cannot be null");
-        if (stock < 0) {
+        this.ratings = ratings != null ? new ArrayList<>(ratings) : new ArrayList<>();
+        if (stock < 0)
             throw new IllegalArgumentException("stock cannot be negative");
-        }
         this.stock = stock;
     }
 
@@ -58,38 +50,37 @@ public class Product {
         return subCategory;
     }
 
-    public Rating getRating() {
-        return rating;
-    }
-
-    public BigDecimal getPrice() {
+    public Money getPrice() {
         return price;
     }
 
-    public CurrencyType getCurrency() {
-        return currency;
+    public List<Rating> getRatings() {
+        return Collections.unmodifiableList(ratings);
     }
 
     public int getStock() {
         return stock;
     }
 
+    // Métodos de domínio
     public Product adjustStock(int delta) {
         int newStock = this.stock + delta;
-        if (newStock < 0) {
+        if (newStock < 0)
             throw new IllegalArgumentException("stock cannot be negative");
-        }
         return new Product(this.id, this.name, this.description, this.category,
-                this.subCategory, this.rating, this.price, this.currency, newStock);
+                this.subCategory, this.price, this.ratings, newStock);
     }
 
-    public Product updatePrice(BigDecimal newPrice) {
-        Objects.requireNonNull(newPrice, "newPrice cannot be null");
-        if (newPrice.compareTo(BigDecimal.ZERO) < 0) {
-            throw new IllegalArgumentException("price cannot be negative");
-        }
+    public Product updatePrice(Money newPrice) {
         return new Product(this.id, this.name, this.description, this.category,
-                this.subCategory, this.rating, newPrice, this.currency, this.stock);
+                this.subCategory, Objects.requireNonNull(newPrice, "price cannot be null"), this.ratings, this.stock);
+    }
+
+    public Product addRating(Rating rating) {
+        List<Rating> newRatings = new ArrayList<>(this.ratings);
+        newRatings.add(Objects.requireNonNull(rating, "rating cannot be null"));
+        return new Product(this.id, this.name, this.description, this.category,
+                this.subCategory, this.price, newRatings, this.stock);
     }
 
     // Enums
@@ -105,10 +96,9 @@ public class Product {
         USD, EUR, BRL
     }
 
-    // factory
+    // Factory
     public static Product createProduct(String name, String description, Category category,
-            SubCategory subCategory, BigDecimal price,
-            CurrencyType currency, int stock) {
-        return new Product(null, name, description, category, subCategory, null, price, currency, stock);
+            SubCategory subCategory, Money price, int stock) {
+        return new Product(null, name, description, category, subCategory, price, null, stock);
     }
 }
