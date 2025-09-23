@@ -22,7 +22,7 @@ public class AuthMapper {
         jpa.setName(domain.getName());
         jpa.setEmail(domain.getEmail());
         jpa.setPassword(domain.getPassword());
-        jpa.setisAdmin(domain.getisAdmin());
+        jpa.setisAdmin(domain.isAdmin());
         return jpa;
     }
 }
