@@ -9,14 +9,14 @@ public class UserMapper {
 
     // JPA -> Domain
     public static User toDomain(UserJpaEntity jpaEntity) {
-        Auth auth = new Auth(
+        Auth auth = Auth.from(
                 null,
                 jpaEntity.getName(),
                 jpaEntity.getEmail(),
                 null,
                 false);
 
-        return new User(jpaEntity.getId(), auth);
+        return User.from(jpaEntity.getId(), auth);
     }
 
     // Domain -> JPA

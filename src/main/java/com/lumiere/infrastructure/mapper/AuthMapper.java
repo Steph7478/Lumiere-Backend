@@ -7,7 +7,7 @@ public class AuthMapper {
 
     // JPA → Domain
     public static Auth toDomain(AuthJpaEntity jpaEntity) {
-        return new Auth(
+        return Auth.from(
                 jpaEntity.getId(),
                 jpaEntity.getName(),
                 jpaEntity.getEmail(),
@@ -21,7 +21,7 @@ public class AuthMapper {
         jpa.setId(domain.getId());
         jpa.setName(domain.getName());
         jpa.setEmail(domain.getEmail());
-        jpa.setPassword(domain.getPassword());
+        jpa.setPassword(domain.getPasswordHash());
         jpa.setisAdmin(domain.isAdmin());
         return jpa;
     }
