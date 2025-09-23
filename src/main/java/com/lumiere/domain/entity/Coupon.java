@@ -4,6 +4,8 @@ import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.UUID;
 
+import com.lumiere.utils.CouponCodeGenerator;
+
 public class Coupon {
 
     private final UUID id;
@@ -11,8 +13,10 @@ public class Coupon {
     private final LocalDateTime expiredAt;
     private final Category category;
     private final UUID userId;
+    private final String code;
 
-    private Coupon(UUID id, LocalDateTime couponDate, LocalDateTime expiredAt, Category category, UUID userId) {
+    private Coupon(UUID id, LocalDateTime couponDate, LocalDateTime expiredAt, Category category, UUID userId,
+            String code) {
         this.id = id != null ? id : UUID.randomUUID();
         this.couponDate = Objects.requireNonNull(couponDate, "couponDate cannot be null");
         this.expiredAt = Objects.requireNonNull(expiredAt, "expiredAt cannot be null");
@@ -21,6 +25,7 @@ public class Coupon {
         }
         this.category = Objects.requireNonNull(category, "category cannot be null");
         this.userId = Objects.requireNonNull(userId, "userId cannot be null");
+        this.code = Objects.requireNonNull(code, "code cannot be null");
     }
 
     // Getters
@@ -44,14 +49,17 @@ public class Coupon {
         return userId;
     }
 
+    public String getCode() {
+        return code;
+    }
+
     // Enums
     public enum Category {
         COUPON_1, COUPON_2
     }
 
     public enum Type {
-        PERCENTAGE,
-        FIXED
+        PERCENTAGE, FIXED
     }
 
     public boolean isValid() {
@@ -59,14 +67,14 @@ public class Coupon {
         return !now.isBefore(couponDate) && !now.isAfter(expiredAt);
     }
 
-    // factory
     public static Coupon createCoupon(UUID userId, Category category) {
+        String generatedCode = CouponCodeGenerator.generate();
         return new Coupon(
                 null,
                 LocalDateTime.now(),
                 LocalDateTime.now().plusDays(7),
                 category,
-                userId);
+                userId,
+                generatedCode);
     }
-
 }
