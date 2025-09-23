@@ -36,7 +36,7 @@ public class Auth {
         return passwordHash;
     }
 
-    public boolean isAdmin() {
+    public boolean getIsAdmin() {
         return isAdmin;
     }
 
