@@ -1,5 +1,6 @@
 package com.lumiere.domain.entity;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -10,13 +11,15 @@ public class Order {
     private Status status;
     private Cart cart;
     private UUID paymentId;
+    private BigDecimal total;
 
-    public Order(UUID id, LocalDateTime orderDate, Status status, Cart cart, UUID paymentId) {
+    public Order(UUID id, LocalDateTime orderDate, Status status, Cart cart, UUID paymentId, BigDecimal total) {
         this.id = id != null ? id : UUID.randomUUID();
         this.orderDate = orderDate;
         this.status = status;
         this.cart = cart;
         this.paymentId = paymentId;
+        this.total = total;
     }
 
     // getters
@@ -40,6 +43,10 @@ public class Order {
         return paymentId;
     }
 
+    public BigDecimal getTotal() {
+        return total;
+    }
+
     // setters
     public void setOrderDate(LocalDateTime orderDate) {
         if (this.status != Status.PAID) {
@@ -53,6 +60,11 @@ public class Order {
         this.status = status;
     }
 
+    public void setTotal(BigDecimal total) {
+        this.total = total;
+    }
+
+    // enums
     public enum Status {
         IN_PROGRESS,
         PAID
