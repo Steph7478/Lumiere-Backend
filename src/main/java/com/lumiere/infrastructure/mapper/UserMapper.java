@@ -1,5 +1,6 @@
 package com.lumiere.infrastructure.mapper;
 
+import com.lumiere.domain.entity.Auth;
 import com.lumiere.domain.entity.User;
 import com.lumiere.infrastructure.jpa.AuthJpaEntity;
 import com.lumiere.infrastructure.jpa.UserJpaEntity;
@@ -8,11 +9,14 @@ public class UserMapper {
 
     // JPA -> Domain
     public static User toDomain(UserJpaEntity jpaEntity) {
-        return new User(
-                jpaEntity.getId(),
+        Auth auth = new Auth(
                 null,
                 jpaEntity.getName(),
-                jpaEntity.getEmail());
+                jpaEntity.getEmail(),
+                null,
+                false);
+
+        return new User(jpaEntity.getId(), auth);
     }
 
     // Domain -> JPA
@@ -20,11 +24,10 @@ public class UserMapper {
         UserJpaEntity jpa = new UserJpaEntity();
         jpa.setId(domain.getId());
 
-        if (domain.getAuthId() != null) {
-            AuthJpaEntity auth = new AuthJpaEntity();
-            auth.setId(domain.getAuthId());
-            jpa.setAuth(auth);
-        }
+        AuthJpaEntity auth = new AuthJpaEntity();
+        auth.setName(domain.getName());
+        auth.setEmail(domain.getEmail());
+        jpa.setAuth(auth);
 
         return jpa;
     }
