@@ -1,4 +1,4 @@
-package com.lumiere.domain.entity;
+package com.lumiere.domain.entities;
 
 import com.lumiere.domain.vo.Money;
 import java.util.*;

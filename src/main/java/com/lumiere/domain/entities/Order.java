@@ -1,4 +1,4 @@
-package com.lumiere.domain.entity;
+package com.lumiere.domain.entities;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;

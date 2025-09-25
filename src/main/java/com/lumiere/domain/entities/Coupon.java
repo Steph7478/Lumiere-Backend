@@ -1,4 +1,4 @@
-package com.lumiere.domain.entity;
+package com.lumiere.domain.entities;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
