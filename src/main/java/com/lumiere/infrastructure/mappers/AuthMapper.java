@@ -1,6 +1,6 @@
-package com.lumiere.infrastructure.mapper;
+package com.lumiere.infrastructure.mappers;
 
-import com.lumiere.domain.entity.Auth;
+import com.lumiere.domain.entities.Auth;
 import com.lumiere.infrastructure.jpa.AuthJpaEntity;
 
 public class AuthMapper {
