@@ -16,7 +16,7 @@ target/
 *env
 .env*
 *.pem
-
+dev.db
 ### IntelliJ IDEA ###
 .idea
 *.iws
