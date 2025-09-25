@@ -11,7 +11,7 @@ public class AuthMapper {
                 jpaEntity.getId(),
                 jpaEntity.getName(),
                 jpaEntity.getEmail(),
-                null,
+                "***hidden***",
                 jpaEntity.getIsAdmin());
     }
 

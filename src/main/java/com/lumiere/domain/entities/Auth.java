@@ -56,6 +56,14 @@ public class Auth {
                 Objects.requireNonNull(passwordHash, "passwordHash cannot be null"), this.isAdmin);
     }
 
+    public static Auth hidden(String name, String email) {
+        return new Auth(UUID.fromString("00000000-0000-0000-0000-000000000000"),
+                name,
+                email,
+                "***hidden***",
+                false);
+    }
+
     // factory
     public static Auth from(UUID id, String name, String email, String passwordHash, boolean isAdmin) {
         return new Auth(id, name, email, passwordHash, isAdmin);

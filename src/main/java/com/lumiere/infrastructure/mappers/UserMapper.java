@@ -9,12 +9,7 @@ public class UserMapper {
 
     // JPA -> Domain
     public static User toDomain(UserJpaEntity jpaEntity) {
-        Auth auth = Auth.from(
-                null,
-                jpaEntity.getName(),
-                jpaEntity.getEmail(),
-                null,
-                false);
+        Auth auth = Auth.hidden(jpaEntity.getName(), jpaEntity.getEmail());
 
         return User.from(jpaEntity.getId(), auth);
     }
