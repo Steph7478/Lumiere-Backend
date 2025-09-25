@@ -47,15 +47,4 @@ public class TokenService {
 
         return signedJWT.serialize();
     }
-
-    public static boolean verifyToken(String token) {
-        try {
-            SignedJWT signedJWT = SignedJWT.parse(token);
-
-            return signedJWT.verify(SignerProvider.getVerifier())
-                    && signedJWT.getJWTClaimsSet().getExpirationTime().after(new Date());
-        } catch (Exception e) {
-            return false;
-        }
-    }
 }
