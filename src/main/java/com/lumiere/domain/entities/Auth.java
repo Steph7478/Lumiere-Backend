@@ -64,6 +64,14 @@ public class Auth {
                 false);
     }
 
+    public static Auth me(String name, String email, UUID id, boolean isAdmin) {
+        return new Auth(id,
+                name,
+                email,
+                "***hidden***",
+                isAdmin);
+    }
+
     // factory
     public static Auth from(UUID id, String name, String email, String passwordHash, boolean isAdmin) {
         return new Auth(id, name, email, passwordHash, isAdmin);
