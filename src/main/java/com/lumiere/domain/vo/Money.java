@@ -2,7 +2,8 @@ package com.lumiere.domain.vo;
 
 import java.math.BigDecimal;
 import java.util.Objects;
-import com.lumiere.domain.entity.Product.CurrencyType;
+
+import com.lumiere.domain.entities.Product.CurrencyType;
 
 public class Money {
 
