@@ -9,7 +9,7 @@ import jakarta.persistence.OneToOne;
 
 import java.util.UUID;
 
-@Entity(name = "Auth")
+@Entity
 public class AuthJpaEntity {
 
     @Id
