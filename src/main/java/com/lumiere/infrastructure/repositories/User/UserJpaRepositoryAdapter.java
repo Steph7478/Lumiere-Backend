@@ -2,7 +2,6 @@ package com.lumiere.infrastructure.repositories.User;
 
 import java.util.UUID;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.lumiere.domain.entities.User;
@@ -13,8 +12,11 @@ import com.lumiere.infrastructure.mappers.UserMapper;
 @Repository
 public class UserJpaRepositoryAdapter implements UserRepository {
 
-    @Autowired
-    private UserJpaRepository userRepo;
+    private final UserJpaRepository userRepo;
+
+    public UserJpaRepositoryAdapter(UserJpaRepository userRepo) {
+        this.userRepo = userRepo;
+    }
 
     @Override
     public User save(User user) {
