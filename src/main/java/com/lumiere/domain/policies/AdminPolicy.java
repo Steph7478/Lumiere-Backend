@@ -8,7 +8,7 @@ public class AdminPolicy {
         return user.getRoles().contains("ADMIN");
     }
 
-    public boolean canManageUsers(ActingUser user) {
+    public boolean canManageProducts(ActingUser user) {
         return user.getPermissions().contains("MANAGE_PRODUCTS");
     }
 }
