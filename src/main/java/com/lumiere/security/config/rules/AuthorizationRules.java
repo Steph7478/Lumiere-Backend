@@ -1,6 +1,9 @@
-package com.lumiere.security.config.permissions;
+package com.lumiere.security.config.rules;
 
 import org.springframework.stereotype.Component;
+
+import com.lumiere.security.config.permissions.RoutePermissions;
+
 import org.springframework.http.HttpMethod;
 import java.util.List;
 import java.util.stream.Collectors;

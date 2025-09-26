@@ -5,7 +5,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.web.SecurityFilterChain;
 
-import com.lumiere.security.config.permissions.AuthorizationRules;
+import com.lumiere.security.config.rules.AuthorizationRules;
 
 @Configuration
 public class SecurityFilterChainConfig {
