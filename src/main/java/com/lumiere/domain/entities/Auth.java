@@ -41,14 +41,19 @@ public class Auth {
     }
 
     public Auth updateName(String newName) {
-        return new Auth(this.id, Objects.requireNonNull(newName, "name cannot be null"),
-                this.email, this.passwordHash, this.isAdmin);
+        Objects.requireNonNull(newName, "name cannot be null");
+        if (Objects.equals(this.name, newName)) {
+            return this;
+        }
+        return new Auth(this.id, newName, this.email, this.passwordHash, this.isAdmin);
     }
 
     public Auth updateEmail(String newEmail) {
-        return new Auth(this.id, this.name,
-                Objects.requireNonNull(newEmail, "email cannot be null"),
-                this.passwordHash, this.isAdmin);
+        Objects.requireNonNull(newEmail, "email cannot be null");
+        if (Objects.equals(this.email, newEmail)) {
+            return this;
+        }
+        return new Auth(this.id, this.name, newEmail, this.passwordHash, this.isAdmin);
     }
 
     public Auth updatePassword(String passwordHash) {

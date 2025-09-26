@@ -34,9 +34,4 @@ public class User {
     public static User from(UUID id, Auth auth) {
         return new User(id, auth);
     }
-
-    public static User createUser(Auth auth) {
-        return new User(null, auth);
-    }
-
 }
