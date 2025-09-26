@@ -27,7 +27,7 @@ public class AuthJpaRepositoryAdapter implements AuthRepository {
     @Override
     public Auth findById(UUID id) {
         return authJpaRepo.findById(id)
-                .map(AuthMapper::toDomainSafe)
+                .map(AuthMapper::toDomainMe)
                 .orElse(null);
     }
 
