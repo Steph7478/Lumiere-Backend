@@ -18,11 +18,11 @@ public class AuthContext {
         return userId;
     }
 
-    public boolean hasRole(String role) {
-        return roles.contains(role);
+    public Set<String> getRoles() {
+        return roles;
     }
 
-    public boolean hasPermission(String permission) {
-        return permissions.contains(permission);
+    public Set<String> getPermissions() {
+        return permissions;
     }
 }
