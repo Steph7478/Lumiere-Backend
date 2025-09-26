@@ -5,10 +5,17 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.web.SecurityFilterChain;
 
+import com.lumiere.security.config.header.SecurityHeadersConfig;
 import com.lumiere.security.config.rules.AuthorizationRules;
 
 @Configuration
 public class SecurityFilterChainConfig {
+
+        private final SecurityHeadersConfig securityHeadersConfig;
+
+        public SecurityFilterChainConfig(SecurityHeadersConfig securityHeadersConfig) {
+                this.securityHeadersConfig = securityHeadersConfig;
+        }
 
         @Bean
         public SecurityFilterChain filterChain(HttpSecurity http,
@@ -27,6 +34,7 @@ public class SecurityFilterChainConfig {
 
                                         auth.anyRequest().denyAll();
                                 });
+                securityHeadersConfig.applyHeaders(http);
 
                 return http.build();
         }
