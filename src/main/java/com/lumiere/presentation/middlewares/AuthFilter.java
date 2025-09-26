@@ -1,8 +1,10 @@
-package com.lumiere.infrastructure.auth;
+package com.lumiere.presentation.middlewares;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.lumiere.domain.vo.ActingUser;
+import com.lumiere.infrastructure.auth.TokenValidator;
+
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
