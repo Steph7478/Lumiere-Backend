@@ -35,7 +35,7 @@ public class TokenValidator {
         return getClaim(token, "role");
     }
 
-    private static String getClaim(String token, String claimKey) {
+    public static String getClaim(String token, String claimKey) {
         try {
             SignedJWT signedJWT = SignedJWT.parse(token);
             return signedJWT.getJWTClaimsSet().getStringClaim(claimKey);

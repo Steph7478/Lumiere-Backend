@@ -1,6 +1,7 @@
 package com.lumiere.infrastructure.auth;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
@@ -15,22 +16,26 @@ public class TokenService {
     private static final long ACCESS_TOKEN_EXPIRATION = 15 * 60 * 1000;
     private static final long REFRESH_TOKEN_EXPIRATION = 7 * 24 * 60 * 60 * 1000;
 
-    public static String generateAccessToken(UUID userId, String role) throws Exception {
-        return generateToken(userId, ACCESS_TOKEN_EXPIRATION, "access", role);
+    public static String generateAccessToken(UUID userId, List<String> roles, List<String> permissions)
+            throws Exception {
+        return generateToken(userId, ACCESS_TOKEN_EXPIRATION, "access", roles, permissions);
     }
 
-    public static String generateRefreshToken(UUID userId, String role) throws Exception {
-        return generateToken(userId, REFRESH_TOKEN_EXPIRATION, "refresh", role);
+    public static String generateRefreshToken(UUID userId, List<String> roles, List<String> permissions)
+            throws Exception {
+        return generateToken(userId, REFRESH_TOKEN_EXPIRATION, "refresh", roles, permissions);
     }
 
-    private static String generateToken(UUID userId, long expirationMillis, String type, String role) throws Exception {
+    private static String generateToken(UUID userId, long expirationMillis, String type,
+            List<String> roles, List<String> permissions) throws Exception {
 
         JWTClaimsSet claimsSet = new JWTClaimsSet.Builder()
                 .subject(userId.toString())
                 .issuer("Lumière")
                 .expirationTime(new Date(System.currentTimeMillis() + expirationMillis))
                 .claim("type", type)
-                .claim("role", role)
+                .claim("roles", roles)
+                .claim("permissions", permissions)
                 .jwtID(UUID.randomUUID().toString())
                 .build();
 
@@ -42,9 +47,8 @@ public class TokenService {
                 .build();
 
         SignedJWT signedJWT = new SignedJWT(header, claimsSet);
-
         signedJWT.sign(SignerProvider.getSigner());
-
         return signedJWT.serialize();
     }
+
 }

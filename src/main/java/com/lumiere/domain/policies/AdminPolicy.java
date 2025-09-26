@@ -1,10 +1,14 @@
 package com.lumiere.domain.policies;
 
-import com.lumiere.domain.entities.Auth;
+import com.lumiere.security.contexts.AuthContext;
 
 public class AdminPolicy {
 
-    public boolean isAllowed(Auth auth) {
-        return auth.getIsAdmin();
+    public boolean canManageUsers(AuthContext auth) {
+        return auth.hasPermission("MANAGE_PRODUCTS");
+    }
+
+    public boolean isAdmin(AuthContext auth) {
+        return auth.hasRole("ADMIN");
     }
 }
