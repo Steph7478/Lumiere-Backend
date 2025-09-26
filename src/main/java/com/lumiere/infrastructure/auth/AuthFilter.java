@@ -8,6 +8,8 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -22,6 +24,7 @@ public class AuthFilter extends OncePerRequestFilter {
 
     private static final String ACCESS_TOKEN_COOKIE = "accessToken";
     private static final ObjectMapper objectMapper = new ObjectMapper();
+    private static final Logger logger = LoggerFactory.getLogger(AuthFilter.class);
 
     @Override
     protected void doFilterInternal(
@@ -29,39 +32,65 @@ public class AuthFilter extends OncePerRequestFilter {
             @NonNull HttpServletResponse response,
             @NonNull FilterChain filterChain) throws ServletException, IOException {
 
-        Cookie[] cookies = request.getCookies();
+        try {
+            Cookie[] cookies = request.getCookies();
 
-        if (cookies != null) {
-            Stream.of(cookies)
-                    .filter(c -> ACCESS_TOKEN_COOKIE.equals(c.getName()))
-                    .map(Cookie::getValue)
-                    .filter(TokenValidator::isValid)
-                    .filter(TokenValidator::isAccessToken)
-                    .findFirst()
-                    .ifPresent(token -> {
-                        try {
-                            UUID userId = TokenValidator.getUserId(token);
+            if (cookies != null) {
+                Stream.of(cookies)
+                        .filter(c -> ACCESS_TOKEN_COOKIE.equals(c.getName()))
+                        .map(Cookie::getValue)
+                        .filter(TokenValidator::isValid)
+                        .filter(TokenValidator::isAccessToken)
+                        .findFirst()
+                        .ifPresent(token -> {
+                            try {
+                                UUID userId = TokenValidator.getUserId(token);
 
-                            String rolesJson = TokenValidator.getClaim(token, "roles");
-                            String permissionsJson = TokenValidator.getClaim(token, "permissions");
+                                String rolesJson = TokenValidator.getClaim(token, "roles");
+                                String permissionsJson = TokenValidator.getClaim(token, "permissions");
 
-                            Set<String> roles = rolesJson != null
-                                    ? objectMapper.readValue(rolesJson, new TypeReference<Set<String>>() {
-                                    })
-                                    : Set.of();
+                                Set<String> roles = rolesJson != null
+                                        ? objectMapper.readValue(rolesJson, new TypeReference<>() {
+                                        })
+                                        : Set.of();
 
-                            Set<String> permissions = permissionsJson != null
-                                    ? objectMapper.readValue(permissionsJson, new TypeReference<Set<String>>() {
-                                    })
-                                    : Set.of();
+                                Set<String> permissions = permissionsJson != null
+                                        ? objectMapper.readValue(permissionsJson, new TypeReference<>() {
+                                        })
+                                        : Set.of();
 
-                            request.setAttribute("actingUser", new ActingUser(userId, roles, permissions));
-                        } catch (Exception e) {
+                                ActingUser actingUser = new ActingUser(userId, roles, permissions);
+                                request.setAttribute("actingUser", actingUser);
 
-                        }
-                    });
+                                logger.debug("Authenticated user [{}] with roles {} and permissions {}",
+                                        userId, roles, permissions);
+
+                            } catch (Exception e) {
+                                logger.warn("Failed to parse token claims", e);
+                                sendUnauthorized(response, "Invalid token claims");
+                                return;
+                            }
+                        });
+            }
+
+            filterChain.doFilter(request, response);
+
+        } catch (Exception e) {
+            logger.error("Authentication process failed", e);
+            sendUnauthorized(response, "Authentication failed");
         }
-
-        filterChain.doFilter(request, response);
     }
+
+    private void sendUnauthorized(HttpServletResponse response, String message) {
+        try {
+            if (!response.isCommitted()) {
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                response.setContentType("application/json");
+                response.getWriter().write("{\"error\": \"" + message + "\"}");
+            }
+        } catch (IOException e) {
+            logger.error("Failed to send unauthorized response", e);
+        }
+    }
+
 }
