@@ -1,5 +1,6 @@
 package com.lumiere.infrastructure.auth;
 
+import java.util.List;
 import java.util.UUID;
 
 public class RefreshTokenService {
@@ -14,12 +15,13 @@ public class RefreshTokenService {
         }
 
         UUID userId = TokenValidator.getUserId(refreshToken);
-        String role = TokenValidator.getRole(refreshToken);
+        List<String> roles = TokenValidator.getRoles(refreshToken);
+        List<String> permissions = TokenValidator.getPermissions(refreshToken);
 
-        if (userId == null || role == null) {
+        if (userId == null || roles == null) {
             throw new RuntimeException("Invalid token");
         }
 
-        return TokenService.generateAccessToken(userId, role);
+        return TokenService.generateAccessToken(userId, roles, permissions);
     }
 }
