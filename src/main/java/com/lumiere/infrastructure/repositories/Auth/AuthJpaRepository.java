@@ -17,5 +17,6 @@ public interface AuthJpaRepository extends JpaRepository<AuthJpaEntity, UUID> {
     Optional<AuthJpaEntity> findByEmailCustom(@Param("email") String email);
 
     @Query("SELECT a FROM AuthJpaEntity a WHERE a.id = :id")
-    Optional<AuthJpaEntity> findById(@Param("id") String id);
+    Optional<AuthJpaEntity> findAuthById(@Param("id") UUID id);
+
 }
