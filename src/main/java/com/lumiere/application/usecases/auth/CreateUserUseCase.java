@@ -1,34 +1,39 @@
 package com.lumiere.application.usecases.auth;
 
-import com.lumiere.application.dtos.auth.AuthResponseDTO;
 import com.lumiere.application.dtos.auth.CreateUserDTO;
-import com.lumiere.application.mappers.AuthMapper;
+import com.lumiere.application.dtos.auth.CreateUserResponse;
+import com.lumiere.application.exceptions.EmailAlreadyExistsException;
 import com.lumiere.domain.entities.Auth;
 import com.lumiere.domain.entities.User;
-import com.lumiere.domain.repositories.AuthRepository;
+import com.lumiere.domain.services.AuthService;
 import com.lumiere.domain.services.UserService;
+import com.lumiere.domain.repositories.UserRepository;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class CreateUserUseCase {
 
-    private final AuthRepository authRepository;
+    private final UserRepository userRepository;
 
-    public CreateUserUseCase(AuthRepository authRepository) {
-        this.authRepository = authRepository;
+    public CreateUserUseCase(UserRepository userRepository) {
+        this.userRepository = userRepository;
     }
 
     @Transactional
-    public AuthResponseDTO execute(CreateUserDTO dto) {
-        Auth auth = AuthMapper.toEntity(dto);
+    public CreateUserResponse execute(CreateUserDTO dto) {
 
-        Auth savedAuth = authRepository.save(auth);
+        if (userRepository.findByAuthEmail(dto.email()) != null) {
+            throw new EmailAlreadyExistsException(dto.email());
+        }
 
-        User user = UserService.createUser(savedAuth);
+        Auth auth = AuthService.createAuth(dto.name(), dto.email(), dto.password(), false);
+        User user = UserService.createUser(auth);
 
-        return new AuthResponseDTO(
-                user.getId().toString(),
-                user.getName());
+        userRepository.save(user);
+
+        return new CreateUserResponse();
     }
+
 }
