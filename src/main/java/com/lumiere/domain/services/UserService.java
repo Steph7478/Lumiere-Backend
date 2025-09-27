@@ -9,6 +9,8 @@ public class UserService {
     }
 
     public static User createUser(Auth auth) {
-        return User.from(null, auth);
+        User user = User.from(null, auth);
+        auth.setUser(user);
+        return user;
     }
 }
