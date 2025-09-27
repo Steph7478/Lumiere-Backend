@@ -9,10 +9,10 @@ import org.springframework.http.HttpMethod;
 public class RoutePermissions {
 
         public static final Map<String, Map<String, List<HttpMethod>>> ROUTE_PERMISSIONS = Map.of(
-                        Routes.USERS, Map.of(
+                        Routes.REGISTER, Map.of(
                                         "ADMIN",
                                         List.of(HttpMethod.GET, HttpMethod.POST, HttpMethod.PUT, HttpMethod.DELETE),
-                                        "USER", List.of(HttpMethod.GET, HttpMethod.POST)),
+                                        "PUBLIC", List.of(HttpMethod.POST)),
                         Routes.PRODUCTS, Map.of(
                                         "PUBLIC",
                                         List.of(HttpMethod.GET, HttpMethod.POST, HttpMethod.PUT, HttpMethod.DELETE)),
