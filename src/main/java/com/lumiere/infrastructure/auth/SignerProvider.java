@@ -19,18 +19,22 @@ import com.nimbusds.jose.jwk.RSAKey;
 
 public class SignerProvider {
 
-    private static final String PRIVATE_KEY_PEM = System.getenv("PRIVATE_KEY");
-
-    // private key cache
+    private static final String PRIVATE_KEY_PEM = loadEnvPrivateKey();
     private static final RSAPrivateKey PRIVATE_KEY = loadPrivateKey(PRIVATE_KEY_PEM);
-
-    // public key cache
     private static final RSAPublicKey PUBLIC_KEY = factoryPublicKey(PRIVATE_KEY);
 
-    // private key factory
+    private static String loadEnvPrivateKey() {
+        String key = System.getProperty("PRIVATE_KEY");
+        if (key == null || key.isBlank()) {
+            throw new IllegalStateException("Environment variable PRIVATE_KEY is not set or empty");
+        }
+        key = key.replace("\\n", "\n");
+        return key;
+
+    }
+
     private static RSAPrivateKey loadPrivateKey(String pem) {
         try {
-            // im removing the begin and end of the key, to get only the bytes
             StringBuilder key = new StringBuilder();
             try (BufferedReader reader = new BufferedReader(new StringReader(pem))) {
                 String line;
