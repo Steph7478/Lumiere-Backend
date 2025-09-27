@@ -8,4 +8,6 @@ public interface AuthRepository {
     Auth save(Auth auth);
 
     Auth findById(UUID id);
+
+    Auth findByEmail(String email);
 }
