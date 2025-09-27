@@ -24,7 +24,7 @@ import java.util.stream.Stream;
 @Component
 public class AuthFilter extends OncePerRequestFilter {
 
-    private static final String ACCESS_TOKEN_COOKIE = "accessToken";
+    private static final String ACCESS_TOKEN_COOKIE = "access_token";
     private static final ObjectMapper objectMapper = new ObjectMapper();
     private static final Logger logger = LoggerFactory.getLogger(AuthFilter.class);
 
