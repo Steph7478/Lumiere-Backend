@@ -10,6 +10,7 @@ public class Auth {
     private final String email;
     private final String passwordHash;
     private final boolean isAdmin;
+    private User user;
 
     private Auth(UUID id, String name, String email, String passwordHash, boolean isAdmin) {
         this.id = id != null ? id : UUID.randomUUID();
@@ -17,6 +18,14 @@ public class Auth {
         this.email = Objects.requireNonNull(email, "email cannot be null");
         this.passwordHash = Objects.requireNonNull(passwordHash, "passwordHash cannot be null");
         this.isAdmin = isAdmin;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 
     // Getters

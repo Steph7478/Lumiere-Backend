@@ -6,7 +6,7 @@ import java.util.UUID;
 public class User {
 
     private final UUID id;
-    private final Auth auth;
+    private Auth auth;
 
     private User(UUID id, Auth auth) {
         this.id = id != null ? id : UUID.randomUUID();
@@ -28,6 +28,10 @@ public class User {
 
     public String getEmail() {
         return auth.getEmail();
+    }
+
+    public void setAuth(Auth auth) {
+        this.auth = auth;
     }
 
     // factory
