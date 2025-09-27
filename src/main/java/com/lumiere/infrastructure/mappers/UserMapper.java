@@ -14,15 +14,18 @@ public class UserMapper {
         return User.from(jpaEntity.getId(), auth);
     }
 
-    // Domain -> JPA
-    public static UserJpaEntity toJpa(User domain) {
+    public static UserJpaEntity toJpa(User domain, AuthJpaEntity existingAuth) {
         UserJpaEntity jpa = new UserJpaEntity();
         jpa.setId(domain.getId());
 
-        AuthJpaEntity auth = new AuthJpaEntity();
-        auth.setName(domain.getName());
-        auth.setEmail(domain.getEmail());
-        jpa.setAuth(auth);
+        if (existingAuth != null) {
+            jpa.setAuth(existingAuth);
+        } else {
+            AuthJpaEntity auth = new AuthJpaEntity();
+            auth.setName(domain.getName());
+            auth.setEmail(domain.getEmail());
+            jpa.setAuth(auth);
+        }
 
         return jpa;
     }
