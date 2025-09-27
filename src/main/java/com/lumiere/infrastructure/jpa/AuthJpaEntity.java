@@ -1,9 +1,7 @@
 package com.lumiere.infrastructure.jpa;
 
-import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToOne;
 
@@ -13,15 +11,20 @@ import java.util.UUID;
 public class AuthJpaEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @OneToOne(mappedBy = "auth", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToOne(mappedBy = "auth")
     private UserJpaEntity user;
 
+    @Column(nullable = false)
     private String name;
+
+    @Column(nullable = false, unique = true)
     private String email;
+
+    @Column(nullable = false)
     private String password;
+
     private Boolean isAdmin;
 
     // Getters
