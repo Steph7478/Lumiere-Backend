@@ -1,4 +1,4 @@
-package com.lumiere.presentation.controllers;
+package com.lumiere.presentation.handlers;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import com.lumiere.application.exceptions.EmailAlreadyExistsException;
-import com.lumiere.application.exceptions.TokenGenerationException;
+import com.lumiere.presentation.exceptions.TokenGenerationException;
 
 import java.util.HashMap;
 import java.util.Map;

@@ -1,4 +1,4 @@
-package com.lumiere.application.exceptions;
+package com.lumiere.presentation.exceptions;
 
 public class TokenGenerationException extends RuntimeException {
     public TokenGenerationException(Throwable cause) {

@@ -1,10 +1,10 @@
 package com.lumiere.presentation.controllers;
 
 import com.lumiere.presentation.dtos.auth.CreateUserRequestDTO;
+import com.lumiere.presentation.exceptions.TokenGenerationException;
 import com.lumiere.presentation.mappers.auth.CreateUserRequestMapper;
 import com.lumiere.application.dtos.auth.CreateUserDTO;
 import com.lumiere.application.dtos.auth.CreateUserResponse;
-import com.lumiere.application.exceptions.TokenGenerationException;
 import com.lumiere.application.usecases.auth.CreateUserUseCase;
 import com.lumiere.infrastructure.auth.TokenService;
 
