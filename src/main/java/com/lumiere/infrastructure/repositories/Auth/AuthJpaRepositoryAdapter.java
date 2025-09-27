@@ -31,6 +31,13 @@ public class AuthJpaRepositoryAdapter implements AuthRepository {
                 .orElse(null);
     }
 
+    @Override
+    public Auth findByEmail(String email) {
+        return authJpaRepo.findByEmail(email)
+                .map(AuthMapper::toDomainSafe)
+                .orElse(null);
+    }
+
     // OBS:
     // this "::" is equal to:
     // .map(authEntity -> AuthMapper.toDomainSafe(authEntity))
