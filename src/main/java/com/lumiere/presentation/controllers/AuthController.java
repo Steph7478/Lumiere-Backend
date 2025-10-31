@@ -3,7 +3,6 @@ package com.lumiere.presentation.controllers;
 import com.lumiere.presentation.dtos.auth.CreateUserRequestDTO;
 import com.lumiere.presentation.exceptions.TokenGenerationException;
 import com.lumiere.presentation.mappers.auth.CreateUserRequestMapper;
-import com.lumiere.security.annotations.RolesAuthorize;
 import com.lumiere.application.dtos.auth.CreateUserDTO;
 import com.lumiere.application.dtos.auth.CreateUserResponse;
 import com.lumiere.application.usecases.auth.CreateUserUseCase;
@@ -31,7 +30,6 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    @RolesAuthorize
     public ResponseEntity<CreateUserResponse> registerUser(
             @Valid @RequestBody CreateUserRequestDTO requestDTO,
             HttpServletResponse response) {
