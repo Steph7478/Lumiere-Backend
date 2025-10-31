@@ -13,7 +13,6 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 import java.text.ParseException;
 import java.util.List;
-import java.util.Set;
 
 public class JwtAuthorizationFilter extends OncePerRequestFilter {
 
@@ -35,17 +34,17 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
 
             String path = req.getRequestURI();
             String method = req.getMethod();
-            Set<String> allowedRoles = PermissionConfig.getRolesForRoute(path);
-            Set<String> allowedMethods = PermissionConfig.getMethodsForRoute(path);
 
-            boolean roleOk = roles.stream().anyMatch(allowedRoles::contains);
-            boolean methodOk = allowedMethods.isEmpty() || allowedMethods.contains(method);
+            var policy = PermissionConfig.getPolicy(path);
+            boolean methodOk = policy.methods().isEmpty() || policy.methods().contains(method);
+            boolean roleOk = roles.stream().anyMatch(policy.roles()::contains);
 
-            if (roleOk && methodOk) {
-                chain.doFilter(req, res);
-            } else {
+            if (!methodOk || !roleOk) {
                 res.sendError(HttpServletResponse.SC_FORBIDDEN, "Access denied");
+                return;
             }
+
+            chain.doFilter(req, res);
 
         } catch (ParseException e) {
             res.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Invalid token");

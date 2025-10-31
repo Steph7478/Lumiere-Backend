@@ -7,18 +7,20 @@ public class PermissionConfig {
 
         public static final String DEFAULT_ROLE = "PUBLIC";
 
-        public record PermissionRule(Set<String> roles, Set<String> methods) {
+        public record Policy(Set<String> roles, Set<String> methods) {
         }
 
-        public static final Map<String, PermissionRule> ROUTE_PERMISSIONS = Map.of(
-                        "/auth/register", new PermissionRule(Set.of(DEFAULT_ROLE), Set.of("POST")));
+        public static final Map<String, Policy> ROUTES = Map.ofEntries(
+                        Map.entry("/auth/register", new Policy(Set.of(DEFAULT_ROLE), Set.of("POST"))),
+                        Map.entry("/auth/login", new Policy(Set.of(DEFAULT_ROLE), Set.of("POST"))),
+                        Map.entry("/users", new Policy(Set.of("ADMIN"), Set.of("GET", "POST", "DELETE"))),
+                        Map.entry("/profile", new Policy(Set.of("USER", "ADMIN"), Set.of("GET", "PUT"))));
 
-        public static Set<String> getRolesForRoute(String key) {
-                return ROUTE_PERMISSIONS.getOrDefault(key, new PermissionRule(Set.of(DEFAULT_ROLE), Set.of())).roles();
-        }
-
-        public static Set<String> getMethodsForRoute(String key) {
-                return ROUTE_PERMISSIONS.getOrDefault(key, new PermissionRule(Set.of(DEFAULT_ROLE), Set.of()))
-                                .methods();
+        public static Policy getPolicy(String path) {
+                return ROUTES.entrySet().stream()
+                                .filter(e -> path.startsWith(e.getKey()))
+                                .findFirst()
+                                .map(Map.Entry::getValue)
+                                .orElse(new Policy(Set.of(DEFAULT_ROLE), Set.of()));
         }
 }
