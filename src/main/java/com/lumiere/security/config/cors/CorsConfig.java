@@ -2,34 +2,29 @@ package com.lumiere.security.config.cors;
 
 import com.lumiere.security.config.permissions.PermissionConfig;
 import org.springframework.context.annotation.Bean;
-import org.springframework.web.cors.*;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
+@Configuration
 public class CorsConfig {
 
     @Bean
     public CorsFilter corsFilter() {
-        CorsConfiguration config = new CorsConfiguration();
+        var source = new UrlBasedCorsConfigurationSource();
 
-        config.setAllowedOriginPatterns(List.of("http://localhost:*"));
-
-        Set<String> allowedMethods = PermissionConfig.ROUTE_PERMISSIONS
-                .values()
-                .stream()
-                .flatMap(rule -> rule.methods().stream())
-                .collect(Collectors.toSet());
-
-        config.setAllowedMethods(List.copyOf(allowedMethods));
-
-        config.setAllowedHeaders(List.of("*"));
-        config.setAllowCredentials(true);
-
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", config);
+        PermissionConfig.ROUTE_PERMISSIONS.forEach((path, rule) -> {
+            var config = new CorsConfiguration();
+            config.setAllowedOriginPatterns(List.of("http://localhost:*"));
+            config.setAllowedMethods(new ArrayList<>(rule.methods()));
+            config.setAllowedHeaders(List.of("*"));
+            config.setAllowCredentials(true);
+            source.registerCorsConfiguration(path, config);
+        });
 
         return new CorsFilter(source);
     }

@@ -6,6 +6,6 @@ import java.lang.annotation.*;
 
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
-@PreAuthorize("@permissionEvaluator.hasPermission(#root.this, #root.method.name, #root.methodMetadata.method, authentication)")
+@PreAuthorize("@permissionEvaluator.hasPermission(request, authentication)")
 public @interface RolesAuthorize {
 }

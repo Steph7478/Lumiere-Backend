@@ -22,23 +22,24 @@ public class SecurityFilterChainConfig {
 
         @Bean
         public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-
                 securityHeadersConfig.applyHeaders(http);
 
-                http.cors(cors -> cors.configurationSource(corsConfigurationSource));
-
-                http.csrf(csrf -> csrf.disable());
-
-                http.authorizeHttpRequests(auth -> {
-                        PermissionConfig.ROUTE_PERMISSIONS.forEach((route, rule) -> {
-                                rule.methods().forEach(method -> {
-                                        auth.requestMatchers("/" + route)
-                                                        .hasAnyRole(rule.roles().toArray(String[]::new));
+                http.cors(cors -> cors.configurationSource(corsConfigurationSource))
+                                .csrf(csrf -> csrf.disable())
+                                .authorizeHttpRequests(auth -> {
+                                        PermissionConfig.ROUTE_PERMISSIONS.forEach((route, rule) -> {
+                                                if (rule.roles().contains(PermissionConfig.DEFAULT_ROLE)) {
+                                                        auth.requestMatchers(route).permitAll();
+                                                } else {
+                                                        auth.requestMatchers(route)
+                                                                        .hasAnyAuthority(rule.roles()
+                                                                                        .toArray(String[]::new));
+                                                }
+                                        });
+                                        auth.anyRequest().denyAll();
                                 });
-                        });
-                        auth.anyRequest().denyAll();
-                });
 
                 return http.build();
         }
+
 }
