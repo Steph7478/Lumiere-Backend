@@ -1,48 +1,36 @@
 package com.lumiere.security.config.cors;
 
-import com.lumiere.domain.vo.ActingUser;
-import com.lumiere.security.config.permissions.RoutePermissions;
-import org.springframework.beans.factory.annotation.Value;
+import com.lumiere.security.config.permissions.PermissionConfig;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.*;
+import org.springframework.web.filter.CorsFilter;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
-@Configuration
 public class CorsConfig {
 
-    @Value("${FRONTEND_URL:http://localhost:*}")
-    private String frontendUrl;
-
     @Bean
-    public CorsConfigurationSource corsConfigurationSource() {
-        return request -> {
-            CorsConfiguration config = new CorsConfiguration();
-            config.setAllowedOriginPatterns(List.of(frontendUrl));
-            config.setAllowedHeaders(List.of("*"));
-            config.setAllowCredentials(true);
+    public CorsFilter corsFilter() {
+        CorsConfiguration config = new CorsConfiguration();
 
-            ActingUser user = (ActingUser) request.getAttribute("actingUser");
-            String path = request.getRequestURI();
-            List<String> allowedMethods = new ArrayList<>();
+        config.setAllowedOriginPatterns(List.of("http://localhost:*"));
 
-            RoutePermissions.ROUTE_PERMISSIONS.forEach((route, rolesMap) -> {
-                if (path.startsWith(route)) {
-                    if (user != null) {
-                        user.getRoles().forEach(role -> rolesMap.getOrDefault(role, List.of())
-                                .forEach(m -> allowedMethods.add(m.name())));
-                    } else {
-                        rolesMap.getOrDefault("PUBLIC", List.of())
-                                .forEach(m -> allowedMethods.add(m.name()));
-                    }
-                }
-            });
+        Set<String> allowedMethods = PermissionConfig.ROUTE_PERMISSIONS
+                .values()
+                .stream()
+                .flatMap(rule -> rule.methods().stream())
+                .collect(Collectors.toSet());
 
-            config.setAllowedMethods(allowedMethods);
-            return config;
-        };
+        config.setAllowedMethods(List.copyOf(allowedMethods));
+
+        config.setAllowedHeaders(List.of("*"));
+        config.setAllowCredentials(true);
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", config);
+
+        return new CorsFilter(source);
     }
 }
