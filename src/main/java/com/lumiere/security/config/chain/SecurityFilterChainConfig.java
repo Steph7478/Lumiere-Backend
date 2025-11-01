@@ -13,12 +13,14 @@ public class SecurityFilterChainConfig {
 
         private final SecurityHeadersConfig securityHeadersConfig;
         private final CorsConfigurationSource corsConfigurationSource;
+        private final JwtAuthorizationFilter jwtAuthorizationFilter;
 
-        public SecurityFilterChainConfig(
-                        SecurityHeadersConfig securityHeadersConfig,
-                        CorsConfigurationSource corsConfigurationSource) {
+        public SecurityFilterChainConfig(SecurityHeadersConfig securityHeadersConfig,
+                        CorsConfigurationSource corsConfigurationSource,
+                        JwtAuthorizationFilter jwtAuthorizationFilter) {
                 this.securityHeadersConfig = securityHeadersConfig;
                 this.corsConfigurationSource = corsConfigurationSource;
+                this.jwtAuthorizationFilter = jwtAuthorizationFilter;
         }
 
         @Bean
@@ -28,7 +30,7 @@ public class SecurityFilterChainConfig {
                 http
                                 .cors(cors -> cors.configurationSource(corsConfigurationSource))
                                 .csrf(csrf -> csrf.disable())
-                                .addFilterBefore(new JwtAuthorizationFilter(),
+                                .addFilterBefore(jwtAuthorizationFilter,
                                                 org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter.class)
                                 .authorizeHttpRequests(auth -> auth.anyRequest().permitAll());
 

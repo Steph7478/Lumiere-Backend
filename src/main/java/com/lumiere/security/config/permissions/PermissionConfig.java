@@ -1,30 +1,43 @@
 package com.lumiere.security.config.permissions;
 
+import com.lumiere.security.constants.Methods;
+import com.lumiere.security.constants.Roles;
+import com.lumiere.presentation.routes.Routes;
+import org.springframework.util.AntPathMatcher;
+
+import java.util.EnumSet;
 import java.util.Map;
 import java.util.Set;
 
-import com.lumiere.security.constants.Methods;
-import com.lumiere.security.constants.Roles;
-import com.lumiere.security.constants.Routes;
+public final class PermissionConfig {
 
-public class PermissionConfig {
-
-        public record Policy(Set<String> roles, Set<String> methods) {
+        private PermissionConfig() {
         }
 
-        public static final Map<String, Policy> ROUTES = Map.ofEntries(
-                        Map.entry(Routes.REGISTER, new Policy(Set.of(Roles.PUBLIC), Set.of(Methods.POST))),
+        public record Policy(Set<Roles> roles, Set<Methods> methods) {
+                public boolean isMethodAllowed(Methods method) {
+                        return methods.isEmpty() || methods.contains(method);
+                }
 
-                        Map.entry(Routes.LOGIN, new Policy(Set.of(Roles.PUBLIC), Set.of(Methods.POST))),
+                public boolean isRoleAllowed(Roles role) {
+                        return roles.isEmpty() || roles.contains(role);
+                }
 
-                        Map.entry(Routes.PROFILE,
-                                        new Policy(Set.of(Roles.ADMIN, Roles.USER), Set.of(Methods.GET, Methods.PUT))));
+                public static final Policy DENY_ALL = new Policy(EnumSet.noneOf(Roles.class), Set.of());
+        }
+
+        private static final AntPathMatcher pathMatcher = new AntPathMatcher();
+
+        private static final Map<String, Policy> ROUTES = Map.ofEntries(
+                        Map.entry(Routes.REGISTER, new Policy(Set.of(), Set.of(Methods.POST))),
+                        Map.entry(Routes.LOGIN, new Policy(Set.of(), Set.of(Methods.POST))),
+                        Map.entry(Routes.ADMIN, new Policy(EnumSet.of(Roles.ADMIN), Set.of(Methods.GET, Methods.PUT))));
 
         public static Policy getPolicy(String path) {
                 return ROUTES.entrySet().stream()
-                                .filter(e -> path.startsWith(e.getKey()))
-                                .findFirst()
+                                .filter(e -> pathMatcher.match(e.getKey(), path))
                                 .map(Map.Entry::getValue)
-                                .orElse(new Policy(Set.of(Roles.PUBLIC), Set.of()));
+                                .findFirst()
+                                .orElse(Policy.DENY_ALL);
         }
 }

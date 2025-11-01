@@ -1,11 +1,13 @@
 package com.lumiere.security.constants;
 
-public final class Methods {
-    public static final String GET = "GET";
-    public static final String POST = "POST";
-    public static final String PUT = "PUT";
-    public static final String DELETE = "DELETE";
+public enum Methods {
+    GET, POST, PUT, DELETE;
 
-    private Methods() {
+    public static Methods fromString(String method) {
+        try {
+            return Methods.valueOf(method.toUpperCase());
+        } catch (Exception e) {
+            return null;
+        }
     }
 }
