@@ -11,19 +11,22 @@ import com.lumiere.application.exceptions.UserNotFound;
 import com.lumiere.application.exceptions.InvalidCredentialsException;
 import com.lumiere.application.interfaces.ILoginUseCase;
 import com.lumiere.domain.entities.Auth;
+import com.lumiere.domain.policies.AdminPolicy;
 import com.lumiere.domain.repositories.AuthRepository;
 import com.lumiere.domain.services.AuthService;
-import com.lumiere.infrastructure.auth.TokenService;
 import com.lumiere.infrastructure.security.constants.Roles;
+import com.lumiere.infrastructure.http.auth.TokenService;
 import com.lumiere.infrastructure.security.constants.Permissions;
 
 @Service
 public class LoginUseCase implements ILoginUseCase {
 
     private final AuthRepository authRepository;
+    private final AdminPolicy adminPolicy;
 
-    public LoginUseCase(AuthRepository authRepository) {
+    public LoginUseCase(AuthRepository authRepository, AdminPolicy adminPolicy) {
         this.authRepository = authRepository;
+        this.adminPolicy = adminPolicy;
     }
 
     @Override
@@ -38,7 +41,7 @@ public class LoginUseCase implements ILoginUseCase {
             throw new InvalidCredentialsException();
         }
 
-        Roles role = auth.getIsAdmin() ? Roles.ADMIN : Roles.USER;
+        Roles role = adminPolicy.isAdminInEntity(auth) ? Roles.ADMIN : Roles.USER;
 
         List<String> roles = List.of(role.name());
         List<String> permissions = role.getPermissions().stream()
