@@ -5,6 +5,7 @@ import com.lumiere.presentation.exceptions.TokenGenerationException;
 import com.lumiere.presentation.mappers.auth.CreateUserRequestMapper;
 import com.lumiere.application.dtos.auth.CreateUserDTO;
 import com.lumiere.application.dtos.auth.CreateUserResponse;
+import com.lumiere.application.interfaces.ICreateUserUseCase;
 import com.lumiere.application.usecases.auth.CreateUserUseCase;
 import com.lumiere.infrastructure.auth.TokenService;
 
@@ -23,9 +24,9 @@ import java.util.UUID;
 @RequestMapping("/auth")
 public class AuthController {
 
-    private final CreateUserUseCase createUserUseCase;
+    private final ICreateUserUseCase createUserUseCase;
 
-    public AuthController(CreateUserUseCase createUserUseCase) {
+    public AuthController(ICreateUserUseCase createUserUseCase) {
         this.createUserUseCase = createUserUseCase;
     }
 
