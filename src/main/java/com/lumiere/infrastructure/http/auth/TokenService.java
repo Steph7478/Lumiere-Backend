@@ -1,4 +1,4 @@
-package com.lumiere.infrastructure.auth;
+package com.lumiere.infrastructure.http.auth;
 
 import java.util.Date;
 import java.util.List;

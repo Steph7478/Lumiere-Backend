@@ -1,4 +1,4 @@
-package com.lumiere.infrastructure.security.config.cors;
+package com.lumiere.infrastructure.http.cors;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

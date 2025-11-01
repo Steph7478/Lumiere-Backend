@@ -1,4 +1,4 @@
-package com.lumiere.infrastructure.auth;
+package com.lumiere.infrastructure.http.auth;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
