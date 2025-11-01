@@ -16,7 +16,9 @@ public enum Roles {
             Permissions.ADMIN_READ,
             Permissions.ADMIN_CREATE,
             Permissions.ADMIN_UPDATE,
-            Permissions.ADMIN_DELETE));
+            Permissions.ADMIN_DELETE)),
+
+    USER(EnumSet.of(Permissions.USER_READ));
 
     @Getter
     private final Set<Permissions> permissions;
