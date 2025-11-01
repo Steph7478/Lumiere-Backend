@@ -11,12 +11,14 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import com.lumiere.infrastructure.http.auth.RefreshTokenService;
+import com.lumiere.infrastructure.http.auth.TokenService;
 import com.lumiere.infrastructure.http.auth.TokenValidator;
+import com.lumiere.infrastructure.http.cookies.CookieFactory;
 
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
@@ -29,37 +31,37 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         Optional<String> accessOpt = getCookie(req, "access_token");
         Optional<String> refreshOpt = getCookie(req, "refresh_token");
 
-        String token = accessOpt.orElse(null);
+        String accessToken = accessOpt.orElse(null);
+        String refreshToken = refreshOpt.orElse(null);
 
-        if (token == null || !TokenValidator.isValid(token)) {
-            token = refreshOpt
-                    .filter(TokenValidator::isValid)
-                    .filter(TokenValidator::isRefreshToken)
-                    .map(rt -> {
-                        try {
-                            return RefreshTokenService.refreshToken(rt);
-                        } catch (Exception e) {
-                            return null;
-                        }
-                    })
-                    .orElse(null);
+        if (accessToken == null || !TokenValidator.isValid(accessToken)) {
+            if (refreshToken != null && TokenValidator.isRefreshToken(refreshToken)) {
+                try {
+                    UUID userId = TokenValidator.getUserId(refreshToken);
+                    List<String> roles = TokenValidator.getRoles(refreshToken);
+                    List<String> permissions = TokenValidator.getPermissions(refreshToken);
 
-            if (token != null) {
-                Cookie cookie = new Cookie("access_token", token);
-                cookie.setHttpOnly(true);
-                cookie.setSecure(true);
-                cookie.setPath("/");
-                res.addCookie(cookie);
+                    String newAccessToken = TokenService.generateAccessToken(userId, roles, permissions);
+
+                    Cookie newAccessCookie = CookieFactory.createAccessTokenCookie(newAccessToken);
+                    res.addCookie(newAccessCookie);
+
+                    accessToken = newAccessToken;
+                } catch (Exception e) {
+                    throw new ServletException("Failed to generate Token", e);
+                }
             }
         }
 
-        if (token != null) {
-            List<String> roles = TokenValidator.getRoles(token);
+        if (accessToken != null && TokenValidator.isValid(accessToken)) {
+            List<String> roles = TokenValidator.getRoles(accessToken);
             SecurityContextHolder.getContext().setAuthentication(
                     new UsernamePasswordAuthenticationToken(
-                            TokenValidator.getUserId(token),
+                            TokenValidator.getUserId(accessToken),
                             null,
-                            roles.stream().map(r -> "ROLE_" + r).map(SimpleGrantedAuthority::new)
+                            roles.stream()
+                                    .map(r -> "ROLE_" + r)
+                                    .map(SimpleGrantedAuthority::new)
                                     .collect(Collectors.toList())));
         }
 
@@ -69,9 +71,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private Optional<String> getCookie(HttpServletRequest req, String name) {
         if (req.getCookies() == null)
             return Optional.empty();
-        for (Cookie c : req.getCookies())
+        for (Cookie c : req.getCookies()) {
             if (name.equals(c.getName()))
                 return Optional.of(c.getValue());
+        }
         return Optional.empty();
     }
 }
