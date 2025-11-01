@@ -3,6 +3,7 @@ package com.lumiere.application.usecases.auth;
 import com.lumiere.application.dtos.auth.CreateUserDTO;
 import com.lumiere.application.dtos.auth.CreateUserResponse;
 import com.lumiere.application.exceptions.EmailAlreadyExistsException;
+import com.lumiere.application.interfaces.ICreateUserUseCase;
 import com.lumiere.domain.entities.Auth;
 import com.lumiere.domain.entities.User;
 import com.lumiere.domain.services.AuthService;
@@ -13,7 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-public class CreateUserUseCase {
+public class CreateUserUseCase implements ICreateUserUseCase {
 
     private final UserRepository userRepository;
 
@@ -21,6 +22,7 @@ public class CreateUserUseCase {
         this.userRepository = userRepository;
     }
 
+    @Override
     @Transactional
     public CreateUserResponse execute(CreateUserDTO dto) {
 
