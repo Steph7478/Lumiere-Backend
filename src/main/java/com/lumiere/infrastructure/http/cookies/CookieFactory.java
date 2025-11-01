@@ -1,6 +1,8 @@
 package com.lumiere.infrastructure.http.cookies;
 
 import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import java.util.Optional;
 
 public class CookieFactory {
 
@@ -13,7 +15,6 @@ public class CookieFactory {
         cookie.setSecure(true);
         cookie.setPath("/");
         cookie.setMaxAge(15 * 60);
-
         return cookie;
     }
 
@@ -24,5 +25,15 @@ public class CookieFactory {
         cookie.setPath("/");
         cookie.setMaxAge(7 * 24 * 60 * 60);
         return cookie;
+    }
+
+    public static Optional<String> getCookie(HttpServletRequest req, String name) {
+        if (req.getCookies() == null)
+            return Optional.empty();
+        for (Cookie c : req.getCookies()) {
+            if (name.equals(c.getName()))
+                return Optional.of(c.getValue());
+        }
+        return Optional.empty();
     }
 }

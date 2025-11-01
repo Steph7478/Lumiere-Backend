@@ -28,8 +28,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             @NonNull HttpServletResponse res,
             @NonNull FilterChain chain) throws ServletException, IOException {
 
-        Optional<String> accessOpt = getCookie(req, "access_token");
-        Optional<String> refreshOpt = getCookie(req, "refresh_token");
+        Optional<String> accessOpt = CookieFactory.getCookie(req, "access_token");
+        Optional<String> refreshOpt = CookieFactory.getCookie(req, "refresh_token");
 
         String accessToken = accessOpt.orElse(null);
         String refreshToken = refreshOpt.orElse(null);
@@ -66,15 +66,5 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
 
         chain.doFilter(req, res);
-    }
-
-    private Optional<String> getCookie(HttpServletRequest req, String name) {
-        if (req.getCookies() == null)
-            return Optional.empty();
-        for (Cookie c : req.getCookies()) {
-            if (name.equals(c.getName()))
-                return Optional.of(c.getValue());
-        }
-        return Optional.empty();
     }
 }
