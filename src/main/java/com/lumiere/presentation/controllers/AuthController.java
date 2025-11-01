@@ -1,10 +1,15 @@
 package com.lumiere.presentation.controllers;
 
 import com.lumiere.presentation.dtos.auth.CreateUserRequestDTO;
+import com.lumiere.presentation.dtos.auth.LoginUserRequestDTO;
 import com.lumiere.presentation.mappers.auth.CreateUserRequestMapper;
+import com.lumiere.presentation.mappers.auth.LoginUserRequestMapper;
 import com.lumiere.application.dtos.auth.CreateUserDTO;
 import com.lumiere.application.dtos.auth.CreateUserResponse;
+import com.lumiere.application.dtos.auth.LoginDTO;
+import com.lumiere.application.dtos.auth.LoginResponse;
 import com.lumiere.application.interfaces.ICreateUserUseCase;
+import com.lumiere.application.interfaces.ILoginUseCase;
 import com.lumiere.infrastructure.http.cookies.CookieFactory;
 
 import jakarta.servlet.http.HttpServletResponse;
@@ -19,9 +24,11 @@ import org.springframework.web.bind.annotation.*;
 public class AuthController {
 
     private final ICreateUserUseCase createUserUseCase;
+    private final ILoginUseCase loginUseCase;
 
-    public AuthController(ICreateUserUseCase createUserUseCase) {
+    public AuthController(ICreateUserUseCase createUserUseCase, ILoginUseCase loginUseCase) {
         this.createUserUseCase = createUserUseCase;
+        this.loginUseCase = loginUseCase;
     }
 
     @PostMapping("/register")
@@ -37,5 +44,18 @@ public class AuthController {
         response.addCookie(CookieFactory.createRefreshTokenCookie(responseDTO.refreshToken()));
 
         return ResponseEntity.status(HttpStatus.CREATED).body(responseDTO);
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<LoginResponse> loginUser(
+            @Valid @RequestBody LoginUserRequestDTO requestDTO, HttpServletResponse response) {
+
+        LoginDTO appDTO = LoginUserRequestMapper.toApplicationDTO(requestDTO);
+        LoginResponse responseDTO = loginUseCase.execute(appDTO);
+
+        response.addCookie(CookieFactory.createAccessTokenCookie(responseDTO.accessToken()));
+        response.addCookie(CookieFactory.createRefreshTokenCookie(responseDTO.refreshToken()));
+
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body(responseDTO);
     }
 }

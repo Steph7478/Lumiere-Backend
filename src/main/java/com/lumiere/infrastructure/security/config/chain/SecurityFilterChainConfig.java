@@ -9,6 +9,7 @@ import org.springframework.web.cors.CorsConfigurationSource;
 
 import com.lumiere.infrastructure.security.config.header.SecurityHeadersConfig;
 import com.lumiere.infrastructure.security.filters.JwtAuthenticationFilter;
+import com.lumiere.infrastructure.security.filters.JwtAuthorizationFilter;
 
 @Configuration
 public class SecurityFilterChainConfig {
@@ -31,8 +32,8 @@ public class SecurityFilterChainConfig {
                                 .csrf(csrf -> csrf.disable())
                                 .addFilterBefore(new JwtAuthenticationFilter(),
                                                 UsernamePasswordAuthenticationFilter.class)
-                                .authorizeHttpRequests(auth -> auth
-                                                .anyRequest().authenticated());
+                                .addFilterAfter(new JwtAuthorizationFilter(), JwtAuthenticationFilter.class)
+                                .authorizeHttpRequests(auth -> auth.anyRequest().permitAll());
 
                 return http.build();
         }
