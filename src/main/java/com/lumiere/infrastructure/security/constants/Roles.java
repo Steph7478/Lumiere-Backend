@@ -1,4 +1,4 @@
-package com.lumiere.security.constants;
+package com.lumiere.infrastructure.security.constants;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

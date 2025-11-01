@@ -1,13 +1,14 @@
-package com.lumiere.security.config.chain;
+package com.lumiere.infrastructure.security.config.chain;
 
-import com.lumiere.security.filters.JwtAuthenticationFilter;
-import com.lumiere.security.config.header.SecurityHeadersConfig;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfigurationSource;
+
+import com.lumiere.infrastructure.security.config.header.SecurityHeadersConfig;
+import com.lumiere.infrastructure.security.filters.JwtAuthenticationFilter;
 
 @Configuration
 public class SecurityFilterChainConfig {

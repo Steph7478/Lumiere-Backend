@@ -1,4 +1,4 @@
-package com.lumiere.security.filters;
+package com.lumiere.infrastructure.security.filters;
 
 import com.lumiere.infrastructure.auth.RefreshTokenService;
 import com.lumiere.infrastructure.auth.TokenValidator;

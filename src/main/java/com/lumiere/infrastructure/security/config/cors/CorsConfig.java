@@ -1,11 +1,12 @@
-package com.lumiere.security.config.cors;
+package com.lumiere.infrastructure.security.config.cors;
 
-import com.lumiere.security.constants.Methods;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
+
+import com.lumiere.infrastructure.security.constants.Methods;
 
 import java.util.List;
 import java.util.stream.Collectors;

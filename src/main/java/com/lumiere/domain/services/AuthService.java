@@ -1,7 +1,7 @@
 package com.lumiere.domain.services;
 
 import com.lumiere.domain.entities.Auth;
-import com.lumiere.security.utils.PasswordHasher;
+import com.lumiere.infrastructure.security.utils.PasswordHasher;
 
 public class AuthService {
 

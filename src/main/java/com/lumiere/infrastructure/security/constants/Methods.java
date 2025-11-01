@@ -1,4 +1,4 @@
-package com.lumiere.security.constants;
+package com.lumiere.infrastructure.security.constants;
 
 public enum Methods {
     GET, POST, PUT, DELETE;

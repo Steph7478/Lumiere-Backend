@@ -1,4 +1,4 @@
-package com.lumiere.security.utils;
+package com.lumiere.infrastructure.security.utils;
 
 import org.springframework.security.crypto.bcrypt.BCrypt;
 

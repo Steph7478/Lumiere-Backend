@@ -1,4 +1,4 @@
-package com.lumiere.security.config.header;
+package com.lumiere.infrastructure.security.config.header;
 
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.stereotype.Component;

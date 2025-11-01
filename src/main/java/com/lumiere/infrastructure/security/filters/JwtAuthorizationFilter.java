@@ -1,8 +1,5 @@
-package com.lumiere.security.filters;
+package com.lumiere.infrastructure.security.filters;
 
-import com.lumiere.security.config.permissions.RoutePermissions;
-import com.lumiere.security.constants.Methods;
-import com.lumiere.security.constants.Roles;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -10,6 +7,10 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.lang.NonNull;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
+
+import com.lumiere.infrastructure.security.config.permissions.RoutePermissions;
+import com.lumiere.infrastructure.security.constants.Methods;
+import com.lumiere.infrastructure.security.constants.Roles;
 
 import java.io.IOException;
 import java.util.List;
