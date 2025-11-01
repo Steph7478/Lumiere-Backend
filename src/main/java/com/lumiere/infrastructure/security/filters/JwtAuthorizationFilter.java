@@ -13,8 +13,6 @@ import com.lumiere.infrastructure.security.constants.Methods;
 import com.lumiere.infrastructure.security.constants.Roles;
 
 import java.io.IOException;
-import java.util.List;
-import java.util.Optional;
 
 public class JwtAuthorizationFilter extends OncePerRequestFilter {
 
@@ -23,34 +21,21 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
             @NonNull HttpServletResponse res,
             @NonNull FilterChain chain) throws ServletException, IOException {
 
-        var auth = SecurityContextHolder.getContext().getAuthentication();
-        if (auth == null) {
+        if (RoutePermissions.PUBLIC_ROUTES.containsKey(req.getRequestURI()) ||
+                SecurityContextHolder.getContext().getAuthentication() == null) {
             chain.doFilter(req, res);
             return;
         }
 
-        List<Roles> roles = auth.getAuthorities().stream()
-                .map(a -> Roles.safeOf(a.getAuthority().replace("ROLE_", "")))
-                .flatMap(Optional::stream)
-                .toList();
+        var policy = RoutePermissions.PRIVATE_ROUTES.get(req.getRequestURI());
 
-        String path = req.getRequestURI();
-        Methods method = Methods.fromString(req.getMethod());
-
-        if (RoutePermissions.PUBLIC_ROUTES.containsKey(path)) {
-            chain.doFilter(req, res);
+        if (policy != null && (!policy.methods().contains(Methods.fromString(req.getMethod())) ||
+                SecurityContextHolder.getContext().getAuthentication().getAuthorities().stream()
+                        .map(a -> Roles.safeOf(a.getAuthority().replace("ROLE_", "")))
+                        .flatMap(o -> o.stream())
+                        .noneMatch(policy.roles()::contains))) {
+            res.sendError(HttpServletResponse.SC_FORBIDDEN, "Access denied");
             return;
-        }
-
-        var policy = RoutePermissions.PRIVATE_ROUTES.get(path);
-        if (policy != null) {
-            boolean methodAllowed = policy.methods().contains(method);
-            boolean roleAllowed = roles.stream().anyMatch(policy.roles()::contains);
-
-            if (!methodAllowed || !roleAllowed) {
-                res.sendError(HttpServletResponse.SC_FORBIDDEN, "Access denied");
-                return;
-            }
         }
 
         chain.doFilter(req, res);
