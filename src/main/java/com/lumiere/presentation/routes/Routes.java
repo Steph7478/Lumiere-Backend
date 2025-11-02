@@ -1,9 +1,18 @@
 package com.lumiere.presentation.routes;
 
-public class Routes {
+public final class Routes {
 
-    public static final String REGISTER = "/auth/register";
-    public static final String LOGIN = "/auth/login";
-    public static final String ADMIN = "/admin";
+    private Routes() {
+    }
+
+    public static final class Auth {
+        public static final String BASE = "/auth";
+        public static final String REGISTER = BASE + "/register";
+        public static final String LOGIN = BASE + "/login";
+    }
+
+    public static final class Admin {
+        public static final String BASE = "/admin";
+    }
 
 }

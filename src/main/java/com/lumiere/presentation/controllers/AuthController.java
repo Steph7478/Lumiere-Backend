@@ -6,6 +6,7 @@ import com.lumiere.presentation.dtos.auth.LoginUserRequestDTO;
 import com.lumiere.presentation.dtos.auth.LoginUserResponseDTO;
 import com.lumiere.presentation.mappers.auth.CreateUserMapper;
 import com.lumiere.presentation.mappers.auth.LoginUserMapper;
+import com.lumiere.presentation.routes.Routes;
 import com.lumiere.shared.annotations.Loggable;
 import com.lumiere.application.dtos.auth.CreateUserDTO;
 import com.lumiere.application.dtos.auth.CreateUserResponse;
@@ -23,7 +24,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/auth")
+@RequestMapping(Routes.Auth.BASE)
 public class AuthController {
 
     private final ICreateUserUseCase createUserUseCase;
@@ -35,7 +36,7 @@ public class AuthController {
     }
 
     @Loggable
-    @PostMapping("/register")
+    @PostMapping(Routes.Auth.REGISTER)
     public ResponseEntity<CreateUserResponseDTO> registerUser(
             @Valid @RequestBody CreateUserRequestDTO requestDTO,
             HttpServletResponse response) {
@@ -53,7 +54,7 @@ public class AuthController {
     }
 
     @Loggable
-    @PostMapping("/login")
+    @PostMapping(Routes.Auth.LOGIN)
     public ResponseEntity<LoginUserResponseDTO> loginUser(
             @Valid @RequestBody LoginUserRequestDTO requestDTO, HttpServletResponse response) {
 
