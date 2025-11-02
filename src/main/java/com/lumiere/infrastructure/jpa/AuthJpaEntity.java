@@ -2,24 +2,16 @@ package com.lumiere.infrastructure.jpa;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
 import jakarta.persistence.OneToOne;
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.UUID;
+import com.lumiere.infrastructure.jpa.base.BaseJpaEntity;
 
 @Getter
 @Setter
-@EqualsAndHashCode(of = "id")
-@NoArgsConstructor
 @Entity
-public class AuthJpaEntity {
-
-    @Id
-    private UUID id;
+public class AuthJpaEntity extends BaseJpaEntity {
 
     @OneToOne(mappedBy = "auth")
     private UserJpaEntity user;
