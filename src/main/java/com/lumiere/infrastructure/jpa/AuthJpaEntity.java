@@ -25,7 +25,6 @@ public class AuthJpaEntity extends BaseJpaEntity {
 
     private Boolean isAdmin;
 
-    // Construtor completo
     public AuthJpaEntity(UUID id, String name, String email, String password, Boolean isAdmin) {
         super(id);
         this.name = name;
@@ -34,7 +33,6 @@ public class AuthJpaEntity extends BaseJpaEntity {
         this.isAdmin = isAdmin;
     }
 
-    // Construtor padrão exigido pelo JPA
     protected AuthJpaEntity() {
         super(null);
     }
