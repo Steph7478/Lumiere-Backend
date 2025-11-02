@@ -15,7 +15,7 @@ public class UseCasesLoggingAspect {
         System.out.println("[USECASE LOG] Entering: " + joinPoint.getSignature().toShortString());
     }
 
-    @AfterReturning(pointcut = "execution(* com.lumiere.application.usecase..*(..))", returning = "result")
+    @AfterReturning(pointcut = "execution(* com.lumiere.application.usecases..*(..))", returning = "result")
     public void logAfter(JoinPoint joinPoint, Object result) {
         System.out
                 .println("[USECASE LOG] Exiting: " + joinPoint.getSignature().toShortString() + " | Result: " + result);
