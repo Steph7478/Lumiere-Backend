@@ -4,16 +4,22 @@ import com.lumiere.application.dtos.auth.LoginDTO;
 import com.lumiere.application.dtos.auth.LoginResponse;
 import com.lumiere.presentation.dtos.auth.LoginUserRequestDTO;
 import com.lumiere.presentation.dtos.auth.LoginUserResponseDTO;
+import com.lumiere.presentation.mappers.base.BaseRequestMapper;
+import com.lumiere.presentation.mappers.base.BaseResponseMapper;
 
-public class LoginUserMapper {
+public class LoginUserMapper implements BaseRequestMapper<LoginUserRequestDTO, LoginDTO>,
+        BaseResponseMapper<LoginResponse, LoginUserResponseDTO> {
+
     private LoginUserMapper() {
     }
 
-    public static LoginDTO toApplicationDTO(LoginUserRequestDTO request) {
+    @Override
+    public LoginDTO toApplicationDTO(LoginUserRequestDTO request) {
         return new LoginDTO(request.email(), request.password());
     }
 
-    public static LoginUserResponseDTO toPresentationDTO(LoginResponse response) {
+    @Override
+    public LoginUserResponseDTO toPresentationDTO(LoginResponse response) {
         return new LoginUserResponseDTO(response.name(), response.role());
     }
 }
