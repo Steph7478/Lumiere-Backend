@@ -1,4 +1,4 @@
-package com.lumiere.shared.utils;
+package com.lumiere.domain.utils;
 
 import java.security.SecureRandom;
 

@@ -1,4 +1,4 @@
-package com.lumiere.infrastructure.security.config.permissions;
+package com.lumiere.infrastructure.security.permissions;
 
 import java.util.EnumSet;
 import java.util.Map;
