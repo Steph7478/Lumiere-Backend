@@ -3,8 +3,9 @@ package com.lumiere.presentation.controllers;
 import com.lumiere.presentation.dtos.auth.CreateUserRequestDTO;
 import com.lumiere.presentation.dtos.auth.CreateUserResponseDTO;
 import com.lumiere.presentation.dtos.auth.LoginUserRequestDTO;
+import com.lumiere.presentation.dtos.auth.LoginUserResponseDTO;
 import com.lumiere.presentation.mappers.auth.CreateUserMapper;
-import com.lumiere.presentation.mappers.auth.LoginUserRequestMapper;
+import com.lumiere.presentation.mappers.auth.LoginUserMapper;
 import com.lumiere.shared.annotations.Loggable;
 import com.lumiere.application.dtos.auth.CreateUserDTO;
 import com.lumiere.application.dtos.auth.CreateUserResponse;
@@ -53,15 +54,17 @@ public class AuthController {
 
     @Loggable
     @PostMapping("/login")
-    public ResponseEntity<LoginResponse> loginUser(
+    public ResponseEntity<LoginUserResponseDTO> loginUser(
             @Valid @RequestBody LoginUserRequestDTO requestDTO, HttpServletResponse response) {
 
-        LoginDTO appDTO = LoginUserRequestMapper.toApplicationDTO(requestDTO);
+        LoginDTO appDTO = LoginUserMapper.toApplicationDTO(requestDTO);
         LoginResponse responseDTO = loginUseCase.execute(appDTO);
 
         response.addCookie(CookieFactory.createAccessTokenCookie(responseDTO.accessToken()));
         response.addCookie(CookieFactory.createRefreshTokenCookie(responseDTO.refreshToken()));
 
-        return ResponseEntity.status(HttpStatus.ACCEPTED).body(responseDTO);
+        LoginUserResponseDTO body = LoginUserMapper.toPresentationDTO(responseDTO);
+
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body(body);
     }
 }
