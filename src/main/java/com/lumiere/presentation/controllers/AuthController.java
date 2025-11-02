@@ -4,6 +4,7 @@ import com.lumiere.presentation.dtos.auth.CreateUserRequestDTO;
 import com.lumiere.presentation.dtos.auth.LoginUserRequestDTO;
 import com.lumiere.presentation.mappers.auth.CreateUserRequestMapper;
 import com.lumiere.presentation.mappers.auth.LoginUserRequestMapper;
+import com.lumiere.shared.annotations.Loggable;
 import com.lumiere.application.dtos.auth.CreateUserDTO;
 import com.lumiere.application.dtos.auth.CreateUserResponse;
 import com.lumiere.application.dtos.auth.LoginDTO;
@@ -31,6 +32,7 @@ public class AuthController {
         this.loginUseCase = loginUseCase;
     }
 
+    @Loggable
     @PostMapping("/register")
     public ResponseEntity<CreateUserResponse> registerUser(
             @Valid @RequestBody CreateUserRequestDTO requestDTO,
@@ -46,6 +48,7 @@ public class AuthController {
         return ResponseEntity.status(HttpStatus.CREATED).body(responseDTO);
     }
 
+    @Loggable
     @PostMapping("/login")
     public ResponseEntity<LoginResponse> loginUser(
             @Valid @RequestBody LoginUserRequestDTO requestDTO, HttpServletResponse response) {

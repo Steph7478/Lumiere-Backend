@@ -16,6 +16,7 @@ import com.lumiere.domain.repositories.UserRepository;
 import com.lumiere.domain.services.AuthService;
 import com.lumiere.domain.services.UserService;
 import com.lumiere.infrastructure.http.auth.TokenService;
+import com.lumiere.shared.annotations.Loggable;
 import com.lumiere.shared.constants.Permissions;
 import com.lumiere.shared.constants.Roles;
 
@@ -30,6 +31,7 @@ public class CreateUserUseCase implements ICreateUserUseCase {
 
     @Override
     @Transactional
+    @Loggable
     public CreateUserResponse execute(CreateUserDTO dto) {
 
         if (userRepository.findByAuthEmail(dto.email()) != null) {

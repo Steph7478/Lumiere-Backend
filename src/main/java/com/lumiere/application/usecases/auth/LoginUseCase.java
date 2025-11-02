@@ -14,6 +14,7 @@ import com.lumiere.domain.entities.Auth;
 import com.lumiere.domain.repositories.AuthRepository;
 import com.lumiere.domain.services.AuthService;
 import com.lumiere.infrastructure.http.auth.TokenService;
+import com.lumiere.shared.annotations.Loggable;
 import com.lumiere.shared.constants.Permissions;
 import com.lumiere.shared.constants.Roles;
 
@@ -27,6 +28,7 @@ public class LoginUseCase implements ILoginUseCase {
     }
 
     @Override
+    @Loggable
     public LoginResponse execute(LoginDTO dto) {
         Auth auth = authRepository.findByEmail(dto.email());
         if (auth == null) {

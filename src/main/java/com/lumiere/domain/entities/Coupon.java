@@ -4,7 +4,7 @@ import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.UUID;
 
-import com.lumiere.shared.utils.CouponCodeGenerator;
+import com.lumiere.domain.utils.CouponCodeGenerator;
 
 public class Coupon {
 
