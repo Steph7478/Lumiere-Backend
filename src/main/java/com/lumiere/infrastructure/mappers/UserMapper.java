@@ -4,11 +4,12 @@ import com.lumiere.domain.entities.Auth;
 import com.lumiere.domain.entities.User;
 import com.lumiere.infrastructure.jpa.AuthJpaEntity;
 import com.lumiere.infrastructure.jpa.UserJpaEntity;
+import com.lumiere.infrastructure.mappers.base.BaseMapper;
 
-public class UserMapper {
+public class UserMapper extends BaseMapper<User, UserJpaEntity> {
 
-    // JPA -> Domain
-    public static User toDomain(UserJpaEntity jpaEntity) {
+    @Override
+    public User toDomain(UserJpaEntity jpaEntity) {
         if (jpaEntity == null)
             return null;
 
@@ -18,23 +19,18 @@ public class UserMapper {
         return User.from(jpaEntity.getId(), auth);
     }
 
-    // Domain -> JPA
-    public static UserJpaEntity toJpa(User domain, AuthJpaEntity existingAuth) {
+    @Override
+    public UserJpaEntity toJpa(User domain) {
         if (domain == null)
             return null;
 
-        UserJpaEntity jpa = new UserJpaEntity();
-        jpa.setId(domain.getId());
+        AuthJpaEntity auth = new AuthJpaEntity(
+                domain.getAuth().getId(),
+                domain.getAuth().getName(),
+                domain.getAuth().getEmail(),
+                domain.getAuth().getPasswordHash(),
+                domain.getAuth().isAdmin());
 
-        if (existingAuth != null) {
-            jpa.setAuth(existingAuth);
-        } else {
-            AuthJpaEntity auth = new AuthJpaEntity();
-            auth.setName(domain.getAuth().getName());
-            auth.setEmail(domain.getAuth().getEmail());
-            jpa.setAuth(auth);
-        }
-
-        return jpa;
+        return new UserJpaEntity(domain.getId(), auth);
     }
 }

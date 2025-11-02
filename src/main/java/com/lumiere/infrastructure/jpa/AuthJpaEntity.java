@@ -1,19 +1,17 @@
 package com.lumiere.infrastructure.jpa;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.OneToOne;
+import jakarta.persistence.*;
 import lombok.Getter;
-import lombok.Setter;
+
+import java.util.UUID;
 
 import com.lumiere.infrastructure.jpa.base.BaseJpaEntity;
 
 @Getter
-@Setter
 @Entity
 public class AuthJpaEntity extends BaseJpaEntity {
 
-    @OneToOne(mappedBy = "auth")
+    @OneToOne(mappedBy = "auth", cascade = CascadeType.ALL, orphanRemoval = true)
     private UserJpaEntity user;
 
     @Column(nullable = false)
@@ -26,4 +24,18 @@ public class AuthJpaEntity extends BaseJpaEntity {
     private String password;
 
     private Boolean isAdmin;
+
+    // Construtor completo
+    public AuthJpaEntity(UUID id, String name, String email, String password, Boolean isAdmin) {
+        super(id);
+        this.name = name;
+        this.email = email;
+        this.password = password;
+        this.isAdmin = isAdmin;
+    }
+
+    // Construtor padrão exigido pelo JPA
+    protected AuthJpaEntity() {
+        super(null);
+    }
 }

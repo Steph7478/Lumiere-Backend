@@ -2,43 +2,38 @@ package com.lumiere.infrastructure.mappers;
 
 import com.lumiere.domain.entities.Auth;
 import com.lumiere.infrastructure.jpa.AuthJpaEntity;
+import com.lumiere.infrastructure.mappers.base.BaseMapper;
 
-public class AuthMapper {
+public class AuthMapper extends BaseMapper<Auth, AuthJpaEntity> {
 
-    // JPA → Domain
-    public static Auth toDomainFull(AuthJpaEntity jpaEntity) {
+    @Override
+    public Auth toDomain(AuthJpaEntity jpaEntity) {
         return Auth.from(
-                jpaEntity.getId(),
                 jpaEntity.getName(),
                 jpaEntity.getEmail(),
                 jpaEntity.getPassword(),
-                jpaEntity.getIsAdmin());
+                jpaEntity.getIsAdmin() != null && jpaEntity.getIsAdmin(),
+                jpaEntity.getId());
     }
 
-    // mapper safe
-    public static Auth toDomainSafe(AuthJpaEntity jpaEntity) {
-        return Auth.hidden(
-                jpaEntity.getName(),
-                jpaEntity.getEmail());
+    @Override
+    public AuthJpaEntity toJpa(Auth domain) {
+        return new AuthJpaEntity(
+                domain.getId(),
+                domain.getName(),
+                domain.getEmail(),
+                domain.getPasswordHash(),
+                domain.isAdmin());
     }
 
-    // auth me
-    public static Auth toDomainMe(AuthJpaEntity jpaEntity) {
+    public Auth toDomainSafe(AuthJpaEntity jpaEntity) {
+        return Auth.hidden(jpaEntity.getName(), jpaEntity.getEmail());
+    }
+
+    public Auth toDomainMe(AuthJpaEntity jpaEntity) {
         return Auth.me(
                 jpaEntity.getName(),
                 jpaEntity.getEmail(),
-                jpaEntity.getId(),
-                jpaEntity.getIsAdmin());
-    }
-
-    // Domain → JPA
-    public static AuthJpaEntity toJpa(Auth domain) {
-        AuthJpaEntity jpa = new AuthJpaEntity();
-        jpa.setId(domain.getId());
-        jpa.setName(domain.getName());
-        jpa.setEmail(domain.getEmail());
-        jpa.setPassword(domain.getPasswordHash());
-        jpa.setIsAdmin(domain.getIsAdmin());
-        return jpa;
+                jpaEntity.getIsAdmin() != null && jpaEntity.getIsAdmin());
     }
 }
