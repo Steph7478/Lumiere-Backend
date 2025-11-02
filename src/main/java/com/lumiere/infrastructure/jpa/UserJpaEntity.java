@@ -9,7 +9,11 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
+import lombok.Getter;
+import lombok.Setter;
 
+@Getter
+@Setter
 @Entity
 public class UserJpaEntity {
 
@@ -20,27 +24,4 @@ public class UserJpaEntity {
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "auth_id", nullable = false)
     private AuthJpaEntity auth;
-
-    // Getters
-    public UUID getId() {
-        return id;
-    }
-
-    public String getName() {
-        return auth != null ? auth.getName() : null;
-    }
-
-    public String getEmail() {
-        return auth != null ? auth.getEmail() : null;
-    }
-
-    // Setters
-
-    public void setId(UUID id) {
-        this.id = id;
-    }
-
-    public void setAuth(AuthJpaEntity auth) {
-        this.auth = auth;
-    }
 }
