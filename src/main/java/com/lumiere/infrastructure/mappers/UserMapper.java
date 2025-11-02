@@ -9,12 +9,20 @@ public class UserMapper {
 
     // JPA -> Domain
     public static User toDomain(UserJpaEntity jpaEntity) {
-        Auth auth = Auth.hidden(jpaEntity.getName(), jpaEntity.getEmail());
+        if (jpaEntity == null)
+            return null;
+
+        AuthJpaEntity authJpa = jpaEntity.getAuth();
+        Auth auth = Auth.hidden(authJpa.getName(), authJpa.getEmail());
 
         return User.from(jpaEntity.getId(), auth);
     }
 
+    // Domain -> JPA
     public static UserJpaEntity toJpa(User domain, AuthJpaEntity existingAuth) {
+        if (domain == null)
+            return null;
+
         UserJpaEntity jpa = new UserJpaEntity();
         jpa.setId(domain.getId());
 
@@ -22,8 +30,8 @@ public class UserMapper {
             jpa.setAuth(existingAuth);
         } else {
             AuthJpaEntity auth = new AuthJpaEntity();
-            auth.setName(domain.getName());
-            auth.setEmail(domain.getEmail());
+            auth.setName(domain.getAuth().getName());
+            auth.setEmail(domain.getAuth().getEmail());
             jpa.setAuth(auth);
         }
 
