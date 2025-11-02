@@ -7,8 +7,9 @@ import org.springframework.stereotype.Service;
 
 import com.lumiere.application.dtos.auth.LoginDTO;
 import com.lumiere.application.dtos.auth.LoginResponse;
-import com.lumiere.application.exceptions.UserNotFound;
 import com.lumiere.application.exceptions.InvalidCredentialsException;
+import com.lumiere.application.exceptions.TokenGenerationException;
+import com.lumiere.application.exceptions.UserNotFoundException;
 import com.lumiere.application.interfaces.ILoginUseCase;
 import com.lumiere.domain.entities.Auth;
 import com.lumiere.domain.repositories.AuthRepository;
@@ -32,7 +33,7 @@ public class LoginUseCase implements ILoginUseCase {
     public LoginResponse execute(LoginDTO dto) {
         Auth auth = authRepository.findByEmail(dto.email());
         if (auth == null) {
-            throw new UserNotFound();
+            throw new UserNotFoundException();
         }
 
         boolean isPasswordValid = AuthService.checkPassword(auth, dto.password());
@@ -41,7 +42,6 @@ public class LoginUseCase implements ILoginUseCase {
         }
 
         Roles role = auth.getIsAdmin() ? Roles.ADMIN : Roles.USER;
-
         List<String> roles = List.of(role.name());
         List<String> permissions = role.getPermissions().stream()
                 .map(Permissions::getPermission)
@@ -52,8 +52,7 @@ public class LoginUseCase implements ILoginUseCase {
             String refreshToken = TokenService.generateRefreshToken(auth.getId(), roles, permissions);
             return new LoginResponse(accessToken, refreshToken, auth.getEmail(), role.name());
         } catch (Exception e) {
-            throw new RuntimeException("Error to generate Tokens", e);
+            throw new TokenGenerationException("Failed to generate tokens", e);
         }
-
     }
 }

@@ -6,27 +6,36 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import com.lumiere.application.exceptions.EmailAlreadyExistsException;
-import com.lumiere.presentation.exceptions.TokenGenerationException;
+import com.lumiere.application.exceptions.InvalidCredentialsException;
+import com.lumiere.application.exceptions.TokenGenerationException;
+import com.lumiere.application.exceptions.UserNotFoundException;
 
-import java.util.HashMap;
 import java.util.Map;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler(EmailAlreadyExistsException.class)
-    public ResponseEntity<Map<String, String>> handleEmailExists(EmailAlreadyExistsException ex) {
-        Map<String, String> body = new HashMap<>();
-        body.put("error", "EMAIL_EXISTS");
-        body.put("message", ex.getMessage());
-        return ResponseEntity.status(HttpStatus.CONFLICT).body(body);
-    }
+        @ExceptionHandler(EmailAlreadyExistsException.class)
+        public ResponseEntity<Map<String, String>> handleEmailExists(EmailAlreadyExistsException ex) {
+                return ResponseEntity.status(HttpStatus.CONFLICT)
+                                .body(Map.of(
+                                                "error", "EMAIL_EXISTS",
+                                                "message", ex.getMessage()));
+        }
 
-    @ExceptionHandler(TokenGenerationException.class)
-    public ResponseEntity<Map<String, String>> handleTokenException(TokenGenerationException ex) {
-        Map<String, String> body = new HashMap<>();
-        body.put("error", "TOKEN_ERROR");
-        body.put("message", ex.getMessage());
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(body);
-    }
+        @ExceptionHandler({ UserNotFoundException.class, InvalidCredentialsException.class })
+        public ResponseEntity<Map<String, String>> handleAuthErrors(RuntimeException ex) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                                .body(Map.of(
+                                                "error", ex.getClass().getSimpleName().toUpperCase(),
+                                                "message", ex.getMessage()));
+        }
+
+        @ExceptionHandler(TokenGenerationException.class)
+        public ResponseEntity<Map<String, String>> handleTokenError(TokenGenerationException ex) {
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                                .body(Map.of(
+                                                "error", "TOKEN_ERROR",
+                                                "message", ex.getMessage()));
+        }
 }

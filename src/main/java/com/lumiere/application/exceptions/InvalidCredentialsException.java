@@ -1,6 +1,6 @@
 package com.lumiere.application.exceptions;
 
-public class InvalidCredentialsException extends RuntimeException {
+public class InvalidCredentialsException extends ApplicationException {
     public InvalidCredentialsException() {
         super("Invalid credentials");
     }

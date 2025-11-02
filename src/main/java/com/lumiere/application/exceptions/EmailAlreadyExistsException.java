@@ -1,7 +1,7 @@
 package com.lumiere.application.exceptions;
 
-public class EmailAlreadyExistsException extends RuntimeException {
+public class EmailAlreadyExistsException extends ApplicationException {
     public EmailAlreadyExistsException(String email) {
-        super("This email already exist" + email);
+        super("This email already exists: " + email);
     }
 }

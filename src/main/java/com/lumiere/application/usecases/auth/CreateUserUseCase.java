@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.lumiere.application.dtos.auth.CreateUserDTO;
 import com.lumiere.application.dtos.auth.CreateUserResponse;
 import com.lumiere.application.exceptions.EmailAlreadyExistsException;
+import com.lumiere.application.exceptions.TokenGenerationException;
 import com.lumiere.application.interfaces.ICreateUserUseCase;
 import com.lumiere.domain.entities.Auth;
 import com.lumiere.domain.entities.User;
@@ -40,11 +41,9 @@ public class CreateUserUseCase implements ICreateUserUseCase {
 
         Auth auth = AuthService.createAuth(dto.name(), dto.email(), dto.password(), false);
         User user = UserService.createUser(auth);
-
         userRepository.save(user);
 
         Roles role = auth.getIsAdmin() ? Roles.ADMIN : Roles.USER;
-
         List<String> roles = List.of(role.name());
         List<String> permissions = role.getPermissions()
                 .stream()
@@ -57,7 +56,7 @@ public class CreateUserUseCase implements ICreateUserUseCase {
 
             return new CreateUserResponse(auth.getEmail(), accessToken, refreshToken, role.name());
         } catch (Exception e) {
-            throw new RuntimeException("Error generating tokens", e);
+            throw new TokenGenerationException("Failed to generate tokens", e);
         }
     }
 }
