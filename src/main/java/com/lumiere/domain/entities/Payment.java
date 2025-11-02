@@ -4,9 +4,10 @@ import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.UUID;
 
+import com.lumiere.domain.entities.base.BaseEntity;
 import com.lumiere.domain.vo.Money;
 
-public class Payment {
+public class Payment extends BaseEntity {
 
     private final UUID id;
     private final Money amount;

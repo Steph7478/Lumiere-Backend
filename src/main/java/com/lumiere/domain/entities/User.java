@@ -3,7 +3,9 @@ package com.lumiere.domain.entities;
 import java.util.Objects;
 import java.util.UUID;
 
-public class User {
+import com.lumiere.domain.entities.base.BaseEntity;
+
+public class User extends BaseEntity {
 
     private final UUID id;
     private Auth auth;

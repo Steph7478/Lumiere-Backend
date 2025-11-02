@@ -1,9 +1,10 @@
 package com.lumiere.domain.entities;
 
+import com.lumiere.domain.entities.base.BaseEntity;
 import com.lumiere.domain.vo.Money;
 import java.util.*;
 
-public class Product {
+public class Product extends BaseEntity {
 
     private final UUID id;
     private final String name;

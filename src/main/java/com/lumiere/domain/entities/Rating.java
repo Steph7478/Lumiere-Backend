@@ -3,7 +3,9 @@ package com.lumiere.domain.entities;
 import java.util.Objects;
 import java.util.UUID;
 
-public class Rating {
+import com.lumiere.domain.entities.base.BaseEntity;
+
+public class Rating extends BaseEntity {
 
     private final UUID id;
     private final UUID productId;

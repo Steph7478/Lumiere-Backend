@@ -5,7 +5,9 @@ import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.UUID;
 
-public class Order {
+import com.lumiere.domain.entities.base.BaseEntity;
+
+public class Order extends BaseEntity {
 
     private final UUID id;
     private final LocalDateTime createdAt;
