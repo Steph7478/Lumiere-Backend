@@ -9,8 +9,8 @@ public abstract class BaseEntity {
     private final LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
-    protected BaseEntity() {
-        this.id = UUID.randomUUID();
+    protected BaseEntity(UUID id) {
+        this.id = id != null ? id : UUID.randomUUID();
         this.createdAt = LocalDateTime.now();
         this.updatedAt = this.createdAt;
     }

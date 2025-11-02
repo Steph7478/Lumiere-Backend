@@ -6,7 +6,6 @@ import java.util.*;
 
 public class Product extends BaseEntity {
 
-    private final UUID id;
     private final String name;
     private final String description;
     private final Category category;
@@ -18,7 +17,7 @@ public class Product extends BaseEntity {
     private Product(UUID id, String name, String description, Category category,
             SubCategory subCategory, Money price, List<Rating> ratings, int stock) {
 
-        this.id = id != null ? id : UUID.randomUUID();
+        super(id);
         this.name = Objects.requireNonNull(name, "name cannot be null");
         this.description = Objects.requireNonNull(description, "description cannot be null");
         this.category = Objects.requireNonNull(category, "category cannot be null");
@@ -32,7 +31,7 @@ public class Product extends BaseEntity {
 
     // Getters
     public UUID getId() {
-        return id;
+        return getId();
     }
 
     public String getName() {
@@ -68,19 +67,19 @@ public class Product extends BaseEntity {
         int newStock = this.stock + delta;
         if (newStock < 0)
             throw new IllegalArgumentException("stock cannot be negative");
-        return new Product(this.id, this.name, this.description, this.category,
+        return new Product(getId(), this.name, this.description, this.category,
                 this.subCategory, this.price, this.ratings, newStock);
     }
 
     public Product updatePrice(Money newPrice) {
-        return new Product(this.id, this.name, this.description, this.category,
+        return new Product(getId(), this.name, this.description, this.category,
                 this.subCategory, Objects.requireNonNull(newPrice, "price cannot be null"), this.ratings, this.stock);
     }
 
     public Product addRating(Rating rating) {
         List<Rating> newRatings = new ArrayList<>(this.ratings);
         newRatings.add(Objects.requireNonNull(rating, "rating cannot be null"));
-        return new Product(this.id, this.name, this.description, this.category,
+        return new Product(getId(), this.name, this.description, this.category,
                 this.subCategory, this.price, newRatings, this.stock);
     }
 

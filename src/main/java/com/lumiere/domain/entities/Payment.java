@@ -9,13 +9,12 @@ import com.lumiere.domain.vo.Money;
 
 public class Payment extends BaseEntity {
 
-    private final UUID id;
     private final Money amount;
     private final PaymentMethod paymentMethod;
     private final LocalDateTime paymentDate;
 
     private Payment(UUID id, Money amount, PaymentMethod paymentMethod, LocalDateTime paymentDate) {
-        this.id = id != null ? id : UUID.randomUUID();
+        super(id);
         this.amount = Objects.requireNonNull(amount, "amount cannot be null");
         this.paymentMethod = Objects.requireNonNull(paymentMethod, "paymentMethod cannot be null");
         this.paymentDate = Objects.requireNonNull(paymentDate, "paymentDate cannot be null");
@@ -23,7 +22,7 @@ public class Payment extends BaseEntity {
 
     // getters
     public UUID getId() {
-        return id;
+        return getId();
     }
 
     public Money getAmount() {

@@ -6,18 +6,16 @@ import java.util.UUID;
 import com.lumiere.domain.entities.base.BaseEntity;
 
 public class User extends BaseEntity {
-
-    private final UUID id;
     private Auth auth;
 
     private User(UUID id, Auth auth) {
-        this.id = id != null ? id : UUID.randomUUID();
+        super(id);
         this.auth = Objects.requireNonNull(auth, "Auth cannot be null");
     }
 
     // Getters
     public UUID getId() {
-        return id;
+        return getId();
     }
 
     public Auth getAuth() {

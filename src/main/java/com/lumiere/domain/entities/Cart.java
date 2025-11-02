@@ -10,22 +10,18 @@ import com.lumiere.domain.entities.base.BaseEntity;
 
 public class Cart extends BaseEntity {
 
-    private final UUID id;
     private final UUID userId;
     private final Coupon coupon;
     private final List<Product> products;
 
     public Cart(UUID id, UUID userId, Coupon coupon, List<Product> products) {
-        this.id = id != null ? id : UUID.randomUUID();
+        super(id);
         this.userId = Objects.requireNonNull(userId, "User cannot be null");
         this.coupon = coupon;
         this.products = products != null ? new ArrayList<>(products) : new ArrayList<>();
     }
 
     // Getters
-    public UUID getId() {
-        return id;
-    }
 
     public UUID getUserId() {
         return userId;
@@ -40,7 +36,7 @@ public class Cart extends BaseEntity {
     }
 
     public Cart withCoupon(Coupon coupon) {
-        return new Cart(this.id, this.userId, coupon, this.products);
+        return new Cart(getId(), this.userId, coupon, this.products);
     }
 
     public Cart addProduct(Product product) {
@@ -50,7 +46,7 @@ public class Cart extends BaseEntity {
         List<Product> newProducts = new ArrayList<>(this.products);
         newProducts.add(product);
 
-        return new Cart(this.id, this.userId, this.coupon, newProducts);
+        return new Cart(getId(), this.userId, this.coupon, newProducts);
     }
 
     public Cart removeProduct(Product product) {
@@ -60,7 +56,7 @@ public class Cart extends BaseEntity {
         List<Product> newProducts = new ArrayList<>(this.products);
         newProducts.remove(product);
 
-        return new Cart(this.id, this.userId, this.coupon, newProducts);
+        return new Cart(getId(), this.userId, this.coupon, newProducts);
     }
 
     // factory

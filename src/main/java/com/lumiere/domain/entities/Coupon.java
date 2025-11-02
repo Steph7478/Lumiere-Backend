@@ -9,7 +9,6 @@ import com.lumiere.domain.utils.CouponCodeGenerator;
 
 public class Coupon extends BaseEntity {
 
-    private final UUID id;
     private final LocalDateTime couponDate;
     private final LocalDateTime expiredAt;
     private final Category category;
@@ -18,7 +17,7 @@ public class Coupon extends BaseEntity {
 
     private Coupon(UUID id, LocalDateTime couponDate, LocalDateTime expiredAt, Category category, UUID userId,
             String code) {
-        this.id = id != null ? id : UUID.randomUUID();
+        super(id);
         this.couponDate = Objects.requireNonNull(couponDate, "couponDate cannot be null");
         this.expiredAt = Objects.requireNonNull(expiredAt, "expiredAt cannot be null");
         if (expiredAt.isBefore(couponDate)) {
@@ -30,10 +29,6 @@ public class Coupon extends BaseEntity {
     }
 
     // Getters
-    public UUID getId() {
-        return id;
-    }
-
     public LocalDateTime getCouponDate() {
         return couponDate;
     }

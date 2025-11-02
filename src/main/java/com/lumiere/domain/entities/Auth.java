@@ -7,34 +7,21 @@ import com.lumiere.domain.entities.base.BaseEntity;
 
 public class Auth extends BaseEntity {
 
-    private final UUID id;
     private final String name;
     private final String email;
     private final String passwordHash;
     private final boolean isAdmin;
     private User user;
 
-    private Auth(UUID id, String name, String email, String passwordHash, boolean isAdmin) {
-        this.id = id != null ? id : UUID.randomUUID();
+    private Auth(String name, String email, String passwordHash, boolean isAdmin, UUID id) {
+        super(id);
         this.name = Objects.requireNonNull(name, "name cannot be null");
         this.email = Objects.requireNonNull(email, "email cannot be null");
         this.passwordHash = Objects.requireNonNull(passwordHash, "passwordHash cannot be null");
         this.isAdmin = isAdmin;
     }
 
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
-
     // Getters
-    public UUID getId() {
-        return id;
-    }
-
     public String getName() {
         return name;
     }
@@ -47,50 +34,45 @@ public class Auth extends BaseEntity {
         return passwordHash;
     }
 
-    public boolean getIsAdmin() {
+    public boolean isAdmin() {
         return isAdmin;
     }
 
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    // Updates imutáveis
     public Auth updateName(String newName) {
-        Objects.requireNonNull(newName, "name cannot be null");
-        if (Objects.equals(this.name, newName)) {
+        if (Objects.equals(this.name, newName))
             return this;
-        }
-        return new Auth(this.id, newName, this.email, this.passwordHash, this.isAdmin);
+        return new Auth(newName, this.email, this.passwordHash, this.isAdmin, getId());
     }
 
     public Auth updateEmail(String newEmail) {
-        Objects.requireNonNull(newEmail, "email cannot be null");
-        if (Objects.equals(this.email, newEmail)) {
+        if (Objects.equals(this.email, newEmail))
             return this;
-        }
-        return new Auth(this.id, this.name, newEmail, this.passwordHash, this.isAdmin);
+        return new Auth(this.name, newEmail, this.passwordHash, this.isAdmin, getId());
     }
 
     public Auth updatePassword(String passwordHash) {
-        return new Auth(this.id, this.name, this.email,
-                Objects.requireNonNull(passwordHash, "passwordHash cannot be null"), this.isAdmin);
+        return new Auth(this.name, this.email, Objects.requireNonNull(passwordHash), this.isAdmin, getId());
     }
 
+    // Factories
     public static Auth hidden(String name, String email) {
-        return new Auth(UUID.fromString("00000000-0000-0000-0000-000000000000"),
-                name,
-                email,
-                "***hidden***",
-                false);
+        return new Auth(name, email, "***hidden***", false, null);
     }
 
-    public static Auth me(String name, String email, UUID id, boolean isAdmin) {
-        return new Auth(id,
-                name,
-                email,
-                "***hidden***",
-                isAdmin);
+    public static Auth me(String name, String email, boolean isAdmin) {
+        return new Auth(name, email, "***hidden***", isAdmin, null);
     }
 
-    // factory
-    public static Auth from(UUID id, String name, String email, String passwordHash, boolean isAdmin) {
-        return new Auth(id, name, email, passwordHash, isAdmin);
+    public static Auth from(String name, String email, String passwordHash, boolean isAdmin, UUID id) {
+        return new Auth(name, email, passwordHash, isAdmin, id);
     }
-
 }
