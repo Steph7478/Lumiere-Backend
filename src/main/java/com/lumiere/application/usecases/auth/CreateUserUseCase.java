@@ -54,7 +54,7 @@ public class CreateUserUseCase implements ICreateUserUseCase {
             String accessToken = TokenService.generateAccessToken(auth.getId(), roles, permissions);
             String refreshToken = TokenService.generateRefreshToken(auth.getId(), roles, permissions);
 
-            return new CreateUserResponse(auth.getEmail(), accessToken, refreshToken, role.name());
+            return new CreateUserResponse(auth.getName(), accessToken, refreshToken, role.name());
         } catch (Exception e) {
             throw new TokenGenerationException("Failed to generate tokens", e);
         }

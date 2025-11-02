@@ -50,7 +50,7 @@ public class LoginUseCase implements ILoginUseCase {
         try {
             String accessToken = TokenService.generateAccessToken(auth.getId(), roles, permissions);
             String refreshToken = TokenService.generateRefreshToken(auth.getId(), roles, permissions);
-            return new LoginResponse(accessToken, refreshToken, auth.getEmail(), role.name());
+            return new LoginResponse(accessToken, refreshToken, auth.getName(), role.name());
         } catch (Exception e) {
             throw new TokenGenerationException("Failed to generate tokens", e);
         }
