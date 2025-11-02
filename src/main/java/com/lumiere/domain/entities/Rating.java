@@ -24,9 +24,6 @@ public class Rating extends BaseEntity {
     }
 
     // Getters
-    public UUID getId() {
-        return getId();
-    }
 
     public UUID getProductId() {
         return productId;

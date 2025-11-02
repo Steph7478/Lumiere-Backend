@@ -14,10 +14,6 @@ public class User extends BaseEntity {
     }
 
     // Getters
-    public UUID getId() {
-        return getId();
-    }
-
     public Auth getAuth() {
         return auth;
     }

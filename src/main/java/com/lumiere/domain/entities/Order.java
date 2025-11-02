@@ -9,7 +9,6 @@ import com.lumiere.domain.entities.base.BaseEntity;
 
 public class Order extends BaseEntity {
 
-    private final LocalDateTime createdAt;
     private final Cart cart;
     private final Status status;
     private final UUID paymentId;
@@ -19,7 +18,6 @@ public class Order extends BaseEntity {
     private Order(UUID id, Cart cart, Status status, UUID paymentId, BigDecimal total, LocalDateTime orderDate) {
         super(id);
         this.cart = Objects.requireNonNull(cart, "cart cannot be null");
-        this.createdAt = LocalDateTime.now();
         this.status = status != null ? status : Status.IN_PROGRESS;
         this.paymentId = paymentId;
         this.total = Objects.requireNonNull(total, "total cannot be null");
@@ -27,9 +25,6 @@ public class Order extends BaseEntity {
     }
 
     // Getters
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
 
     public Cart getCart() {
         return cart;
