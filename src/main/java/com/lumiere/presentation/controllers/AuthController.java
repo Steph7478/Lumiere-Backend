@@ -1,5 +1,6 @@
 package com.lumiere.presentation.controllers;
 
+import com.lumiere.presentation.controllers.base.BaseController;
 import com.lumiere.presentation.dtos.auth.CreateUserRequestDTO;
 import com.lumiere.presentation.dtos.auth.CreateUserResponseDTO;
 import com.lumiere.presentation.dtos.auth.LoginUserRequestDTO;
@@ -25,7 +26,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping(Routes.Auth.BASE)
-public class AuthController {
+public class AuthController extends BaseController {
 
     private final ICreateUserUseCase createUserUseCase;
     private final ILoginUseCase loginUseCase;
