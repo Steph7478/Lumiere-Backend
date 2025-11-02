@@ -1,14 +1,13 @@
-package com.lumiere.infrastructure.security.constants;
+package com.lumiere.shared.constants;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 public enum Permissions {
-    ADMIN_READ("admin:read"),
-    ADMIN_CREATE("admin:create"),
-    ADMIN_UPDATE("admin:update"),
-    ADMIN_DELETE("admin:delete"),
+    PRODUCT_ADD("PRODUCT_ADD"),
+    PRODUCT_DELETE("PRODUCT_DELETE"),
+    PRODUCT_UPDATE("PRODUCT_UPDATE"),
 
     USER_READ("user:read");
 

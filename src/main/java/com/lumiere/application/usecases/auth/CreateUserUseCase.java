@@ -12,23 +12,20 @@ import com.lumiere.application.exceptions.EmailAlreadyExistsException;
 import com.lumiere.application.interfaces.ICreateUserUseCase;
 import com.lumiere.domain.entities.Auth;
 import com.lumiere.domain.entities.User;
-import com.lumiere.domain.policies.AdminPolicy;
 import com.lumiere.domain.repositories.UserRepository;
 import com.lumiere.domain.services.AuthService;
 import com.lumiere.domain.services.UserService;
-import com.lumiere.infrastructure.security.constants.Roles;
 import com.lumiere.infrastructure.http.auth.TokenService;
-import com.lumiere.infrastructure.security.constants.Permissions;
+import com.lumiere.shared.constants.Permissions;
+import com.lumiere.shared.constants.Roles;
 
 @Service
 public class CreateUserUseCase implements ICreateUserUseCase {
 
     private final UserRepository userRepository;
-    private final AdminPolicy adminPolicy;
 
-    public CreateUserUseCase(UserRepository userRepository, AdminPolicy adminPolicy) {
+    public CreateUserUseCase(UserRepository userRepository) {
         this.userRepository = userRepository;
-        this.adminPolicy = adminPolicy;
     }
 
     @Override
@@ -44,7 +41,7 @@ public class CreateUserUseCase implements ICreateUserUseCase {
 
         userRepository.save(user);
 
-        Roles role = adminPolicy.isAdminInEntity(auth) ? Roles.ADMIN : Roles.USER;
+        Roles role = auth.getIsAdmin() ? Roles.ADMIN : Roles.USER;
 
         List<String> roles = List.of(role.name());
         List<String> permissions = role.getPermissions()

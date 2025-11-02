@@ -1,4 +1,4 @@
-package com.lumiere.infrastructure.security.constants;
+package com.lumiere.shared.constants;
 
 public class Routes {
     public static final String REGISTER = "/auth/register";

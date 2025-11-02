@@ -1,4 +1,4 @@
-package com.lumiere.infrastructure.security.constants;
+package com.lumiere.shared.constants;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -13,15 +13,17 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public enum Roles {
     ADMIN(EnumSet.of(
-            Permissions.ADMIN_READ,
-            Permissions.ADMIN_CREATE,
-            Permissions.ADMIN_UPDATE,
-            Permissions.ADMIN_DELETE)),
+            Permissions.PRODUCT_ADD,
+            Permissions.PRODUCT_DELETE,
+            Permissions.PRODUCT_UPDATE)),
 
     USER(EnumSet.of(Permissions.USER_READ));
 
     @Getter
     private final Set<Permissions> permissions;
+
+    @Getter
+    private final String role = this.name();
 
     public List<SimpleGrantedAuthority> getAuthorities() {
         var authorities = permissions.stream()

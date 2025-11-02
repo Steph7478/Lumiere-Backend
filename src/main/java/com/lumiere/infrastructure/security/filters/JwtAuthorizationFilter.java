@@ -9,8 +9,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import com.lumiere.infrastructure.security.config.permissions.RoutePermissions;
-import com.lumiere.infrastructure.security.constants.Methods;
-import com.lumiere.infrastructure.security.constants.Roles;
+import com.lumiere.shared.constants.Methods;
+import com.lumiere.shared.constants.Roles;
 
 import java.io.IOException;
 

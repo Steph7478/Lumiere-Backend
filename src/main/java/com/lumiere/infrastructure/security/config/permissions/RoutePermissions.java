@@ -4,9 +4,9 @@ import java.util.EnumSet;
 import java.util.Map;
 import java.util.Set;
 
-import com.lumiere.infrastructure.security.constants.Methods;
-import com.lumiere.infrastructure.security.constants.Roles;
-import com.lumiere.infrastructure.security.constants.Routes;
+import com.lumiere.shared.constants.Methods;
+import com.lumiere.shared.constants.Roles;
+import com.lumiere.shared.constants.Routes;
 
 public final class RoutePermissions {
 

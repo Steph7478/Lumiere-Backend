@@ -6,7 +6,7 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 
-import com.lumiere.infrastructure.security.constants.Methods;
+import com.lumiere.shared.constants.Methods;
 
 import java.util.List;
 import java.util.stream.Collectors;
