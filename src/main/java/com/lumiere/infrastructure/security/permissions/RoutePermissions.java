@@ -18,6 +18,10 @@ public final class RoutePermissions {
                         API_PREFIX + Routes.Auth.LOGIN, EnumSet.of(Methods.POST));
 
         public static final Map<String, RoutePolicy> PRIVATE_ROUTES = Map.of(
+                        // API_PREFIX + Routes.User.BASE, new RoutePolicy(
+                        // Set.of(Roles.USER, Roles.ADMIN),
+                        // EnumSet.of(Methods.GET)),
+
                         API_PREFIX + Routes.Admin.BASE, new RoutePolicy(
                                         Set.of(Roles.ADMIN),
                                         EnumSet.of(Methods.GET, Methods.PUT)));
