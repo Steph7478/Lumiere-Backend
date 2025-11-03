@@ -45,7 +45,7 @@ public class AuthController extends BaseController {
     }
 
     @Loggable
-    @PostMapping(Routes.REGISTER)
+    @PostMapping(Routes.AUTH.REGISTER)
     public ResponseEntity<CreateUserResponseDTO> registerUser(
             @Valid @RequestBody CreateUserRequestDTO requestDTO,
             HttpServletResponse response) {
@@ -61,7 +61,7 @@ public class AuthController extends BaseController {
     }
 
     @Loggable
-    @PostMapping(Routes.LOGIN)
+    @PostMapping(Routes.AUTH.LOGIN)
     public ResponseEntity<LoginUserResponseDTO> loginUser(
             @Valid @RequestBody LoginUserRequestDTO requestDTO, HttpServletResponse response) {
 

@@ -19,12 +19,33 @@ public final class Routes {
         }
     }
 
-    public static final String REGISTER = "/auth/register";
-    public static final Route REGISTER_ROUTE = new Route(REGISTER, EnumSet.of(Methods.POST), Set.of());
+    public static final class AUTH {
+        public static final String REGISTER = "/auth/register";
+        public static final Route REGISTER_ROUTE = new Route(REGISTER, EnumSet.of(Methods.POST), Set.of());
 
-    public static final String LOGIN = "/auth/login";
-    public static final Route LOGIN_ROUTE = new Route(LOGIN, EnumSet.of(Methods.POST), Set.of());
+        public static final String LOGIN = "/auth/login";
+        public static final Route LOGIN_ROUTE = new Route(LOGIN, EnumSet.of(Methods.POST), Set.of());
 
-    public static final List<Route> PUBLIC_ROUTES = List.of(REGISTER_ROUTE, LOGIN_ROUTE);
-    public static final List<Route> PRIVATE_ROUTES = List.of();
+        public static final List<Route> ALL = List.of(REGISTER_ROUTE, LOGIN_ROUTE);
+    }
+
+    public static final class USER {
+        public static final String PROFILE = "/user/profile";
+        public static final Route PROFILE_ROUTE = new Route(PROFILE, EnumSet.of(Methods.GET, Methods.PUT),
+                Set.of(Roles.USER));
+
+        public static final List<Route> ALL = List.of(PROFILE_ROUTE);
+    }
+
+    public static final class ADMIN {
+        public static final String BASE = "/admin";
+        public static final Route BASE_ROUTE = new Route(BASE, EnumSet.of(Methods.GET, Methods.PUT),
+                Set.of(Roles.ADMIN));
+
+        public static final List<Route> ALL = List.of(BASE_ROUTE);
+    }
+
+    public static final List<Route> PUBLIC_ROUTES = List.of(AUTH.ALL).stream().flatMap(List::stream).toList();
+    public static final List<Route> PRIVATE_ROUTES = List.of(USER.ALL, ADMIN.ALL).stream().flatMap(List::stream)
+            .toList();
 }
