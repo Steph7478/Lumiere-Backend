@@ -21,19 +21,21 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
             @NonNull HttpServletResponse res,
             @NonNull FilterChain chain) throws ServletException, IOException {
 
-        if (RoutePermissions.PUBLIC_ROUTES.containsKey(req.getRequestURI()) ||
-                SecurityContextHolder.getContext().getAuthentication() == null) {
+        Methods method = Methods.fromString(req.getMethod());
+        String uri = req.getRequestURI();
+        var auth = SecurityContextHolder.getContext().getAuthentication();
+
+        if (RoutePermissions.PUBLIC_ROUTES.stream().anyMatch(r -> r.path().equals(uri) && r.methods().contains(method))
+                || auth == null) {
             chain.doFilter(req, res);
             return;
         }
 
-        var policy = RoutePermissions.PRIVATE_ROUTES.get(req.getRequestURI());
-
-        if (policy != null && (!policy.methods().contains(Methods.fromString(req.getMethod())) ||
-                SecurityContextHolder.getContext().getAuthentication().getAuthorities().stream()
-                        .map(a -> Roles.safeOf(a.getAuthority().replace("ROLE_", "")))
+        if (RoutePermissions.PRIVATE_ROUTES.stream().noneMatch(r -> uri.startsWith(r.path())
+                && r.methods().contains(method)
+                && auth.getAuthorities().stream().map(a -> Roles.safeOf(a.getAuthority().replace("ROLE_", "")))
                         .flatMap(o -> o.stream())
-                        .noneMatch(policy.roles()::contains))) {
+                        .anyMatch(r.roles()::contains))) {
             res.sendError(HttpServletResponse.SC_FORBIDDEN, "Access denied");
             return;
         }
