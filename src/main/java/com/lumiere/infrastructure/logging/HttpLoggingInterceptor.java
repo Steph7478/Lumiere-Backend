@@ -14,7 +14,7 @@ public class HttpLoggingInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response,
             @NonNull Object handler) {
-        System.out.println("[HTTP LOG] Incoming request: " + request.getMethod() + " " + request.getRequestURI());
+        System.out.println("\n[HTTP LOG] Incoming request: " + request.getMethod() + " " + request.getRequestURI());
         return true;
     }
 
@@ -22,9 +22,9 @@ public class HttpLoggingInterceptor implements HandlerInterceptor {
     public void afterCompletion(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response,
             @NonNull Object handler,
             @Nullable Exception ex) {
-        System.out.println("[HTTP LOG] Response status: " + response.getStatus());
+        System.out.println("\n[HTTP LOG] Response status: " + response.getStatus());
         if (ex != null) {
-            System.out.println("[HTTP LOG] Exception: " + ex.getMessage());
+            System.out.println("\n[HTTP LOG] Exception: " + ex.getMessage());
         }
     }
 }

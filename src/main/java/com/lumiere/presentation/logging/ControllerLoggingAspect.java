@@ -15,11 +15,11 @@ public class ControllerLoggingAspect {
         try {
             Object result = joinPoint.proceed();
             long elapsed = System.currentTimeMillis() - start;
-            System.out.println("[CONTROLLER LOG] " + joinPoint.getSignature() +
+            System.out.println("\n[CONTROLLER LOG] " + joinPoint.getSignature() +
                     " executed in " + elapsed + "ms | Result: " + result);
             return result;
         } catch (Throwable ex) {
-            System.out.println("[CONTROLLER ERROR] " + joinPoint.getSignature() +
+            System.out.println("\n[CONTROLLER ERROR] " + joinPoint.getSignature() +
                     " threw " + ex.getClass().getSimpleName() + ": " + ex.getMessage());
             throw ex;
         }

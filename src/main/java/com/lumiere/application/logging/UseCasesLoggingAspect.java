@@ -12,12 +12,13 @@ public class UseCasesLoggingAspect {
 
     @Before("@annotation(com.lumiere.shared.annotations.Loggable)")
     public void logBefore(JoinPoint joinPoint) {
-        System.out.println("[USECASE LOG] Entering: " + joinPoint.getSignature().toShortString());
+        System.out.println("\n[USECASE LOG] Entering: " + joinPoint.getSignature().toShortString());
     }
 
     @AfterReturning(pointcut = "execution(* com.lumiere.application.usecases..*(..))", returning = "result")
     public void logAfter(JoinPoint joinPoint, Object result) {
         System.out
-                .println("[USECASE LOG] Exiting: " + joinPoint.getSignature().toShortString() + " | Result: " + result);
+                .println("\n[USECASE LOG] Exiting: " + joinPoint.getSignature().toShortString() + " | Result: "
+                        + result);
     }
 }
