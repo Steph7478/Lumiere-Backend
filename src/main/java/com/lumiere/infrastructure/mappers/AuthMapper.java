@@ -1,9 +1,12 @@
 package com.lumiere.infrastructure.mappers;
 
+import org.springframework.stereotype.Component;
+
 import com.lumiere.domain.entities.Auth;
 import com.lumiere.infrastructure.jpa.AuthJpaEntity;
 import com.lumiere.infrastructure.mappers.base.BaseMapper;
 
+@Component
 public class AuthMapper extends BaseMapper<Auth, AuthJpaEntity> {
 
     @Override
