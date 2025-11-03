@@ -12,7 +12,7 @@ public class CookieFactory {
     public static Cookie createAccessTokenCookie(String token) {
         Cookie cookie = new Cookie("access_token", token);
         cookie.setHttpOnly(true);
-        cookie.setSecure(true);
+        cookie.setSecure(false);
         cookie.setPath("/");
         cookie.setMaxAge(15 * 60);
         return cookie;
@@ -21,7 +21,7 @@ public class CookieFactory {
     public static Cookie createRefreshTokenCookie(String token) {
         Cookie cookie = new Cookie("refresh_token", token);
         cookie.setHttpOnly(true);
-        cookie.setSecure(true);
+        cookie.setSecure(false);
         cookie.setPath("/");
         cookie.setMaxAge(7 * 24 * 60 * 60);
         return cookie;

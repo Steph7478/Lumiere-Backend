@@ -6,10 +6,7 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 
-import com.lumiere.shared.constants.Methods;
-
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Configuration
 public class CorsConfig {
@@ -21,11 +18,7 @@ public class CorsConfig {
 
         config.setAllowedOriginPatterns(List.of("http://localhost:*"));
 
-        List<String> allowedMethods = List.of(Methods.GET, Methods.POST, Methods.PUT, Methods.DELETE)
-                .stream()
-                .map(Enum::name)
-                .collect(Collectors.toList());
-        config.setAllowedMethods(allowedMethods);
+        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE"));
 
         config.setAllowedHeaders(List.of("*"));
         config.setAllowCredentials(true);

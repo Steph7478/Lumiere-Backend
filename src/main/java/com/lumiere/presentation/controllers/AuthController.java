@@ -22,6 +22,9 @@ import jakarta.validation.Valid;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -43,8 +46,14 @@ public class AuthController extends BaseController {
         this.loginUserMapper = loginUserMapper;
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
+    @GetMapping(Routes.PRIVATE.AUTH.ME)
+    public UserDetails getMe(@AuthenticationPrincipal UserDetails userDetails) {
+        return userDetails;
+    }
+
     @Loggable
-    @PostMapping(Routes.AUTH.REGISTER)
+    @PostMapping(Routes.PUBLIC.AUTH.REGISTER)
     public ResponseEntity<CreateUserResponseDTO> registerUser(
             @Valid @RequestBody CreateUserRequestDTO requestDTO,
             HttpServletResponse response) {
@@ -60,7 +69,7 @@ public class AuthController extends BaseController {
     }
 
     @Loggable
-    @PostMapping(Routes.AUTH.LOGIN)
+    @PostMapping(Routes.PUBLIC.AUTH.LOGIN)
     public ResponseEntity<LoginUserResponseDTO> loginUser(
             @Valid @RequestBody LoginUserRequestDTO requestDTO, HttpServletResponse response) {
 
