@@ -7,11 +7,11 @@ import com.lumiere.presentation.dtos.auth.CreateUserResponseDTO;
 import com.lumiere.presentation.mappers.base.BaseRequestMapper;
 import com.lumiere.presentation.mappers.base.BaseResponseMapper;
 
+import org.springframework.stereotype.Component;
+
+@Component
 public class CreateUserMapper implements BaseRequestMapper<CreateUserRequestDTO, CreateUserDTO>,
         BaseResponseMapper<CreateUserResponse, CreateUserResponseDTO> {
-
-    private CreateUserMapper() {
-    }
 
     @Override
     public CreateUserDTO toApplicationDTO(CreateUserRequestDTO request) {

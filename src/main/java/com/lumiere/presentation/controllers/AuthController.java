@@ -30,10 +30,18 @@ public class AuthController extends BaseController {
 
     private final ICreateUserUseCase createUserUseCase;
     private final ILoginUseCase loginUseCase;
+    private final CreateUserMapper createUserMapper;
+    private final LoginUserMapper loginUserMapper;
 
-    public AuthController(ICreateUserUseCase createUserUseCase, ILoginUseCase loginUseCase) {
+    public AuthController(
+            ICreateUserUseCase createUserUseCase,
+            ILoginUseCase loginUseCase,
+            CreateUserMapper createUserMapper,
+            LoginUserMapper loginUserMapper) {
         this.createUserUseCase = createUserUseCase;
         this.loginUseCase = loginUseCase;
+        this.createUserMapper = createUserMapper;
+        this.loginUserMapper = loginUserMapper;
     }
 
     @Loggable
@@ -42,15 +50,13 @@ public class AuthController extends BaseController {
             @Valid @RequestBody CreateUserRequestDTO requestDTO,
             HttpServletResponse response) {
 
-        CreateUserDTO appDTO = CreateUserMapper.toApplicationDTO(requestDTO);
-
+        CreateUserDTO appDTO = createUserMapper.toApplicationDTO(requestDTO);
         CreateUserResponse responseDTO = createUserUseCase.execute(appDTO);
 
         response.addCookie(CookieFactory.createAccessTokenCookie(responseDTO.accessToken()));
         response.addCookie(CookieFactory.createRefreshTokenCookie(responseDTO.refreshToken()));
 
-        CreateUserResponseDTO body = CreateUserMapper.toPresentationDTO(responseDTO);
-
+        CreateUserResponseDTO body = createUserMapper.toPresentationDTO(responseDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(body);
     }
 
@@ -59,14 +65,13 @@ public class AuthController extends BaseController {
     public ResponseEntity<LoginUserResponseDTO> loginUser(
             @Valid @RequestBody LoginUserRequestDTO requestDTO, HttpServletResponse response) {
 
-        LoginDTO appDTO = LoginUserMapper.toApplicationDTO(requestDTO);
+        LoginDTO appDTO = loginUserMapper.toApplicationDTO(requestDTO);
         LoginResponse responseDTO = loginUseCase.execute(appDTO);
 
         response.addCookie(CookieFactory.createAccessTokenCookie(responseDTO.accessToken()));
         response.addCookie(CookieFactory.createRefreshTokenCookie(responseDTO.refreshToken()));
 
-        LoginUserResponseDTO body = LoginUserMapper.toPresentationDTO(responseDTO);
-
+        LoginUserResponseDTO body = loginUserMapper.toPresentationDTO(responseDTO);
         return ResponseEntity.status(HttpStatus.ACCEPTED).body(body);
     }
 }

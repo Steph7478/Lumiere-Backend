@@ -1,5 +1,7 @@
 package com.lumiere.presentation.mappers.auth;
 
+import org.springframework.stereotype.Component;
+
 import com.lumiere.application.dtos.auth.LoginDTO;
 import com.lumiere.application.dtos.auth.LoginResponse;
 import com.lumiere.presentation.dtos.auth.LoginUserRequestDTO;
@@ -7,6 +9,7 @@ import com.lumiere.presentation.dtos.auth.LoginUserResponseDTO;
 import com.lumiere.presentation.mappers.base.BaseRequestMapper;
 import com.lumiere.presentation.mappers.base.BaseResponseMapper;
 
+@Component
 public class LoginUserMapper implements BaseRequestMapper<LoginUserRequestDTO, LoginDTO>,
         BaseResponseMapper<LoginResponse, LoginUserResponseDTO> {
 
