@@ -15,6 +15,7 @@ import com.lumiere.application.dtos.auth.LoginResponse;
 import com.lumiere.application.interfaces.ICreateUserUseCase;
 import com.lumiere.application.interfaces.ILoginUseCase;
 import com.lumiere.infrastructure.http.cookies.CookieFactory;
+import com.lumiere.infrastructure.security.config.ApiConfig;
 import com.lumiere.presentation.routes.Routes;
 
 import jakarta.servlet.http.HttpServletResponse;
@@ -25,7 +26,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("")
 public class AuthController extends BaseController {
 
     private final ICreateUserUseCase createUserUseCase;
