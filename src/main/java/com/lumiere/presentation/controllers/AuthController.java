@@ -15,7 +15,6 @@ import com.lumiere.application.dtos.auth.LoginResponse;
 import com.lumiere.application.interfaces.ICreateUserUseCase;
 import com.lumiere.application.interfaces.ILoginUseCase;
 import com.lumiere.infrastructure.http.cookies.CookieFactory;
-import com.lumiere.infrastructure.security.config.ApiConfig;
 import com.lumiere.presentation.routes.Routes;
 
 import jakarta.servlet.http.HttpServletResponse;

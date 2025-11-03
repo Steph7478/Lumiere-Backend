@@ -30,14 +30,14 @@ public class AuthJpaRepositoryAdapter implements AuthRepository {
     @Override
     public Auth findById(UUID id) {
         return authJpaRepo.findById(id)
-                .map(authMapper::toDomain)
+                .map(authMapper::toDomainMe)
                 .orElse(null);
     }
 
     @Override
     public Auth findByEmail(String email) {
         return authJpaRepo.findByEmail(email)
-                .map(authMapper::toDomainMe)
+                .map(authMapper::toDomain)
                 .orElse(null);
     }
 }
