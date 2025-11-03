@@ -9,7 +9,7 @@ public enum Permissions {
     PRODUCT_DELETE("PRODUCT_DELETE"),
     PRODUCT_UPDATE("PRODUCT_UPDATE"),
 
-    USER_READ("user:read");
+    USER_READ("READ_ONLY");
 
     @Getter
     private final String permission;
