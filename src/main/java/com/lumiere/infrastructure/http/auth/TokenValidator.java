@@ -1,7 +1,5 @@
 package com.lumiere.infrastructure.http.auth;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nimbusds.jwt.SignedJWT;
 import java.util.List;
 import java.util.UUID;
@@ -9,14 +7,22 @@ import java.util.Date;
 
 public class TokenValidator {
 
-    private static final ObjectMapper objectMapper = new ObjectMapper();
-
     public static boolean isValid(String token) {
         try {
-            SignedJWT signedJWT = SignedJWT.parse(token);
-            return signedJWT.verify(SignerProvider.getVerifier()) &&
-                    signedJWT.getJWTClaimsSet().getExpirationTime().after(new Date());
+            SignedJWT jwt = SignedJWT.parse(token);
+
+            boolean verified = jwt.verify(SignerProvider.getVerifier());
+
+            if (!verified)
+                return false;
+
+            Date expiration = jwt.getJWTClaimsSet().getExpirationTime();
+            if (expiration == null || !expiration.after(new Date()))
+                return false;
+
+            return true;
         } catch (Exception e) {
+            e.printStackTrace();
             return false;
         }
     }
@@ -44,11 +50,14 @@ public class TokenValidator {
 
     private static List<String> getListClaim(String token, String claimKey) {
         try {
-            String json = getClaim(token, claimKey);
-            return json != null
-                    ? objectMapper.readValue(json, new TypeReference<List<String>>() {
-                    })
-                    : List.of();
+            SignedJWT signedJWT = SignedJWT.parse(token);
+            Object claim = signedJWT.getJWTClaimsSet().getClaim(claimKey);
+            if (claim instanceof List<?>) {
+                return ((List<?>) claim).stream()
+                        .map(Object::toString)
+                        .toList();
+            }
+            return List.of();
         } catch (Exception e) {
             return List.of();
         }

@@ -2,12 +2,11 @@ package com.lumiere.infrastructure.http.auth;
 
 import java.util.Date;
 import java.util.List;
-import java.util.Set;
 import java.util.UUID;
 
-import com.nimbusds.jose.JOSEObjectType;
 import com.nimbusds.jose.JWSAlgorithm;
 import com.nimbusds.jose.JWSHeader;
+import com.nimbusds.jose.JOSEObjectType;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
 
@@ -40,15 +39,13 @@ public class TokenService {
                 .build();
 
         JWSHeader header = new JWSHeader.Builder(JWSAlgorithm.RS256)
-                .keyID("auth-key-v1")
-                .base64URLEncodePayload(true)
                 .type(JOSEObjectType.JWT)
-                .criticalParams(Set.of("alg", "typ", "kid"))
+                .keyID("auth-key-v1")
                 .build();
 
         SignedJWT signedJWT = new SignedJWT(header, claimsSet);
         signedJWT.sign(SignerProvider.getSigner());
+
         return signedJWT.serialize();
     }
-
 }
