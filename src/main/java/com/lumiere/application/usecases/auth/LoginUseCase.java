@@ -41,7 +41,7 @@ public class LoginUseCase implements ILoginUseCase {
             throw new InvalidCredentialsException();
         }
 
-        Roles role = auth.getIsAdmin() ? Roles.ADMIN : Roles.USER;
+        Roles role = auth.isAdmin() ? Roles.ADMIN : Roles.USER;
         List<String> roles = List.of(role.name());
         List<String> permissions = role.getPermissions().stream()
                 .map(Permissions::getPermission)

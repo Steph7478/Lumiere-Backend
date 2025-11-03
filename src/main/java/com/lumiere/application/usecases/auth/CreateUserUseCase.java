@@ -43,7 +43,7 @@ public class CreateUserUseCase implements ICreateUserUseCase {
         User user = UserService.createUser(auth);
         userRepository.save(user);
 
-        Roles role = auth.getIsAdmin() ? Roles.ADMIN : Roles.USER;
+        Roles role = auth.isAdmin() ? Roles.ADMIN : Roles.USER;
         List<String> roles = List.of(role.name());
         List<String> permissions = role.getPermissions()
                 .stream()
