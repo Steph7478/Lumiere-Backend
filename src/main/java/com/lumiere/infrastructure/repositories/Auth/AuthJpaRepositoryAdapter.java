@@ -12,53 +12,55 @@ import com.lumiere.infrastructure.mappers.AuthMapper;
 public class AuthJpaRepositoryAdapter implements AuthRepository {
 
     private final AuthJpaRepository authJpaRepo;
+    private final AuthMapper authMapper;
 
-    public AuthJpaRepositoryAdapter(AuthJpaRepository authJpaRepo) {
+    public AuthJpaRepositoryAdapter(AuthJpaRepository authJpaRepo, AuthMapper authMapper) {
         this.authJpaRepo = authJpaRepo;
+        this.authMapper = authMapper;
     }
 
     @Override
     public Auth save(Auth auth) {
-        var entity = AuthMapper.toJpa(auth);
+        var entity = authMapper.toJpa(auth);
         var saved = authJpaRepo.save(entity);
-        return AuthMapper.toDomainSafe(saved);
+
+        return authMapper.toDomainMe(saved);
     }
 
     @Override
     public Auth findById(UUID id) {
         return authJpaRepo.findById(id)
-                .map(AuthMapper::toDomainMe)
+                .map(authMapper::toDomain)
                 .orElse(null);
     }
 
     @Override
     public Auth findByEmail(String email) {
         return authJpaRepo.findByEmail(email)
-                .map(AuthMapper::toDomainFull)
+                .map(authMapper::toDomainMe)
                 .orElse(null);
     }
-
-    // OBS:
-    // this "::" is equal to:
-    // .map(authEntity -> AuthMapper.toDomainSafe(authEntity))
-    // .map(AuthMapper::toDomainSafe)
-
-    // Example:
-
-    // Method Reference:
-    // @Override
-    // public Auth findById(UUID id) {
-    // return authJpaRepo.findById(id)
-    // .map(AuthMapper::toDomainSafe)
-    // .orElse(null);
-    // }
-
-    // Normal Lambda:
-    // @Override
-    // public Auth findById(UUID id) {
-    // return authJpaRepo.findById(id)
-    // .map(authEntity -> AuthMapper.toDomainSafe(authEntity))
-    // .orElse(null);
-    // }
-
 }
+
+// OBS:
+// this "::" is equal to:
+// .map(authEntity -> AuthMapper.toDomainSafe(authEntity))
+// .map(AuthMapper::toDomainSafe)
+
+// Example:
+
+// Method Reference:
+// @Override
+// public Auth findById(UUID id) {
+// return authJpaRepo.findById(id)
+// .map(AuthMapper::toDomainSafe)
+// .orElse(null);
+// }
+
+// Normal Lambda:
+// @Override
+// public Auth findById(UUID id) {
+// return authJpaRepo.findById(id)
+// .map(authEntity -> AuthMapper.toDomainSafe(authEntity))
+// .orElse(null);
+// }

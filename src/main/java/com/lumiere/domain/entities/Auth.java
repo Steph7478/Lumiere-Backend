@@ -46,32 +46,24 @@ public class Auth extends BaseEntity {
         this.user = user;
     }
 
-    // Updates imutáveis
-    public Auth updateName(String newName) {
+    // updates
+    public Auth withName(String newName) {
         if (Objects.equals(this.name, newName))
             return this;
         return new Auth(newName, this.email, this.passwordHash, this.isAdmin, getId());
     }
 
-    public Auth updateEmail(String newEmail) {
+    public Auth withEmail(String newEmail) {
         if (Objects.equals(this.email, newEmail))
             return this;
         return new Auth(this.name, newEmail, this.passwordHash, this.isAdmin, getId());
     }
 
-    public Auth updatePassword(String passwordHash) {
-        return new Auth(this.name, this.email, Objects.requireNonNull(passwordHash), this.isAdmin, getId());
+    public Auth withPasswordHash(String newPasswordHash) {
+        return new Auth(this.name, this.email, Objects.requireNonNull(newPasswordHash), this.isAdmin, getId());
     }
 
-    // Factories
-    public static Auth hidden(String name, String email) {
-        return new Auth(name, email, "***hidden***", false, null);
-    }
-
-    public static Auth me(String name, String email, boolean isAdmin) {
-        return new Auth(name, email, "***hidden***", isAdmin, null);
-    }
-
+    // Factory
     public static Auth from(String name, String email, String passwordHash, boolean isAdmin, UUID id) {
         return new Auth(name, email, passwordHash, isAdmin, id);
     }

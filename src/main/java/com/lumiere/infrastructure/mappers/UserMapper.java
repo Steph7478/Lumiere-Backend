@@ -14,7 +14,12 @@ public class UserMapper extends BaseMapper<User, UserJpaEntity> {
             return null;
 
         AuthJpaEntity authJpa = jpaEntity.getAuth();
-        Auth auth = Auth.hidden(authJpa.getName(), authJpa.getEmail());
+        Auth auth = Auth.from(
+                authJpa.getName(),
+                authJpa.getEmail(),
+                "***hidden***",
+                false,
+                null);
 
         return User.from(jpaEntity.getId(), auth);
     }
