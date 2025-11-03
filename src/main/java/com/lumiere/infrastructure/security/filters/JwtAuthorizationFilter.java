@@ -8,7 +8,7 @@ import org.springframework.lang.NonNull;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import com.lumiere.infrastructure.security.permissions.RoutePermissions;
+import com.lumiere.presentation.routes.Routes;
 import com.lumiere.shared.constants.Methods;
 import com.lumiere.shared.constants.Roles;
 
@@ -21,19 +21,20 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
             @NonNull HttpServletResponse res,
             @NonNull FilterChain chain) throws ServletException, IOException {
 
-        Methods method = Methods.fromString(req.getMethod());
-        String uri = req.getRequestURI();
+        var method = Methods.fromString(req.getMethod());
+        var uri = req.getRequestURI();
         var auth = SecurityContextHolder.getContext().getAuthentication();
 
-        if (RoutePermissions.PUBLIC_ROUTES.stream().anyMatch(r -> r.path().equals(uri) && r.methods().contains(method))
+        if (Routes.PUBLIC_ROUTES.stream().anyMatch(r -> r.path().equals(uri) && r.methods().contains(method))
                 || auth == null) {
             chain.doFilter(req, res);
             return;
         }
 
-        if (RoutePermissions.PRIVATE_ROUTES.stream().noneMatch(r -> uri.startsWith(r.path())
+        if (Routes.PRIVATE_ROUTES.stream().noneMatch(r -> uri.startsWith(r.path())
                 && r.methods().contains(method)
-                && auth.getAuthorities().stream().map(a -> Roles.safeOf(a.getAuthority().replace("ROLE_", "")))
+                && auth.getAuthorities().stream()
+                        .map(a -> Roles.safeOf(a.getAuthority().replace("ROLE_", "")))
                         .flatMap(o -> o.stream())
                         .anyMatch(r.roles()::contains))) {
             res.sendError(HttpServletResponse.SC_FORBIDDEN, "Access denied");
