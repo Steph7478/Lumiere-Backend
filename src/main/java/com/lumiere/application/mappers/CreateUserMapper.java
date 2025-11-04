@@ -5,7 +5,7 @@ import com.lumiere.domain.entities.Auth;
 import com.lumiere.domain.services.AuthService;
 import com.lumiere.application.mappers.base.BaseMapper;
 
-public class AuthMapper implements BaseMapper<Auth, CreateUserDTO> {
+public class CreateUserMapper implements BaseMapper<Auth, CreateUserDTO> {
 
     @Override
     public CreateUserDTO toDTO(Auth entity) {

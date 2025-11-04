@@ -11,10 +11,10 @@ import com.lumiere.application.dtos.auth.CreateUserResponse;
 import com.lumiere.application.exceptions.EmailAlreadyExistsException;
 import com.lumiere.application.exceptions.TokenGenerationException;
 import com.lumiere.application.interfaces.ICreateUserUseCase;
+import com.lumiere.application.mappers.CreateUserMapper;
 import com.lumiere.domain.entities.Auth;
 import com.lumiere.domain.entities.User;
 import com.lumiere.domain.repositories.UserRepository;
-import com.lumiere.domain.services.AuthService;
 import com.lumiere.domain.services.UserService;
 import com.lumiere.infrastructure.http.auth.TokenService;
 import com.lumiere.shared.annotations.Loggable;
@@ -25,9 +25,11 @@ import com.lumiere.shared.constants.Roles;
 public class CreateUserUseCase implements ICreateUserUseCase {
 
     private final UserRepository userRepository;
+    private final CreateUserMapper authMapper;
 
-    public CreateUserUseCase(UserRepository userRepository) {
+    public CreateUserUseCase(UserRepository userRepository, CreateUserMapper authMapper) {
         this.userRepository = userRepository;
+        this.authMapper = authMapper;
     }
 
     @Override
@@ -38,8 +40,7 @@ public class CreateUserUseCase implements ICreateUserUseCase {
         if (userRepository.findByAuthEmail(dto.email()) != null) {
             throw new EmailAlreadyExistsException(dto.email());
         }
-
-        Auth auth = AuthService.createAuth(dto.name(), dto.email(), dto.password(), false);
+        Auth auth = authMapper.toEntity(dto);
         User user = UserService.createUser(auth);
         userRepository.save(user);
 
