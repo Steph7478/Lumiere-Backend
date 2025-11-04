@@ -8,6 +8,8 @@ import com.lumiere.application.exceptions.UserNotFoundException;
 import com.lumiere.application.interfaces.IGetMeUseCase;
 import com.lumiere.domain.entities.Auth;
 import com.lumiere.domain.repositories.AuthRepository;
+import com.lumiere.shared.annotations.Loggable;
+
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
@@ -18,12 +20,11 @@ public class GetMeUseCase implements IGetMeUseCase {
         this.authRepository = authRepository;
     }
 
+    @Loggable
     @Override
     @Transactional(readOnly = true)
     public GetMeResponse execute(GetMeRequest request) {
-        Auth auth = authRepository.findById(request.userId());
-        if (auth == null)
-            throw new UserNotFoundException();
+        Auth auth = authRepository.findById(request.userId()).orElseThrow(UserNotFoundException::new);
 
         return new GetMeResponse(auth.getName(), auth.isAdmin());
     }

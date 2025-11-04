@@ -31,10 +31,8 @@ public class LoginUseCase implements ILoginUseCase {
     @Override
     @Loggable
     public LoginResponse execute(LoginDTO dto) {
-        Auth auth = authRepository.findByEmail(dto.email());
-        if (auth == null) {
-            throw new UserNotFoundException();
-        }
+        Auth auth = authRepository.findByEmail(dto.email())
+                .orElseThrow(UserNotFoundException::new);
 
         boolean isPasswordValid = AuthService.checkPassword(auth, dto.password());
         if (!isPasswordValid) {

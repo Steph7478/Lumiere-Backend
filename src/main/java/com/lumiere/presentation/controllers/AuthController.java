@@ -54,6 +54,7 @@ public class AuthController extends BaseController {
         this.loginUserMapper = loginUserMapper;
     }
 
+    @Loggable
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     @GetMapping(Routes.PRIVATE.AUTH.ME)
     public ResponseEntity<GetMeResponse> getMe(@AuthenticationPrincipal UserDetails userDetails) {
