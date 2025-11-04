@@ -29,7 +29,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -57,8 +56,8 @@ public class AuthController extends BaseController {
     @Loggable
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     @GetMapping(Routes.PRIVATE.AUTH.ME)
-    public ResponseEntity<GetMeResponse> getMe(@AuthenticationPrincipal UserDetails userDetails) {
-        GetMeRequest request = new GetMeRequest(UUID.fromString(userDetails.getUsername()));
+    public ResponseEntity<GetMeResponse> getMe(@AuthenticationPrincipal UUID userId) {
+        GetMeRequest request = new GetMeRequest(userId);
         GetMeResponse response = getMeUseCase.execute(request);
         return ResponseEntity.ok(response);
     }
