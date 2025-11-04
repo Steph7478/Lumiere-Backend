@@ -1,0 +1,30 @@
+package com.lumiere.application.usecases.auth;
+
+import org.springframework.stereotype.Service;
+
+import com.lumiere.application.dtos.auth.GetMeRequest;
+import com.lumiere.application.dtos.auth.GetMeResponse;
+import com.lumiere.application.exceptions.UserNotFoundException;
+import com.lumiere.application.interfaces.IGetMeUseCase;
+import com.lumiere.domain.entities.Auth;
+import com.lumiere.domain.repositories.AuthRepository;
+import org.springframework.transaction.annotation.Transactional;
+
+@Service
+public class GetMeUseCase implements IGetMeUseCase {
+    private final AuthRepository authRepository;
+
+    public GetMeUseCase(AuthRepository authRepository) {
+        this.authRepository = authRepository;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public GetMeResponse execute(GetMeRequest request) {
+        Auth auth = authRepository.findById(request.userId());
+        if (auth == null)
+            throw new UserNotFoundException();
+
+        return new GetMeResponse(auth.getName(), auth.isAdmin());
+    }
+}
