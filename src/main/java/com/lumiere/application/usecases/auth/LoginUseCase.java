@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.lumiere.application.dtos.auth.LoginDTO;
 import com.lumiere.application.dtos.auth.LoginResponse;
@@ -30,6 +31,7 @@ public class LoginUseCase implements ILoginUseCase {
 
     @Override
     @Loggable
+    @Transactional(readOnly = true)
     public LoginResponse execute(LoginDTO dto) {
         Auth auth = authRepository.findByEmail(dto.email())
                 .orElseThrow(UserNotFoundException::new);
