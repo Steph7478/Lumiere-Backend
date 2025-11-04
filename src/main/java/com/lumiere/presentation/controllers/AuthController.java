@@ -10,15 +10,20 @@ import com.lumiere.presentation.mappers.auth.LoginUserMapper;
 import com.lumiere.shared.annotations.Loggable;
 import com.lumiere.application.dtos.auth.CreateUserDTO;
 import com.lumiere.application.dtos.auth.CreateUserResponse;
+import com.lumiere.application.dtos.auth.GetMeRequest;
+import com.lumiere.application.dtos.auth.GetMeResponse;
 import com.lumiere.application.dtos.auth.LoginDTO;
 import com.lumiere.application.dtos.auth.LoginResponse;
 import com.lumiere.application.interfaces.ICreateUserUseCase;
+import com.lumiere.application.interfaces.IGetMeUseCase;
 import com.lumiere.application.interfaces.ILoginUseCase;
 import com.lumiere.infrastructure.http.cookies.CookieFactory;
 import com.lumiere.presentation.routes.Routes;
 
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
+
+import java.util.UUID;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -32,24 +37,29 @@ public class AuthController extends BaseController {
 
     private final ICreateUserUseCase createUserUseCase;
     private final ILoginUseCase loginUseCase;
+    private final IGetMeUseCase getMeUseCase;
     private final CreateUserMapper createUserMapper;
     private final LoginUserMapper loginUserMapper;
 
     public AuthController(
             ICreateUserUseCase createUserUseCase,
             ILoginUseCase loginUseCase,
+            IGetMeUseCase getMeUseCase,
             CreateUserMapper createUserMapper,
             LoginUserMapper loginUserMapper) {
         this.createUserUseCase = createUserUseCase;
         this.loginUseCase = loginUseCase;
+        this.getMeUseCase = getMeUseCase;
         this.createUserMapper = createUserMapper;
         this.loginUserMapper = loginUserMapper;
     }
 
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     @GetMapping(Routes.PRIVATE.AUTH.ME)
-    public UserDetails getMe(@AuthenticationPrincipal UserDetails userDetails) {
-        return userDetails;
+    public ResponseEntity<GetMeResponse> getMe(@AuthenticationPrincipal UserDetails userDetails) {
+        GetMeRequest request = new GetMeRequest(UUID.fromString(userDetails.getUsername()));
+        GetMeResponse response = getMeUseCase.execute(request);
+        return ResponseEntity.ok(response);
     }
 
     @Loggable
