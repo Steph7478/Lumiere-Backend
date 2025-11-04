@@ -11,7 +11,7 @@ import com.lumiere.application.dtos.auth.CreateUserResponse;
 import com.lumiere.application.exceptions.EmailAlreadyExistsException;
 import com.lumiere.application.exceptions.TokenGenerationException;
 import com.lumiere.application.interfaces.ICreateUserUseCase;
-import com.lumiere.application.mappers.CreateUserMapper;
+import com.lumiere.application.mappers.CreateUserUseCaseMapper;
 import com.lumiere.domain.entities.Auth;
 import com.lumiere.domain.entities.User;
 import com.lumiere.domain.repositories.UserRepository;
@@ -25,9 +25,9 @@ import com.lumiere.shared.constants.Roles;
 public class CreateUserUseCase implements ICreateUserUseCase {
 
     private final UserRepository userRepository;
-    private final CreateUserMapper authMapper;
+    private final CreateUserUseCaseMapper authMapper;
 
-    public CreateUserUseCase(UserRepository userRepository, CreateUserMapper authMapper) {
+    public CreateUserUseCase(UserRepository userRepository, CreateUserUseCaseMapper authMapper) {
         this.userRepository = userRepository;
         this.authMapper = authMapper;
     }
