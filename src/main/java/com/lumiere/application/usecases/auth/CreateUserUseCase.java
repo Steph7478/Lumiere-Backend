@@ -37,9 +37,10 @@ public class CreateUserUseCase implements ICreateUserUseCase {
     @Loggable
     public CreateUserResponse execute(CreateUserDTO dto) {
 
-        if (userRepository.findByAuthEmail(dto.email()) != null) {
+        if (userRepository.findByAuthEmail(dto.email()).isPresent()) {
             throw new EmailAlreadyExistsException(dto.email());
         }
+
         Auth auth = authMapper.toEntity(dto);
         User user = UserService.createUser(auth);
         userRepository.save(user);
