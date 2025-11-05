@@ -7,7 +7,7 @@ import com.lumiere.infrastructure.jpa.AuthJpaEntity;
 import com.lumiere.infrastructure.mappers.base.BaseMapper;
 
 @Component
-public class AuthMapper extends BaseMapper<Auth, AuthJpaEntity> {
+public final class AuthMapper implements BaseMapper<Auth, AuthJpaEntity> {
 
     @Override
     public AuthJpaEntity toJpa(Auth domain) {

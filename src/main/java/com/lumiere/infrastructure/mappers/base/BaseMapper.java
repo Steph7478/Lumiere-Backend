@@ -1,8 +1,7 @@
 package com.lumiere.infrastructure.mappers.base;
 
-public abstract class BaseMapper<Domain, Jpa> {
+public interface BaseMapper<Domain, Jpa> {
+    Domain toDomain(Jpa jpaEntity);
 
-    public abstract Domain toDomain(Jpa jpaEntity);
-
-    public abstract Jpa toJpa(Domain domain);
+    Jpa toJpa(Domain domain);
 }

@@ -9,7 +9,7 @@ import com.lumiere.infrastructure.jpa.UserJpaEntity;
 import com.lumiere.infrastructure.mappers.base.BaseMapper;
 
 @Component
-public class UserMapper extends BaseMapper<User, UserJpaEntity> {
+public class UserMapper implements BaseMapper<User, UserJpaEntity> {
 
     @Override
     public User toDomain(UserJpaEntity jpaEntity) {

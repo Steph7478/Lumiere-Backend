@@ -2,68 +2,38 @@ package com.lumiere.infrastructure.repositories.Auth;
 
 import java.util.Objects;
 import java.util.Optional;
-import java.util.UUID;
 
 import org.springframework.stereotype.Repository;
 
 import com.lumiere.domain.entities.Auth;
 import com.lumiere.domain.repositories.AuthRepository;
+import com.lumiere.infrastructure.jpa.AuthJpaEntity;
 import com.lumiere.infrastructure.mappers.AuthMapper;
+import com.lumiere.infrastructure.repositories.base.BaseRepositoryAdapter;
 
 @Repository
-public class AuthJpaRepositoryAdapter implements AuthRepository {
+public class AuthJpaRepositoryAdapter extends BaseRepositoryAdapter<Auth, AuthJpaEntity>
+        implements AuthRepository {
 
-    private final AuthJpaRepository authJpaRepo;
     private final AuthMapper authMapper;
+    private final AuthJpaRepository authRepo;
 
-    public AuthJpaRepositoryAdapter(AuthJpaRepository authJpaRepo, AuthMapper authMapper) {
-        this.authJpaRepo = authJpaRepo;
+    public AuthJpaRepositoryAdapter(AuthJpaRepository authRepo, AuthMapper authMapper) {
+        super(authRepo, authMapper);
         this.authMapper = authMapper;
-    }
-
-    @Override
-    public Auth save(Auth auth) {
-        var entity = authMapper.toJpa(auth);
-        Objects.requireNonNull(entity, "entity cannot be null");
-        var saved = authJpaRepo.save(entity);
-
-        return authMapper.toDomainMe(saved);
-    }
-
-    @Override
-    public Optional<Auth> findById(UUID id) {
-        Objects.requireNonNull(id, "id cannot be null");
-        return authJpaRepo.findById(id)
-                .map(authMapper::toDomainMe);
+        this.authRepo = authRepo;
     }
 
     @Override
     public Optional<Auth> findByEmail(String email) {
         Objects.requireNonNull(email, "email cannot be null");
-        return authJpaRepo.findByEmail(email)
-                .map(authMapper::toDomain);
+        return authRepo.findByEmail(email)
+                .map(authMapper::toDomainMe);
+    }
+
+    @Override
+    public Auth save(Auth auth) {
+        var saved = super.save(auth);
+        return authMapper.toDomainMe(authMapper.toJpa(saved));
     }
 }
-
-// OBS:
-// this "::" is equal to:
-// .map(authEntity -> AuthMapper.toDomainSafe(authEntity))
-// .map(AuthMapper::toDomainSafe)
-
-// Example:
-
-// Method Reference:
-// @Override
-// public Auth findById(UUID id) {
-// return authJpaRepo.findById(id)
-// .map(AuthMapper::toDomainSafe)
-// .orElse(null);
-// }
-
-// Normal Lambda:
-// @Override
-// public Auth findById(UUID id) {
-// return authJpaRepo.findById(id)
-// .map(authEntity -> AuthMapper.toDomainSafe(authEntity))
-// .orElse(null);
-// }
