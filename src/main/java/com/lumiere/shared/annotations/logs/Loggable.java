@@ -1,4 +1,4 @@
-package com.lumiere.shared.annotations;
+package com.lumiere.shared.annotations.logs;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

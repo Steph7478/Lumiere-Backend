@@ -17,7 +17,7 @@ import com.lumiere.domain.entities.User;
 import com.lumiere.domain.repositories.UserRepository;
 import com.lumiere.domain.services.UserService;
 import com.lumiere.infrastructure.http.auth.TokenService;
-import com.lumiere.shared.annotations.Loggable;
+import com.lumiere.shared.annotations.logs.Loggable;
 import com.lumiere.shared.constants.Permissions;
 import com.lumiere.shared.constants.Roles;
 

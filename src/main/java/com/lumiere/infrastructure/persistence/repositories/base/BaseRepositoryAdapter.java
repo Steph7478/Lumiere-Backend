@@ -8,9 +8,10 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 import com.lumiere.infrastructure.mappers.base.BaseMapper;
+import com.lumiere.infrastructure.persistence.utils.EntityGraphBuilder;
+import com.lumiere.shared.annotations.validators.ValidEntityGraphPaths;
 
 public abstract class BaseRepositoryAdapter<D, E> implements BaseReader<D>, BaseWriter<D> {
 
@@ -33,8 +34,7 @@ public abstract class BaseRepositoryAdapter<D, E> implements BaseReader<D>, Base
     @Override
     public Optional<D> findById(UUID id) {
         Objects.requireNonNull(id, "id cannot be null");
-        return jpaRepository.findById(id)
-                .map(mapper::toDomain);
+        return jpaRepository.findById(id).map(mapper::toDomain);
     }
 
     @Override
@@ -45,35 +45,37 @@ public abstract class BaseRepositoryAdapter<D, E> implements BaseReader<D>, Base
     }
 
     public List<D> findAllWithEager(String... relations) {
-        Objects.requireNonNull(relations, "relations cannot be null");
+        if (relations == null)
+            relations = new String[0];
 
-        EntityGraph<E> graph = entityManager.createEntityGraph(entityClass);
-        for (String rel : relations) {
-            graph.addAttributeNodes(rel);
-        }
+        EntityGraph<E> graph = EntityGraphBuilder.build(entityManager, entityClass, List.of(relations));
 
-        TypedQuery<E> query = entityManager.createQuery(
-                "SELECT e FROM " + entityClass.getSimpleName() + " e",
-                entityClass);
-        query.setHint("jakarta.persistence.fetchgraph", graph);
+        String jpql = "SELECT e FROM " + entityClass.getName() + " e";
+        TypedQuery<E> query = entityManager.createQuery(jpql, entityClass);
+        query.setHint(EntityGraphBuilder.FETCHGRAPH_HINT, graph);
 
         return query.getResultList().stream()
                 .map(mapper::toDomain)
-                .collect(Collectors.toUnmodifiableList());
+                .toList();
     }
 
     public Optional<D> findByIdWithEager(UUID id, String... relations) {
-        Objects.requireNonNull(id, "id cannot be null");
-        Objects.requireNonNull(relations, "relations cannot be null");
+        Objects.requireNonNull(id, "ID cannot be null");
+        if (relations == null)
+            relations = new String[0];
 
-        EntityGraph<E> graph = entityManager.createEntityGraph(entityClass);
-        for (String rel : relations) {
-            graph.addAttributeNodes(rel);
+        EntityGraph<E> graph = EntityGraphBuilder.build(entityManager, entityClass, List.of(relations));
+
+        E entity;
+        try {
+            entity = entityManager.find(entityClass, id, Map.of(EntityGraphBuilder.FETCHGRAPH_HINT, graph));
+        } catch (IllegalArgumentException ex) {
+            throw new IllegalArgumentException(
+                    "Error fetching entity with invalid paths: " + Arrays.toString(relations), ex);
         }
 
-        Map<String, Object> hints = Map.of("jakarta.persistence.fetchgraph", graph);
-        E entity = entityManager.find(entityClass, id, hints);
-        return Optional.ofNullable(entity).map(mapper::toDomain);
+        return Optional.ofNullable(entity)
+                .map(mapper::toDomain);
     }
 
     @Override
@@ -101,6 +103,3 @@ public abstract class BaseRepositoryAdapter<D, E> implements BaseReader<D>, Base
         jpaRepository.deleteById(id);
     }
 }
-
-// Fetch Graphs:
-// https://jakarta.ee/learn/docs/jakartaee-tutorial/current/persist/persistence-entitygraphs/persistence-entitygraphs.html#_fetch_graphs

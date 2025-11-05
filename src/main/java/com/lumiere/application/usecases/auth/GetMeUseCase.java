@@ -8,7 +8,7 @@ import com.lumiere.application.exceptions.UserNotFoundException;
 import com.lumiere.application.interfaces.IGetMeUseCase;
 import com.lumiere.domain.entities.Auth;
 import com.lumiere.domain.repositories.AuthRepository;
-import com.lumiere.shared.annotations.Loggable;
+import com.lumiere.shared.annotations.logs.Loggable;
 
 import org.springframework.transaction.annotation.Transactional;
 

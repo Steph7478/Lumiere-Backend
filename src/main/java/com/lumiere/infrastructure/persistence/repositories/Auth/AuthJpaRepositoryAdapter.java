@@ -13,6 +13,7 @@ import com.lumiere.domain.repositories.AuthRepository;
 import com.lumiere.infrastructure.mappers.AuthMapper;
 import com.lumiere.infrastructure.persistence.entities.AuthJpaEntity;
 import com.lumiere.infrastructure.persistence.repositories.base.BaseRepositoryAdapter;
+import com.lumiere.shared.annotations.validators.ValidEntityGraphPaths;
 
 import jakarta.persistence.EntityManager;
 
@@ -52,7 +53,8 @@ public class AuthJpaRepositoryAdapter extends BaseRepositoryAdapter<Auth, AuthJp
     }
 
     @Override
-    public Optional<Auth> findByIdWithRelations(UUID id, String... relations) {
+    public Optional<Auth> findByIdWithRelations(UUID id,
+            @ValidEntityGraphPaths(root = AuthJpaEntity.class, allowedPaths = { "user" }) String... relations) {
         return findByIdWithEager(id, relations);
     }
 

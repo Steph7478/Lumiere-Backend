@@ -7,7 +7,6 @@ import com.lumiere.presentation.dtos.auth.LoginUserRequestDTO;
 import com.lumiere.presentation.dtos.auth.LoginUserResponseDTO;
 import com.lumiere.presentation.mappers.auth.CreateUserMapper;
 import com.lumiere.presentation.mappers.auth.LoginUserMapper;
-import com.lumiere.shared.annotations.Loggable;
 import com.lumiere.application.dtos.auth.CreateUserDTO;
 import com.lumiere.application.dtos.auth.CreateUserResponse;
 import com.lumiere.application.dtos.auth.GetMeRequest;
@@ -19,6 +18,7 @@ import com.lumiere.application.interfaces.IGetMeUseCase;
 import com.lumiere.application.interfaces.ILoginUseCase;
 import com.lumiere.infrastructure.http.cookies.CookieFactory;
 import com.lumiere.presentation.routes.Routes;
+import com.lumiere.shared.annotations.logs.Loggable;
 
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
