@@ -2,6 +2,7 @@ package com.lumiere.infrastructure.repositories.Auth;
 
 import java.util.Objects;
 import java.util.Optional;
+import java.util.UUID;
 
 import org.springframework.stereotype.Repository;
 
@@ -25,10 +26,17 @@ public class AuthJpaRepositoryAdapter extends BaseRepositoryAdapter<Auth, AuthJp
     }
 
     @Override
+    public Optional<Auth> findById(UUID id) {
+        Objects.requireNonNull(id, "id cannot be null");
+        return authRepo.findById(id)
+                .map(authMapper::toDomainMe);
+    }
+
+    @Override
     public Optional<Auth> findByEmail(String email) {
         Objects.requireNonNull(email, "email cannot be null");
         return authRepo.findByEmail(email)
-                .map(authMapper::toDomainMe);
+                .map(authMapper::toDomain);
     }
 
     @Override
