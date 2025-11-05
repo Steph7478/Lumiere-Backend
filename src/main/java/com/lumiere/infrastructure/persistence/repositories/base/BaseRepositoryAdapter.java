@@ -11,7 +11,6 @@ import java.util.*;
 
 import com.lumiere.infrastructure.mappers.base.BaseMapper;
 import com.lumiere.infrastructure.persistence.utils.EntityGraphBuilder;
-import com.lumiere.shared.annotations.validators.ValidEntityGraphPaths;
 
 public abstract class BaseRepositoryAdapter<D, E> implements BaseReader<D>, BaseWriter<D> {
 
