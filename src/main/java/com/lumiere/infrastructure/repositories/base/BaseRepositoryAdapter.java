@@ -101,3 +101,6 @@ public abstract class BaseRepositoryAdapter<D, E> implements BaseReader<D>, Base
         jpaRepository.deleteById(id);
     }
 }
+
+// Fetch Graphs:
+// https://jakarta.ee/learn/docs/jakartaee-tutorial/current/persist/persistence-entitygraphs/persistence-entitygraphs.html#_fetch_graphs
