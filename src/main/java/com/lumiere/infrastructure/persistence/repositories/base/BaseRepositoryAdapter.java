@@ -44,13 +44,11 @@ public abstract class BaseRepositoryAdapter<D, E> implements BaseReader<D>, Base
     }
 
     public List<D> findAllWithEager(String... relations) {
-        if (relations == null)
-            relations = new String[0];
+        final EntityGraph<E> graph = EntityGraphBuilder.build(entityManager, entityClass, Arrays.asList(relations));
 
-        EntityGraph<E> graph = EntityGraphBuilder.build(entityManager, entityClass, List.of(relations));
+        final String jpql = "SELECT e FROM " + entityClass.getName() + " e";
+        final TypedQuery<E> query = entityManager.createQuery(jpql, entityClass);
 
-        String jpql = "SELECT e FROM " + entityClass.getName() + " e";
-        TypedQuery<E> query = entityManager.createQuery(jpql, entityClass);
         query.setHint(EntityGraphBuilder.FETCHGRAPH_HINT, graph);
 
         return query.getResultList().stream()
@@ -59,20 +57,14 @@ public abstract class BaseRepositoryAdapter<D, E> implements BaseReader<D>, Base
     }
 
     public Optional<D> findByIdWithEager(UUID id, String... relations) {
-        Objects.requireNonNull(id, "ID cannot be null");
-        if (relations == null)
-            relations = new String[0];
+        Objects.requireNonNull(id, "ID must not be null");
 
-        EntityGraph<E> graph = EntityGraphBuilder.build(entityManager, entityClass, List.of(relations));
+        final EntityGraph<E> graph = EntityGraphBuilder.build(entityManager, entityClass, Arrays.asList(relations));
 
-        E entity;
-        try {
-            entity = entityManager.find(entityClass, id, Map.of(EntityGraphBuilder.FETCHGRAPH_HINT, graph));
-        } catch (IllegalArgumentException ex) {
-            throw new IllegalArgumentException(
-                    "Error fetching entity with invalid paths: " + Arrays.toString(relations), ex);
-        }
-
+        final E entity = entityManager.find(
+                entityClass,
+                id,
+                Map.of(EntityGraphBuilder.FETCHGRAPH_HINT, graph));
         return Optional.ofNullable(entity)
                 .map(mapper::toDomain);
     }

@@ -8,6 +8,9 @@ import java.util.Objects;
 
 public final class EntityGraphBuilder {
 
+    public static final String FETCHGRAPH_HINT = "jakarta.persistence.fetchgraph";
+    public static final String LOADGRAPH_HINT = "jakarta.persistence.loadgraph";
+
     private EntityGraphBuilder() {
     }
 
@@ -17,12 +20,11 @@ public final class EntityGraphBuilder {
 
         EntityGraph<T> graph = em.createEntityGraph(entityClass);
 
-        if (paths == null || paths.isEmpty())
-            return graph;
-
-        for (String path : paths) {
-            if (path != null && !path.isBlank()) {
-                addSubgraph(graph, path.trim().split("\\."));
+        if (paths != null) {
+            for (String path : paths) {
+                if (path != null && !path.isBlank()) {
+                    addSubgraph(graph, path.trim().split("\\."));
+                }
             }
         }
 
@@ -30,15 +32,16 @@ public final class EntityGraphBuilder {
     }
 
     private static void addSubgraph(EntityGraph<?> graph, String[] parts) {
-        Subgraph<?> parent = null;
+        Subgraph<?> currentGraph = null;
         for (String part : parts) {
-            part = part.trim();
-            if (part.isEmpty())
+            String trimmedPart = part.trim();
+            if (trimmedPart.isEmpty()) {
                 throw new IllegalArgumentException("Invalid path part in: " + String.join(".", parts));
-            parent = (parent == null) ? graph.addSubgraph(part) : parent.addSubgraph(part);
+            }
+
+            currentGraph = (currentGraph == null)
+                    ? graph.addSubgraph(trimmedPart)
+                    : currentGraph.addSubgraph(trimmedPart);
         }
     }
-
-    public static final String FETCHGRAPH_HINT = "jakarta.persistence.fetchgraph";
-    public static final String LOADGRAPH_HINT = "jakarta.persistence.loadgraph";
 }

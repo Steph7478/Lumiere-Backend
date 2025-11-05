@@ -30,30 +30,25 @@ public class ValidEntityGraphPathsValidator
 
     @Override
     public boolean isValid(String[] paths, ConstraintValidatorContext context) {
-        if (paths == null || paths.length == 0)
+        if (paths == null || paths.length == 0) {
             return true;
+        }
 
-        boolean skipMetamodelCheck = rootEntity.equals(Object.class);
+        final boolean skipMetamodelCheck = rootEntity.equals(Object.class);
 
         for (String path : paths) {
-            if (path == null || path.isBlank())
+            if (path == null || path.isBlank()) {
                 continue;
-            String trimmedPath = path.trim();
+            }
+            final String trimmedPath = path.trim();
 
             if (!allowedPaths.isEmpty() && !allowedPaths.contains(trimmedPath)) {
-                context.disableDefaultConstraintViolation();
-                context.buildConstraintViolationWithTemplate(
-                        "Path not allowed by security whitelist: '" + trimmedPath + "'.")
-                        .addConstraintViolation();
-                return false;
+                return reject(context, "Path not allowed by security whitelist: '" + trimmedPath + "'.");
             }
 
             if (!skipMetamodelCheck && !isValidPath(trimmedPath)) {
-                context.disableDefaultConstraintViolation();
-                context.buildConstraintViolationWithTemplate(
-                        "Invalid entity graph path: '" + trimmedPath + "' in entity " + rootEntity.getSimpleName())
-                        .addConstraintViolation();
-                return false;
+                return reject(context,
+                        "Invalid entity graph path: '" + trimmedPath + "' in entity " + rootEntity.getSimpleName());
             }
         }
         return true;
@@ -61,10 +56,8 @@ public class ValidEntityGraphPathsValidator
 
     private boolean isValidPath(String path) {
         try {
-            String[] parts = path.split("\\.");
             Class<?> current = rootEntity;
-
-            for (String part : parts) {
+            for (String part : path.split("\\.")) {
                 EntityType<?> entityType = em.getMetamodel().entity(current);
                 Attribute<?, ?> attr = entityType.getAttribute(part);
                 current = attr.getJavaType();
@@ -73,5 +66,11 @@ public class ValidEntityGraphPathsValidator
         } catch (IllegalArgumentException ex) {
             return false;
         }
+    }
+
+    private boolean reject(ConstraintValidatorContext context, String message) {
+        context.disableDefaultConstraintViolation();
+        context.buildConstraintViolationWithTemplate(message).addConstraintViolation();
+        return false;
     }
 }
