@@ -1,7 +1,9 @@
 package com.lumiere.infrastructure.repositories.User;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.UUID;
 
 import org.springframework.stereotype.Repository;
 
@@ -14,6 +16,8 @@ import com.lumiere.infrastructure.mappers.UserMapper;
 import com.lumiere.infrastructure.repositories.Auth.AuthJpaRepository;
 import com.lumiere.infrastructure.repositories.base.BaseRepositoryAdapter;
 
+import jakarta.persistence.EntityManager;
+
 @Repository
 public class UserJpaRepositoryAdapter extends BaseRepositoryAdapter<User, UserJpaEntity>
         implements UserRepository {
@@ -25,9 +29,9 @@ public class UserJpaRepositoryAdapter extends BaseRepositoryAdapter<User, UserJp
             UserJpaRepository userRepo,
             AuthJpaRepository authRepo,
             AuthMapper authMapper,
-            UserMapper userMapper) {
-
-        super(userRepo, userMapper);
+            UserMapper userMapper,
+            EntityManager entityManager) {
+        super(userRepo, userMapper, entityManager, UserJpaEntity.class);
         this.authRepo = authRepo;
         this.authMapper = authMapper;
     }
@@ -38,6 +42,7 @@ public class UserJpaRepositoryAdapter extends BaseRepositoryAdapter<User, UserJp
         Objects.requireNonNull(authEntity, "auth entity cannot be null");
         AuthJpaEntity savedAuth = authRepo.save(authEntity);
         user.setAuth(authMapper.toDomain(savedAuth));
+
         return super.save(user);
     }
 
@@ -47,4 +52,15 @@ public class UserJpaRepositoryAdapter extends BaseRepositoryAdapter<User, UserJp
                 .findByAuthEmail(email)
                 .map(((UserMapper) mapper)::toDomain);
     }
+
+    @Override
+    public Optional<User> findByIdWithRelations(UUID id, String... relations) {
+        return findByIdWithEager(id, relations);
+    }
+
+    @Override
+    public List<User> findAllWithRelations() {
+        return findAllWithEager("auth");
+    }
+
 }

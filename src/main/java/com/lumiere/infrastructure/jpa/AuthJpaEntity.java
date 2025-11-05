@@ -11,7 +11,7 @@ import com.lumiere.infrastructure.jpa.base.BaseJpaEntity;
 @Entity
 public class AuthJpaEntity extends BaseJpaEntity {
 
-    @OneToOne(mappedBy = "auth", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToOne(mappedBy = "auth", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private UserJpaEntity user;
 
     @Column(nullable = false)
