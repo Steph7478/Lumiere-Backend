@@ -7,6 +7,7 @@ import org.springframework.stereotype.Repository;
 
 import com.lumiere.domain.entities.User;
 import com.lumiere.domain.repositories.UserRepository;
+import com.lumiere.infrastructure.jpa.AuthJpaEntity;
 import com.lumiere.infrastructure.jpa.UserJpaEntity;
 import com.lumiere.infrastructure.mappers.AuthMapper;
 import com.lumiere.infrastructure.mappers.UserMapper;
@@ -33,9 +34,9 @@ public class UserJpaRepositoryAdapter extends BaseRepositoryAdapter<User, UserJp
 
     @Override
     public User save(User user) {
-        var authEntity = authMapper.toJpa(user.getAuth());
+        AuthJpaEntity authEntity = authMapper.toJpa(user.getAuth());
         Objects.requireNonNull(authEntity, "auth entity cannot be null");
-        var savedAuth = authRepo.save(authEntity);
+        AuthJpaEntity savedAuth = authRepo.save(authEntity);
         user.setAuth(authMapper.toDomain(savedAuth));
         return super.save(user);
     }

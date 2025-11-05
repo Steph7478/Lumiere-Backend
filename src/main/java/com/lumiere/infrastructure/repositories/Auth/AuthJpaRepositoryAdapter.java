@@ -41,7 +41,7 @@ public class AuthJpaRepositoryAdapter extends BaseRepositoryAdapter<Auth, AuthJp
 
     @Override
     public Auth save(Auth auth) {
-        var saved = super.save(auth);
+        Auth saved = super.save(auth);
         return authMapper.toDomainMe(authMapper.toJpa(saved));
     }
 }
