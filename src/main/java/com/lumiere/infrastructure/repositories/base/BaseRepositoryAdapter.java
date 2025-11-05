@@ -22,6 +22,7 @@ public abstract class BaseRepositoryAdapter<D, E> implements BaseReader<D>, Base
     @Override
     public Optional<D> findById(UUID id) {
         Objects.requireNonNull(id, "id cannot be null");
+
         return jpaRepository.findById(id)
                 .map(mapper::toDomain);
     }
@@ -37,8 +38,10 @@ public abstract class BaseRepositoryAdapter<D, E> implements BaseReader<D>, Base
     public D save(D domain) {
         Objects.requireNonNull(domain, "domain cannot be null");
         E entity = mapper.toJpa(domain);
+
         Objects.requireNonNull(entity, "entity cannot be null");
         E saved = jpaRepository.save(entity);
+
         return mapper.toDomain(saved);
     }
 
@@ -46,8 +49,10 @@ public abstract class BaseRepositoryAdapter<D, E> implements BaseReader<D>, Base
     public D update(D domain) {
         Objects.requireNonNull(domain, "domain cannot be null");
         E entity = mapper.toJpa(domain);
+
         Objects.requireNonNull(entity, "entity cannot be null");
         E updated = jpaRepository.save(entity);
+
         return mapper.toDomain(updated);
     }
 
