@@ -1,14 +1,10 @@
 package com.lumiere.domain.repositories;
 
 import java.util.Optional;
-import java.util.UUID;
 
 import com.lumiere.domain.entities.User;
+import com.lumiere.domain.repositories.base.BaseRepository;
 
-public interface UserRepository {
-    User save(User user);
-
-    Optional<User> findById(UUID id);
-
+public interface UserRepository extends BaseRepository<User> {
     Optional<User> findByAuthEmail(String email);
 }
