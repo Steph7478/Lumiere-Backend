@@ -1,7 +1,10 @@
 package com.lumiere.application.dtos.auth;
 
+import java.util.UUID;
+
 public record GetMeResponse(
-        String name,
-        boolean isAdmin) {
+                UUID userId,
+                String name,
+                boolean isAdmin) {
 
 }

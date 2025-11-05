@@ -24,8 +24,9 @@ public class GetMeUseCase implements IGetMeUseCase {
     @Override
     @Transactional(readOnly = true)
     public GetMeResponse execute(GetMeRequest request) {
-        Auth auth = authRepository.findById(request.userId()).orElseThrow(UserNotFoundException::new);
+        Auth auth = authRepository.findByIdWithRelations(request.userId(), "user")
+                .orElseThrow(UserNotFoundException::new);
 
-        return new GetMeResponse(auth.getName(), auth.isAdmin());
+        return new GetMeResponse(auth.getUser().getId(), auth.getName(), auth.isAdmin());
     }
 }

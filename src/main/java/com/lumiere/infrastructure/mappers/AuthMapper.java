@@ -1,6 +1,7 @@
 package com.lumiere.infrastructure.mappers;
 
 import org.springframework.stereotype.Component;
+import java.util.Optional;
 
 import com.lumiere.domain.entities.Auth;
 import com.lumiere.infrastructure.mappers.base.BaseMapper;
@@ -8,6 +9,12 @@ import com.lumiere.infrastructure.persistence.entities.AuthJpaEntity;
 
 @Component
 public final class AuthMapper implements BaseMapper<Auth, AuthJpaEntity> {
+
+    private final UserMapper userMapper;
+
+    public AuthMapper(UserMapper userMapper) {
+        this.userMapper = userMapper;
+    }
 
     @Override
     public AuthJpaEntity toJpa(Auth domain) {
@@ -21,20 +28,32 @@ public final class AuthMapper implements BaseMapper<Auth, AuthJpaEntity> {
 
     @Override
     public Auth toDomain(AuthJpaEntity jpaEntity) {
-        return Auth.from(
+        Auth auth = Auth.from(
                 jpaEntity.getName(),
                 jpaEntity.getEmail(),
                 jpaEntity.getPassword(),
                 jpaEntity.getIsAdmin() != null && jpaEntity.getIsAdmin(),
                 jpaEntity.getId());
+
+        Optional.ofNullable(jpaEntity.getUser())
+                .map(userMapper::toDomain)
+                .ifPresent(auth::setUser);
+
+        return auth;
     }
 
     public Auth toDomainMe(AuthJpaEntity jpaEntity) {
-        return Auth.from(
+        Auth auth = Auth.from(
                 jpaEntity.getName(),
                 jpaEntity.getEmail(),
                 "***hidden***",
                 jpaEntity.getIsAdmin() != null && jpaEntity.getIsAdmin(),
-                jpaEntity.getId());
+                null);
+
+        Optional.ofNullable(jpaEntity.getUser())
+                .map(userMapper::toDomain)
+                .ifPresent(auth::setUser);
+
+        return auth;
     }
 }
