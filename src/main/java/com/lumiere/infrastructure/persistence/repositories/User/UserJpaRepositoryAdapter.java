@@ -1,4 +1,4 @@
-package com.lumiere.infrastructure.repositories.User;
+package com.lumiere.infrastructure.persistence.repositories.User;
 
 import java.util.List;
 import java.util.Objects;
@@ -9,12 +9,12 @@ import org.springframework.stereotype.Repository;
 
 import com.lumiere.domain.entities.User;
 import com.lumiere.domain.repositories.UserRepository;
-import com.lumiere.infrastructure.jpa.AuthJpaEntity;
-import com.lumiere.infrastructure.jpa.UserJpaEntity;
 import com.lumiere.infrastructure.mappers.AuthMapper;
 import com.lumiere.infrastructure.mappers.UserMapper;
-import com.lumiere.infrastructure.repositories.Auth.AuthJpaRepository;
-import com.lumiere.infrastructure.repositories.base.BaseRepositoryAdapter;
+import com.lumiere.infrastructure.persistence.entities.AuthJpaEntity;
+import com.lumiere.infrastructure.persistence.entities.UserJpaEntity;
+import com.lumiere.infrastructure.persistence.repositories.Auth.AuthJpaRepository;
+import com.lumiere.infrastructure.persistence.repositories.base.BaseRepositoryAdapter;
 
 import jakarta.persistence.EntityManager;
 

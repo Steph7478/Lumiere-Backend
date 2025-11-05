@@ -1,4 +1,4 @@
-package com.lumiere.infrastructure.repositories.base;
+package com.lumiere.infrastructure.persistence.repositories.base;
 
 import java.util.UUID;
 

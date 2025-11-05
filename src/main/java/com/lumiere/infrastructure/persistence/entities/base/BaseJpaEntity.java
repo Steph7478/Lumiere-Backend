@@ -1,4 +1,4 @@
-package com.lumiere.infrastructure.jpa.base;
+package com.lumiere.infrastructure.persistence.entities.base;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Id;
