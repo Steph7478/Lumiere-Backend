@@ -102,7 +102,7 @@ class ValidEntityGraphPathsValidatorTest {
         assertThat(validator.isValid(new String[] { invalidPath }, context)).isFalse();
 
         verify(context)
-                .buildConstraintViolationWithTemplate("Path not allowed by security whitelist: '" + invalidPath + "'.");
+                .buildConstraintViolationWithTemplate("Path not allowed by security whitelist");
         verify(context).disableDefaultConstraintViolation();
 
         assertThat(validator.isValid(null, context)).isTrue();
@@ -135,7 +135,7 @@ class ValidEntityGraphPathsValidatorTest {
 
         assertThat(validator.isValid(invalidPaths.toArray(new String[0]), context)).isFalse();
 
-        verify(context).buildConstraintViolationWithTemplate("Path not allowed by security whitelist: 'wrong.path'.");
+        verify(context).buildConstraintViolationWithTemplate("Path not allowed by security whitelist");
         verify(em, never()).getMetamodel();
     }
 
@@ -200,7 +200,7 @@ class ValidEntityGraphPathsValidatorTest {
 
         assertThat(validator.isValid(new String[] { invalidPath }, context)).isFalse();
 
-        String expectedMessage = "Invalid entity graph path: 'invalid.field' in entity User";
+        String expectedMessage = "Invalid Entity Path";
         verify(context).buildConstraintViolationWithTemplate(expectedMessage);
     }
 }

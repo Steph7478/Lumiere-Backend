@@ -45,7 +45,7 @@ public class ValidEntityGraphPathsValidator
                 return reject(context, "Path not allowed by security whitelist");
 
             if (!skipMetamodelCheck && !isValidPath(trimmedPath))
-                return reject(context, "Invalid Path");
+                return reject(context, "Invalid Entity Path");
 
         }
         return true;
