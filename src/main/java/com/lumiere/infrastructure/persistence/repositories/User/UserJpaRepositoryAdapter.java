@@ -8,6 +8,7 @@ import java.util.UUID;
 import org.springframework.stereotype.Repository;
 
 import com.lumiere.domain.entities.User;
+import com.lumiere.domain.readmodels.AuthInfoView;
 import com.lumiere.domain.repositories.UserRepository;
 import com.lumiere.infrastructure.mappers.AuthMapper;
 import com.lumiere.infrastructure.mappers.UserMapper;
@@ -48,13 +49,6 @@ public class UserJpaRepositoryAdapter extends BaseRepositoryAdapter<User, UserJp
     }
 
     @Override
-    public Optional<User> findByAuthEmail(String email) {
-        return ((UserJpaRepository) jpaRepository)
-                .findByAuthEmail(email)
-                .map(((UserMapper) mapper)::toDomain);
-    }
-
-    @Override
     public Optional<User> findByIdWithRelations(
             UUID id,
             @ValidEntityGraphPaths(root = UserJpaEntity.class, allowedPaths = { "auth" }) String... relations) {
@@ -66,4 +60,15 @@ public class UserJpaRepositoryAdapter extends BaseRepositoryAdapter<User, UserJp
         return findAllWithEager("auth");
     }
 
+    @Override
+    public Optional<User> findByAuthEmail(String email) {
+        return ((UserJpaRepository) jpaRepository)
+                .findByAuthEmail(email)
+                .map(((UserMapper) mapper)::toDomain);
+    }
+
+    @Override
+    public Optional<AuthInfoView> findAuthInfoByAuthId(UUID id) {
+        return ((UserJpaRepository) jpaRepository).findAuthInfoByAuthId(id);
+    }
 }
