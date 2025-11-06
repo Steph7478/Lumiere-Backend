@@ -47,12 +47,6 @@ public class AuthJpaRepositoryAdapter extends BaseRepositoryAdapter<Auth, AuthJp
     }
 
     @Override
-    public Auth save(Auth auth) {
-        Auth saved = super.save(auth);
-        return authMapper.toDomain(authMapper.toJpa(saved));
-    }
-
-    @Override
     public Optional<Auth> findByIdWithRelations(UUID id,
             @ValidEntityGraphPaths(root = AuthJpaEntity.class, allowedPaths = { "user" }) String... relations) {
         return findByIdWithEager(id, relations);

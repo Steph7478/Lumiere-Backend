@@ -39,16 +39,6 @@ public class UserJpaRepositoryAdapter extends BaseRepositoryAdapter<User, UserJp
     }
 
     @Override
-    public User save(User user) {
-        AuthJpaEntity authEntity = authMapper.toJpa(user.getAuth());
-        Objects.requireNonNull(authEntity, "auth entity cannot be null");
-        AuthJpaEntity savedAuth = authRepo.save(authEntity);
-        user.setAuth(authMapper.toDomainFull(savedAuth));
-
-        return super.save(user);
-    }
-
-    @Override
     public Optional<User> findByIdWithRelations(
             UUID id,
             @ValidEntityGraphPaths(root = UserJpaEntity.class, allowedPaths = { "auth" }) String... relations) {
