@@ -30,26 +30,23 @@ public class ValidEntityGraphPathsValidator
 
     @Override
     public boolean isValid(String[] paths, ConstraintValidatorContext context) {
-        if (paths == null || paths.length == 0) {
+        if (paths == null || paths.length == 0)
             return true;
-        }
 
         final boolean skipMetamodelCheck = rootEntity.equals(Object.class);
 
         for (String path : paths) {
-            if (path == null || path.isBlank()) {
+            if (path == null || path.isBlank())
                 continue;
-            }
+
             final String trimmedPath = path.trim();
 
-            if (!allowedPaths.isEmpty() && !allowedPaths.contains(trimmedPath)) {
-                return reject(context, "Path not allowed by security whitelist: '" + trimmedPath + "'.");
-            }
+            if (!allowedPaths.isEmpty() && !allowedPaths.contains(trimmedPath))
+                return reject(context, "Path not allowed by security whitelist");
 
-            if (!skipMetamodelCheck && !isValidPath(trimmedPath)) {
-                return reject(context,
-                        "Invalid entity graph path: '" + trimmedPath + "' in entity " + rootEntity.getSimpleName());
-            }
+            if (!skipMetamodelCheck && !isValidPath(trimmedPath))
+                return reject(context, "Invalid Path");
+
         }
         return true;
     }
@@ -57,11 +54,13 @@ public class ValidEntityGraphPathsValidator
     private boolean isValidPath(String path) {
         try {
             Class<?> current = rootEntity;
+
             for (String part : path.split("\\.")) {
                 EntityType<?> entityType = em.getMetamodel().entity(current);
                 Attribute<?, ?> attr = entityType.getAttribute(part);
                 current = attr.getJavaType();
             }
+
             return true;
         } catch (IllegalArgumentException ex) {
             return false;
