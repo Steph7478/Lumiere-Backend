@@ -3,6 +3,7 @@ package com.lumiere.domain.services;
 import com.lumiere.domain.entities.Auth;
 import com.lumiere.infrastructure.security.utils.PasswordHasher;
 
+import java.util.Optional;
 import java.util.UUID;
 
 public class AuthService {
@@ -15,17 +16,19 @@ public class AuthService {
         return Auth.from(name, email, hashed, isAdmin, UUID.randomUUID());
     }
 
-    public static Auth updatePassword(Auth auth, String newRawPassword) {
-        String hashed = PasswordHasher.hash(newRawPassword);
-        return auth.withPasswordHash(hashed);
-    }
+    public static Auth update(
+            Auth auth,
+            Optional<String> newName,
+            Optional<String> newEmail,
+            Optional<String> newRawPassword) {
 
-    public static Auth updateName(Auth auth, String newName) {
-        return auth.withName(newName);
-    }
+        Optional<String> newHashedPassword = newRawPassword
+                .map(PasswordHasher::hash);
 
-    public static Auth updateEmail(Auth auth, String newEmail) {
-        return auth.withEmail(newEmail);
+        return auth.update(
+                newName,
+                newEmail,
+                newHashedPassword);
     }
 
     public static boolean checkPassword(Auth auth, String rawPassword) {
