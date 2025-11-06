@@ -1,7 +1,6 @@
 package com.lumiere.infrastructure.persistence.repositories.User;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -10,9 +9,7 @@ import org.springframework.stereotype.Repository;
 import com.lumiere.domain.entities.User;
 import com.lumiere.domain.readmodels.AuthInfoView;
 import com.lumiere.domain.repositories.UserRepository;
-import com.lumiere.infrastructure.mappers.AuthMapper;
 import com.lumiere.infrastructure.mappers.UserMapper;
-import com.lumiere.infrastructure.persistence.entities.AuthJpaEntity;
 import com.lumiere.infrastructure.persistence.entities.UserJpaEntity;
 import com.lumiere.infrastructure.persistence.repositories.Auth.AuthJpaRepository;
 import com.lumiere.infrastructure.persistence.repositories.base.BaseRepositoryAdapter;
@@ -24,18 +21,12 @@ import jakarta.persistence.EntityManager;
 public class UserJpaRepositoryAdapter extends BaseRepositoryAdapter<User, UserJpaEntity>
         implements UserRepository {
 
-    private final AuthJpaRepository authRepo;
-    private final AuthMapper authMapper;
-
     public UserJpaRepositoryAdapter(
             UserJpaRepository userRepo,
             AuthJpaRepository authRepo,
-            AuthMapper authMapper,
             UserMapper userMapper,
             EntityManager entityManager) {
         super(userRepo, userMapper, entityManager, UserJpaEntity.class);
-        this.authRepo = authRepo;
-        this.authMapper = authMapper;
     }
 
     @Override
