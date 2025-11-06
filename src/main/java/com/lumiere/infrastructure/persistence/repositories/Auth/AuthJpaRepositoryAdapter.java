@@ -1,4 +1,4 @@
-package com.lumiere.infrastructure.persistence.repositories.Auth;
+package com.lumiere.infrastructure.persistence.repositories.auth;
 
 import java.util.List;
 import java.util.Objects;

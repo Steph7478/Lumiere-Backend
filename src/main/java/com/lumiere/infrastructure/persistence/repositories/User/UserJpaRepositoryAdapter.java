@@ -1,4 +1,4 @@
-package com.lumiere.infrastructure.persistence.repositories.User;
+package com.lumiere.infrastructure.persistence.repositories.user;
 
 import java.util.List;
 import java.util.Optional;
@@ -11,7 +11,7 @@ import com.lumiere.domain.readmodels.AuthInfoView;
 import com.lumiere.domain.repositories.UserRepository;
 import com.lumiere.infrastructure.mappers.UserMapper;
 import com.lumiere.infrastructure.persistence.entities.UserJpaEntity;
-import com.lumiere.infrastructure.persistence.repositories.Auth.AuthJpaRepository;
+import com.lumiere.infrastructure.persistence.repositories.auth.AuthJpaRepository;
 import com.lumiere.infrastructure.persistence.repositories.base.BaseRepositoryAdapter;
 import com.lumiere.shared.annotations.validators.ValidEntityGraphPaths;
 

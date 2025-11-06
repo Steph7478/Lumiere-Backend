@@ -1,4 +1,4 @@
-package com.lumiere.infrastructure.persistence.repositories.User;
+package com.lumiere.infrastructure.persistence.repositories.user;
 
 import java.util.Optional;
 import java.util.UUID;
