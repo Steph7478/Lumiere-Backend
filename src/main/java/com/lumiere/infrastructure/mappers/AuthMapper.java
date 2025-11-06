@@ -31,6 +31,21 @@ public final class AuthMapper implements BaseMapper<Auth, AuthJpaEntity> {
         Auth auth = Auth.from(
                 jpaEntity.getName(),
                 jpaEntity.getEmail(),
+                "***hidden***",
+                jpaEntity.getIsAdmin() != null && jpaEntity.getIsAdmin(),
+                null);
+
+        Optional.ofNullable(jpaEntity.getUser())
+                .map(userMapper::toDomain)
+                .ifPresent(auth::setUser);
+
+        return auth;
+    }
+
+    public Auth toDomainFull(AuthJpaEntity jpaEntity) {
+        Auth auth = Auth.from(
+                jpaEntity.getName(),
+                jpaEntity.getEmail(),
                 jpaEntity.getPassword(),
                 jpaEntity.getIsAdmin() != null && jpaEntity.getIsAdmin(),
                 jpaEntity.getId());
@@ -42,18 +57,4 @@ public final class AuthMapper implements BaseMapper<Auth, AuthJpaEntity> {
         return auth;
     }
 
-    public Auth toDomainMe(AuthJpaEntity jpaEntity) {
-        Auth auth = Auth.from(
-                jpaEntity.getName(),
-                jpaEntity.getEmail(),
-                "***hidden***",
-                jpaEntity.getIsAdmin() != null && jpaEntity.getIsAdmin(),
-                null);
-
-        Optional.ofNullable(jpaEntity.getUser())
-                .map(userMapper::toDomain)
-                .ifPresent(auth::setUser);
-
-        return auth;
-    }
 }

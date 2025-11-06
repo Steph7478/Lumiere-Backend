@@ -43,13 +43,13 @@ public class AuthJpaRepositoryAdapter extends BaseRepositoryAdapter<Auth, AuthJp
     public Optional<Auth> findByEmail(String email) {
         Objects.requireNonNull(email, "email cannot be null");
         return authRepo.findByEmail(email)
-                .map(authMapper::toDomain);
+                .map(authMapper::toDomainFull);
     }
 
     @Override
     public Auth save(Auth auth) {
         Auth saved = super.save(auth);
-        return authMapper.toDomainMe(authMapper.toJpa(saved));
+        return authMapper.toDomain(authMapper.toJpa(saved));
     }
 
     @Override

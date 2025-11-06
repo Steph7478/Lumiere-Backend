@@ -43,7 +43,7 @@ public class UserJpaRepositoryAdapter extends BaseRepositoryAdapter<User, UserJp
         AuthJpaEntity authEntity = authMapper.toJpa(user.getAuth());
         Objects.requireNonNull(authEntity, "auth entity cannot be null");
         AuthJpaEntity savedAuth = authRepo.save(authEntity);
-        user.setAuth(authMapper.toDomain(savedAuth));
+        user.setAuth(authMapper.toDomainFull(savedAuth));
 
         return super.save(user);
     }
