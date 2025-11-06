@@ -14,7 +14,6 @@ import jakarta.persistence.metamodel.EntityType;
 import jakarta.persistence.metamodel.Metamodel;
 import jakarta.persistence.metamodel.Attribute;
 import jakarta.validation.ConstraintValidatorContext;
-import jakarta.validation.Payload;
 
 import java.util.Arrays;
 import java.util.List;
@@ -48,6 +47,9 @@ class ValidEntityGraphPathsValidatorTest {
     @InjectMocks
     private ValidEntityGraphPathsValidator validator;
 
+    @Mock
+    private ConstraintValidatorContext context;
+
     private ValidEntityGraphPaths createFakeAnnotation(Class<?> root, String[] allowed) {
         return new ValidEntityGraphPaths() {
             @Override
@@ -69,17 +71,6 @@ class ValidEntityGraphPathsValidatorTest {
             public String message() {
                 return "Invalid";
             }
-
-            @Override
-            public Class<?>[] groups() {
-                return new Class[0];
-            }
-
-            @Override
-            @SuppressWarnings("unchecked")
-            public Class<? extends Payload>[] payload() {
-                return (Class<? extends Payload>[]) new Class[0];
-            }
         };
     }
 
@@ -88,22 +79,11 @@ class ValidEntityGraphPathsValidatorTest {
         ValidEntityGraphPaths annotation = createFakeAnnotation(Object.class, new String[] { "user.name", "email" });
         validator.initialize(annotation);
 
-        ConstraintValidatorContext context = mock(ConstraintValidatorContext.class);
-        ConstraintValidatorContext.ConstraintViolationBuilder builder = mock(
-                ConstraintValidatorContext.ConstraintViolationBuilder.class);
-
-        when(context.buildConstraintViolationWithTemplate(anyString())).thenReturn(builder);
-        doNothing().when(context).disableDefaultConstraintViolation();
-
         assertThat(validator.isValid(new String[] { "user.name" }, context)).isTrue();
         assertThat(validator.isValid(new String[] { "email" }, context)).isTrue();
 
         String invalidPath = "invalid";
         assertThat(validator.isValid(new String[] { invalidPath }, context)).isFalse();
-
-        verify(context)
-                .buildConstraintViolationWithTemplate("Path not allowed by security whitelist");
-        verify(context).disableDefaultConstraintViolation();
 
         assertThat(validator.isValid(null, context)).isTrue();
         assertThat(validator.isValid(new String[] {}, context)).isTrue();
@@ -119,23 +99,14 @@ class ValidEntityGraphPathsValidatorTest {
         ValidEntityGraphPaths annotation = createFakeAnnotation(Object.class, new String[] { "item.id", "date" });
         validator.initialize(annotation);
 
-        ConstraintValidatorContext context = mock(ConstraintValidatorContext.class);
-
         List<String> validPaths = Arrays.asList("item.id", "date", null, " ");
 
         assertThat(validator.isValid(validPaths.toArray(new String[0]), context)).isTrue();
 
         List<String> invalidPaths = Arrays.asList("item.id", "wrong.path");
 
-        ConstraintValidatorContext.ConstraintViolationBuilder builder = mock(
-                ConstraintValidatorContext.ConstraintViolationBuilder.class);
-
-        when(context.buildConstraintViolationWithTemplate(anyString())).thenReturn(builder);
-        doNothing().when(context).disableDefaultConstraintViolation();
-
         assertThat(validator.isValid(invalidPaths.toArray(new String[0]), context)).isFalse();
 
-        verify(context).buildConstraintViolationWithTemplate("Path not allowed by security whitelist");
         verify(em, never()).getMetamodel();
     }
 
@@ -170,7 +141,6 @@ class ValidEntityGraphPathsValidatorTest {
         when(nameAttr.getJavaType()).thenReturn((Class) String.class);
 
         String subgraphPath = "address.city.name";
-        ConstraintValidatorContext context = mock(ConstraintValidatorContext.class);
 
         assertThat(validator.isValid(new String[] { subgraphPath }, context)).isTrue();
 
@@ -190,17 +160,8 @@ class ValidEntityGraphPathsValidatorTest {
 
         when(userType.getAttribute(anyString())).thenThrow(new IllegalArgumentException());
 
-        ConstraintValidatorContext context = mock(ConstraintValidatorContext.class);
-        ConstraintValidatorContext.ConstraintViolationBuilder builder = mock(
-                ConstraintValidatorContext.ConstraintViolationBuilder.class);
-        when(context.buildConstraintViolationWithTemplate(anyString())).thenReturn(builder);
-        doNothing().when(context).disableDefaultConstraintViolation();
-
         String invalidPath = "invalid.field";
 
         assertThat(validator.isValid(new String[] { invalidPath }, context)).isFalse();
-
-        String expectedMessage = "Invalid Entity Path";
-        verify(context).buildConstraintViolationWithTemplate(expectedMessage);
     }
 }

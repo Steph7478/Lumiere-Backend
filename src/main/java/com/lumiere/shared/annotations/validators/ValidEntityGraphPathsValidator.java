@@ -42,10 +42,10 @@ public class ValidEntityGraphPathsValidator
             final String trimmedPath = path.trim();
 
             if (!allowedPaths.isEmpty() && !allowedPaths.contains(trimmedPath))
-                return reject(context, "Path not allowed by security whitelist");
+                return false;
 
             if (!skipMetamodelCheck && !isValidPath(trimmedPath))
-                return reject(context, "Invalid Entity Path");
+                return false;
 
         }
         return true;
@@ -65,11 +65,5 @@ public class ValidEntityGraphPathsValidator
         } catch (IllegalArgumentException ex) {
             return false;
         }
-    }
-
-    private boolean reject(ConstraintValidatorContext context, String message) {
-        context.disableDefaultConstraintViolation();
-        context.buildConstraintViolationWithTemplate(message).addConstraintViolation();
-        return false;
     }
 }
