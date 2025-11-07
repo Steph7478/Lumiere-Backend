@@ -20,8 +20,9 @@ public class UserMapper implements BaseMapper<User, UserJpaEntity> {
         Auth auth = Auth.from(
                 authJpa.getName(),
                 authJpa.getEmail(),
-                authJpa.getPassword(),
-                authJpa.getIsAdmin(), authJpa.getId());
+                "***hidden***",
+                false,
+                null);
 
         return User.from(jpaEntity.getId(), auth);
     }
