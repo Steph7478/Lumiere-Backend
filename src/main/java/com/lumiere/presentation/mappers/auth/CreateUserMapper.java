@@ -12,6 +12,8 @@ import org.springframework.stereotype.Component;
 @Component
 public class CreateUserMapper implements BaseRequestMapper<CreateUserRequestDTO, CreateUserDTO>,
         BaseResponseMapper<CreateUserResponse, CreateUserResponseDTO> {
+    private CreateUserMapper() {
+    }
 
     @Override
     public CreateUserDTO toApplicationDTO(CreateUserRequestDTO request) {

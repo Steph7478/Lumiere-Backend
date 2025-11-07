@@ -10,18 +10,19 @@ public final class SecurityMatcherConfigurator {
     }
 
     public static void configure(HttpSecurity http) throws Exception {
-        final String prefix = ApiConfig.API_PREFIX;
+        final String api = ApiConfig.API_PREFIX;
 
         http.authorizeHttpRequests(auth -> {
 
             auth.requestMatchers(
-                    prefix + Routes.PUBLIC.AUTH.REGISTER,
-                    prefix + Routes.PUBLIC.AUTH.LOGIN).permitAll();
+                    api + Routes.PUBLIC.AUTH.REGISTER,
+                    api + Routes.PUBLIC.AUTH.LOGIN).permitAll();
 
             auth.requestMatchers(
-                    prefix + Routes.PRIVATE.AUTH.ME,
-                    prefix + Routes.PRIVATE.USER.PROFILE,
-                    prefix + Routes.PRIVATE.ADMIN.BASE);
+                    api + Routes.PRIVATE.AUTH.ME,
+                    api + Routes.PRIVATE.AUTH.UPDATE,
+                    api + Routes.PRIVATE.USER.PROFILE,
+                    api + Routes.PRIVATE.ADMIN.BASE);
 
             auth.anyRequest().authenticated();
         });
