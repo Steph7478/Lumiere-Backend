@@ -110,9 +110,12 @@ public class AuthController extends BaseController {
     @Loggable
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     @PutMapping(Routes.PRIVATE.AUTH.UPDATE)
-    public ResponseEntity<UpdateUserResponse> updateUser(@AuthenticationPrincipal UUID userId,
+    public ResponseEntity<UpdateUserResponse> updatePutUser(@AuthenticationPrincipal UUID userId,
             @Valid @RequestBody UpdateUserRequest requestDTO,
             HttpServletResponse response) {
+
+        if (!requestDTO.isCompleteUpdate())
+            return ResponseEntity.badRequest().build();
 
         UpdateUserRequestDTO partialRequestData = updateUserMapper.toApplicationDTO(requestDTO);
 
@@ -124,5 +127,25 @@ public class AuthController extends BaseController {
 
         return ResponseEntity.status(HttpStatus.ACCEPTED).body(body);
 
+    }
+
+    @Loggable
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
+    @PatchMapping(Routes.PRIVATE.AUTH.UPDATE)
+    public ResponseEntity<UpdateUserResponse> updatePatchUser(@AuthenticationPrincipal UUID userId,
+            @Valid @RequestBody UpdateUserRequest requestDTO,
+            HttpServletResponse response) {
+
+        if (!requestDTO.hasUpdates())
+            return ResponseEntity.badRequest().build();
+
+        UpdateUserRequestDTO partialRequestData = updateUserMapper.toApplicationDTO(requestDTO);
+        UpdateUserInput appDTO = new UpdateUserInput(partialRequestData, userId);
+
+        UpdateUserResponseDTO responseDTO = updateUser.execute(appDTO);
+
+        UpdateUserResponse body = updateUserMapper.toPresentationDTO(responseDTO);
+
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body(body);
     }
 }
