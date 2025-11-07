@@ -9,6 +9,8 @@ import com.lumiere.domain.readmodels.UserInfoView;
 import com.lumiere.domain.repositories.base.BaseRepository;
 
 public interface UserRepository extends BaseRepository<User> {
+    Optional<User> findUserByAuthId(UUID id);
+
     Optional<User> findByAuthEmail(String email);
 
     Optional<UserInfoView> findUserInfoById(UUID id);

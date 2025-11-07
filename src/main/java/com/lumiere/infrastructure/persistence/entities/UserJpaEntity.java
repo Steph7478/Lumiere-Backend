@@ -16,9 +16,9 @@ import lombok.Getter;
 @Entity
 public class UserJpaEntity extends BaseJpaEntity {
 
-    @JsonIgnore
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     @JoinColumn(name = "auth_id", nullable = false)
+    @JsonIgnore
     private AuthJpaEntity auth;
 
     public UserJpaEntity(UUID id, AuthJpaEntity auth) {

@@ -17,4 +17,6 @@ public interface UserJpaRepository extends JpaRepository<UserJpaEntity, UUID> {
     Optional<AuthInfoView> findAuthInfoByAuthId(UUID id);
 
     Optional<UserInfoView> findUserInfoById(UUID id);
+
+    Optional<UserJpaEntity> findUserByAuthId(UUID id);
 }

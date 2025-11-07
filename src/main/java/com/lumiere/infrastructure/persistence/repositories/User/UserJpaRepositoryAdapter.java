@@ -50,6 +50,11 @@ public class UserJpaRepositoryAdapter extends BaseRepositoryAdapter<User, UserJp
     }
 
     @Override
+    public Optional<User> findUserByAuthId(UUID id) {
+        return ((UserJpaRepository) jpaRepository).findUserByAuthId(id).map(((UserMapper) mapper)::toDomain);
+    }
+
+    @Override
     public Optional<UserInfoView> findUserInfoById(UUID id) {
         return ((UserJpaRepository) jpaRepository).findUserInfoById(id);
     }
@@ -58,4 +63,5 @@ public class UserJpaRepositoryAdapter extends BaseRepositoryAdapter<User, UserJp
     public Optional<AuthInfoView> findAuthInfoByAuthId(UUID id) {
         return ((UserJpaRepository) jpaRepository).findAuthInfoByAuthId(id);
     }
+
 }

@@ -16,7 +16,7 @@ public class AuthService {
         return Auth.from(name, email, hashed, isAdmin, UUID.randomUUID());
     }
 
-    public static Auth update(
+    public static void update(
             Auth auth,
             Optional<String> newName,
             Optional<String> newEmail,
@@ -24,8 +24,7 @@ public class AuthService {
 
         Optional<String> newHashedPassword = newRawPassword
                 .map(PasswordHasher::hash);
-
-        return auth.update(
+        auth.update(
                 newName,
                 newEmail,
                 newHashedPassword);

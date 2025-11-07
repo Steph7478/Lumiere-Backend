@@ -8,9 +8,9 @@ import com.lumiere.domain.entities.base.BaseEntity;
 
 public class Auth extends BaseEntity {
 
-    private final String name;
-    private final String email;
-    private final String passwordHash;
+    private String name;
+    private String email;
+    private String passwordHash;
     private final boolean isAdmin;
     private User user;
 
@@ -22,7 +22,6 @@ public class Auth extends BaseEntity {
         this.isAdmin = isAdmin;
     }
 
-    // Getters
     public String getName() {
         return name;
     }
@@ -47,29 +46,14 @@ public class Auth extends BaseEntity {
         this.user = user;
     }
 
-    // updates
-    public Auth update(
+    public void update(
             Optional<String> newName,
             Optional<String> newEmail,
             Optional<String> newPasswordHash) {
 
-        String updatedName = newName.orElse(this.name);
-        String updatedEmail = newEmail.orElse(this.email);
-        String updatedPasswordHash = newPasswordHash.orElse(this.passwordHash);
-
-        if (Objects.equals(this.name, updatedName) &&
-                Objects.equals(this.email, updatedEmail) &&
-                Objects.equals(this.passwordHash, updatedPasswordHash)) {
-
-            return this;
-        }
-
-        return new Auth(
-                updatedName,
-                updatedEmail,
-                updatedPasswordHash,
-                this.isAdmin(),
-                this.getId());
+        newName.ifPresent(name -> this.name = name);
+        newEmail.ifPresent(email -> this.email = email);
+        newPasswordHash.ifPresent(hash -> this.passwordHash = hash);
     }
 
     public Auth withPasswordHash(String newPasswordHash) {

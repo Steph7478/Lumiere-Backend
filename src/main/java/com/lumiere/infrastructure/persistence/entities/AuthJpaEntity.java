@@ -5,13 +5,15 @@ import lombok.Getter;
 
 import java.util.UUID;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.lumiere.infrastructure.persistence.entities.base.BaseJpaEntity;
 
 @Getter
 @Entity
 public class AuthJpaEntity extends BaseJpaEntity {
 
-    @OneToOne(mappedBy = "auth", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @OneToOne(mappedBy = "auth", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonIgnore
     private UserJpaEntity user;
 
     @Column(nullable = false)
@@ -20,6 +22,7 @@ public class AuthJpaEntity extends BaseJpaEntity {
     @Column(nullable = false, unique = true)
     private String email;
 
+    @JsonIgnore
     @Column(nullable = false)
     private String password;
 

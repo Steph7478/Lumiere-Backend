@@ -1,27 +1,25 @@
 package com.lumiere.application.usecases.auth;
 
 import java.util.UUID;
-
 import org.springframework.stereotype.Service;
-
+import org.springframework.transaction.annotation.Transactional;
 import com.lumiere.application.dtos.auth.updateUser.UpdateUserInput;
 import com.lumiere.application.dtos.auth.updateUser.UpdateUserRequestDTO;
 import com.lumiere.application.dtos.auth.updateUser.UpdateUserResponseDTO;
 import com.lumiere.application.exceptions.UserNotFoundException;
 import com.lumiere.application.interfaces.IUpdateUser;
 import com.lumiere.domain.entities.Auth;
-import com.lumiere.domain.repositories.AuthRepository;
+import com.lumiere.domain.entities.User;
+import com.lumiere.domain.repositories.UserRepository;
 import com.lumiere.domain.services.AuthService;
 import com.lumiere.shared.annotations.logs.Loggable;
 
-import jakarta.transaction.Transactional;
-
 @Service
 public class UpdateUserUseCase implements IUpdateUser {
-    private final AuthRepository authRepository;
+    private final UserRepository userRepository;
 
-    public UpdateUserUseCase(AuthRepository authRepository) {
-        this.authRepository = authRepository;
+    public UpdateUserUseCase(UserRepository userRepository) {
+        this.userRepository = userRepository;
     }
 
     @Loggable
@@ -31,10 +29,16 @@ public class UpdateUserUseCase implements IUpdateUser {
         UUID id = input.userId();
         UpdateUserRequestDTO request = input.requestData();
 
-        Auth auth = authRepository.findById(id).orElseThrow(UserNotFoundException::new);
-        Auth newAuth = AuthService.update(auth, request.name(), request.email(), request.newPassword());
+        User user = userRepository.findUserByAuthId(id).orElseThrow(UserNotFoundException::new);
+        Auth authToUpdate = user.getAuth();
 
-        authRepository.save(newAuth);
+        AuthService.update(
+                authToUpdate,
+                request.name(),
+                request.email(),
+                request.newPassword());
+
+        userRepository.save(user);
 
         return new UpdateUserResponseDTO();
     }
