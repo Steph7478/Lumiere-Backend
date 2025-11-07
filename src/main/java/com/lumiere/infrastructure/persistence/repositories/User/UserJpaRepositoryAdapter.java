@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 
 import com.lumiere.domain.entities.User;
 import com.lumiere.domain.readmodels.AuthInfoView;
+import com.lumiere.domain.readmodels.UserInfoView;
 import com.lumiere.domain.repositories.UserRepository;
 import com.lumiere.infrastructure.mappers.UserMapper;
 import com.lumiere.infrastructure.persistence.entities.UserJpaEntity;
@@ -46,6 +47,11 @@ public class UserJpaRepositoryAdapter extends BaseRepositoryAdapter<User, UserJp
         return ((UserJpaRepository) jpaRepository)
                 .findByAuthEmail(email)
                 .map(((UserMapper) mapper)::toDomain);
+    }
+
+    @Override
+    public Optional<UserInfoView> findUserInfoById(UUID id) {
+        return ((UserJpaRepository) jpaRepository).findUserInfoById(id);
     }
 
     @Override
