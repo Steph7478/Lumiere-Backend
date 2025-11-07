@@ -9,17 +9,16 @@ import com.lumiere.application.dtos.auth.updateUser.UpdateUserResponseDTO;
 import com.lumiere.application.exceptions.UserNotFoundException;
 import com.lumiere.application.interfaces.IUpdateUser;
 import com.lumiere.domain.entities.Auth;
-import com.lumiere.domain.entities.User;
-import com.lumiere.domain.repositories.UserRepository;
+import com.lumiere.domain.repositories.AuthRepository;
 import com.lumiere.domain.services.AuthService;
 import com.lumiere.shared.annotations.logs.Loggable;
 
 @Service
 public class UpdateUserUseCase implements IUpdateUser {
-    private final UserRepository userRepository;
+    private final AuthRepository authRepository;
 
-    public UpdateUserUseCase(UserRepository userRepository) {
-        this.userRepository = userRepository;
+    public UpdateUserUseCase(AuthRepository authRepository) {
+        this.authRepository = authRepository;
     }
 
     @Loggable
@@ -29,16 +28,15 @@ public class UpdateUserUseCase implements IUpdateUser {
         UUID id = input.userId();
         UpdateUserRequestDTO request = input.requestData();
 
-        User user = userRepository.findUserByAuthId(id).orElseThrow(UserNotFoundException::new);
-        Auth authToUpdate = user.getAuth();
+        Auth auth = authRepository.findById(id).orElseThrow(UserNotFoundException::new);
 
         AuthService.update(
-                authToUpdate,
+                auth,
                 request.name(),
                 request.email(),
                 request.newPassword());
 
-        userRepository.save(user);
+        authRepository.save(auth);
 
         return new UpdateUserResponseDTO();
     }
