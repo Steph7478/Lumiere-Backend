@@ -1,6 +1,6 @@
 package com.lumiere.application.usecases.auth;
 
-import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
@@ -42,10 +42,10 @@ public class LoginUseCase implements ILoginUseCase {
         }
 
         Roles role = auth.isAdmin() ? Roles.ADMIN : Roles.USER;
-        List<String> roles = List.of(role.name());
-        List<String> permissions = role.getPermissions().stream()
+        Set<String> roles = Set.of(role.name());
+        Set<String> permissions = role.getPermissions().stream()
                 .map(Permissions::getPermission)
-                .collect(Collectors.toList());
+                .collect(Collectors.toSet());
 
         try {
             String accessToken = TokenService.generateAccessToken(auth.getId(), roles, permissions);

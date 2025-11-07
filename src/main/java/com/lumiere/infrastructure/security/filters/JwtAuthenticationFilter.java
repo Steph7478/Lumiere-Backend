@@ -11,6 +11,8 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+import com.lumiere.domain.vo.ActingUser;
+import com.lumiere.infrastructure.http.auth.mappers.ActingUserExtractor;
 import com.lumiere.infrastructure.http.auth.token.TokenService;
 import com.lumiere.infrastructure.http.auth.token.TokenValidator;
 import com.lumiere.infrastructure.http.cookies.CookieFactory;
@@ -18,7 +20,6 @@ import com.lumiere.infrastructure.http.cookies.CookieFactory;
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
@@ -37,11 +38,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         if (accessToken == null || !TokenValidator.isValid(accessToken)) {
             if (refreshToken != null && TokenValidator.isRefreshToken(refreshToken)) {
                 try {
-                    UUID userId = TokenValidator.getUserId(refreshToken);
-                    List<String> roles = TokenValidator.getRoles(refreshToken);
-                    List<String> permissions = TokenValidator.getPermissions(refreshToken);
+                    ActingUser actingUser = ActingUserExtractor.fromToken(refreshToken);
 
-                    String newAccessToken = TokenService.generateAccessToken(userId, roles, permissions);
+                    String newAccessToken = TokenService.generateAccessToken(
+                            actingUser.getId(),
+                            actingUser.getRoles(),
+                            actingUser.getPermissions());
 
                     Cookie newAccessCookie = CookieFactory.createAccessTokenCookie(newAccessToken);
                     res.addCookie(newAccessCookie);
@@ -54,15 +56,18 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
 
         if (accessToken != null && TokenValidator.isValid(accessToken)) {
-            List<String> roles = TokenValidator.getRoles(accessToken);
+            ActingUser actingUser = ActingUserExtractor.fromToken(accessToken);
+
+            List<SimpleGrantedAuthority> authorities = actingUser.getRoles().stream()
+                    .map(r -> "ROLE_" + r)
+                    .map(SimpleGrantedAuthority::new)
+                    .collect(Collectors.toList());
+
             SecurityContextHolder.getContext().setAuthentication(
                     new UsernamePasswordAuthenticationToken(
-                            TokenValidator.getUserId(accessToken),
+                            actingUser.getId(),
                             null,
-                            roles.stream()
-                                    .map(r -> "ROLE_" + r)
-                                    .map(SimpleGrantedAuthority::new)
-                                    .collect(Collectors.toList())));
+                            authorities));
         }
 
         chain.doFilter(req, res);

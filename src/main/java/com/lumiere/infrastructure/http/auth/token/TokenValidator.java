@@ -3,7 +3,9 @@ package com.lumiere.infrastructure.http.auth.token;
 import com.lumiere.infrastructure.http.auth.JWT.SignerProvider;
 import com.nimbusds.jwt.SignedJWT;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 import java.util.Date;
 
 public class TokenValidator {
@@ -41,26 +43,27 @@ public class TokenValidator {
         return subject != null ? UUID.fromString(subject) : null;
     }
 
-    public static List<String> getRoles(String token) {
+    public static Set<String> getRoles(String token) {
         return getListClaim(token, "roles");
     }
 
-    public static List<String> getPermissions(String token) {
+    public static Set<String> getPermissions(String token) {
         return getListClaim(token, "permissions");
     }
 
-    private static List<String> getListClaim(String token, String claimKey) {
+    private static Set<String> getListClaim(String token, String claimKey) {
         try {
             SignedJWT signedJWT = SignedJWT.parse(token);
             Object claim = signedJWT.getJWTClaimsSet().getClaim(claimKey);
-            if (claim instanceof List<?>) {
-                return ((List<?>) claim).stream()
+
+            if (claim instanceof List<?> claimList) {
+                return claimList.stream()
                         .map(Object::toString)
-                        .toList();
+                        .collect(Collectors.toSet());
             }
-            return List.of();
+            return Set.of();
         } catch (Exception e) {
-            return List.of();
+            return Set.of();
         }
     }
 

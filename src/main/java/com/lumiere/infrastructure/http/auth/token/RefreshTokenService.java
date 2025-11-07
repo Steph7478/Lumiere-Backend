@@ -1,6 +1,6 @@
 package com.lumiere.infrastructure.http.auth.token;
 
-import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 public class RefreshTokenService {
@@ -15,8 +15,8 @@ public class RefreshTokenService {
         }
 
         UUID userId = TokenValidator.getUserId(refreshToken);
-        List<String> roles = TokenValidator.getRoles(refreshToken);
-        List<String> permissions = TokenValidator.getPermissions(refreshToken);
+        Set<String> roles = TokenValidator.getRoles(refreshToken);
+        Set<String> permissions = TokenValidator.getPermissions(refreshToken);
 
         if (userId == null || roles == null) {
             throw new RuntimeException("Invalid token");
