@@ -36,4 +36,26 @@ public class CookieFactory {
         }
         return Optional.empty();
     }
+
+    public static Cookie cleanCookies(HttpServletRequest req, String name) {
+        if (req.getSession(false) != null)
+            req.getSession().invalidate();
+
+        Cookie[] cookies = req.getCookies();
+
+        if (cookies != null) {
+            for (Cookie c : cookies) {
+                if (name.equals(c.getName())) {
+                    Cookie cleanedCookie = new Cookie(name, "");
+                    cleanedCookie.setMaxAge(0);
+                    cleanedCookie.setPath(c.getPath() != null ? c.getPath() : "/");
+                    return cleanedCookie;
+                }
+            }
+        }
+        Cookie defaultCleaner = new Cookie(name, "");
+        defaultCleaner.setMaxAge(0);
+        defaultCleaner.setPath("/");
+        return defaultCleaner;
+    }
 }
