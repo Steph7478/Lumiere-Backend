@@ -1,4 +1,4 @@
-package com.lumiere.infrastructure.http.auth;
+package com.lumiere.infrastructure.http.auth.JWT;
 
 import java.security.interfaces.RSAPrivateCrtKey;
 import java.security.interfaces.RSAPublicKey;

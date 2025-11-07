@@ -1,9 +1,9 @@
 package com.lumiere.presentation.mappers.auth;
 
-import com.lumiere.application.dtos.auth.CreateUserDTO;
-import com.lumiere.application.dtos.auth.CreateUserResponse;
-import com.lumiere.presentation.dtos.auth.CreateUserRequestDTO;
-import com.lumiere.presentation.dtos.auth.CreateUserResponseDTO;
+import com.lumiere.application.dtos.auth.createUser.CreateUserDTO;
+import com.lumiere.application.dtos.auth.createUser.CreateUserResponse;
+import com.lumiere.presentation.dtos.auth.createUser.CreateUserRequestDTO;
+import com.lumiere.presentation.dtos.auth.createUser.CreateUserResponseDTO;
 import com.lumiere.presentation.mappers.base.BaseRequestMapper;
 import com.lumiere.presentation.mappers.base.BaseResponseMapper;
 

@@ -1,4 +1,4 @@
-package com.lumiere.infrastructure.http.auth;
+package com.lumiere.infrastructure.http.auth.token;
 
 import java.util.List;
 import java.util.UUID;

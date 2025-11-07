@@ -1,5 +1,6 @@
-package com.lumiere.infrastructure.http.auth;
+package com.lumiere.infrastructure.http.auth.token;
 
+import com.lumiere.infrastructure.http.auth.JWT.SignerProvider;
 import com.nimbusds.jwt.SignedJWT;
 import java.util.List;
 import java.util.UUID;

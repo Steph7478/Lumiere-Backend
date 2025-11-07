@@ -11,8 +11,8 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import com.lumiere.infrastructure.http.auth.TokenService;
-import com.lumiere.infrastructure.http.auth.TokenValidator;
+import com.lumiere.infrastructure.http.auth.token.TokenService;
+import com.lumiere.infrastructure.http.auth.token.TokenValidator;
 import com.lumiere.infrastructure.http.cookies.CookieFactory;
 
 import java.io.IOException;

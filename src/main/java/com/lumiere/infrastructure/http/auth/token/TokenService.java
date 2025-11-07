@@ -1,4 +1,4 @@
-package com.lumiere.infrastructure.http.auth;
+package com.lumiere.infrastructure.http.auth.token;
 
 import java.util.Date;
 import java.util.List;
@@ -6,6 +6,7 @@ import java.util.UUID;
 
 import com.nimbusds.jose.JWSAlgorithm;
 import com.nimbusds.jose.JWSHeader;
+import com.lumiere.infrastructure.http.auth.JWT.SignerProvider;
 import com.nimbusds.jose.JOSEObjectType;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;

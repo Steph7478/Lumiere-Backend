@@ -1,6 +1,8 @@
 package com.lumiere.infrastructure.http.auth;
 
 import com.lumiere.domain.vo.ActingUser;
+import com.lumiere.infrastructure.http.auth.token.TokenValidator;
+
 import java.util.Set;
 import java.util.UUID;
 import java.util.List;

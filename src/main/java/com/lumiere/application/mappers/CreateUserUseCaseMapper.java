@@ -2,9 +2,9 @@ package com.lumiere.application.mappers;
 
 import org.springframework.stereotype.Component;
 
-import com.lumiere.application.dtos.auth.CreateUserDTO;
 import com.lumiere.domain.entities.Auth;
 import com.lumiere.domain.services.AuthService;
+import com.lumiere.application.dtos.auth.createUser.CreateUserDTO;
 import com.lumiere.application.mappers.base.BaseMapper;
 
 @Component

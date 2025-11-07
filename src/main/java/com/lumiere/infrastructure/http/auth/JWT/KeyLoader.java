@@ -1,4 +1,4 @@
-package com.lumiere.infrastructure.http.auth;
+package com.lumiere.infrastructure.http.auth.JWT;
 
 import java.nio.file.Files;
 import java.nio.file.Paths;
