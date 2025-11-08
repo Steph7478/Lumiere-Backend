@@ -1,4 +1,4 @@
-package com.lumiere.application.interfaces;
+package com.lumiere.application.interfaces.auth;
 
 import com.lumiere.application.dtos.auth.query.GetMeRequest;
 import com.lumiere.application.dtos.auth.response.details.GetMeResponse;

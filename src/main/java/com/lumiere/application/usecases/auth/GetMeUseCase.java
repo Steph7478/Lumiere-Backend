@@ -4,8 +4,8 @@ import org.springframework.stereotype.Service;
 
 import com.lumiere.application.dtos.auth.query.GetMeRequest;
 import com.lumiere.application.dtos.auth.response.details.GetMeResponse;
-import com.lumiere.application.exceptions.UserNotFoundException;
-import com.lumiere.application.interfaces.IGetMeUseCase;
+import com.lumiere.application.exceptions.auth.UserNotFoundException;
+import com.lumiere.application.interfaces.auth.IGetMeUseCase;
 import com.lumiere.domain.readmodels.AuthInfoView;
 import com.lumiere.domain.repositories.UserRepository;
 import com.lumiere.shared.annotations.logs.Loggable;

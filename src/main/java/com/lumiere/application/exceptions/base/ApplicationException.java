@@ -1,4 +1,4 @@
-package com.lumiere.application.exceptions;
+package com.lumiere.application.exceptions.base;
 
 public abstract class ApplicationException extends RuntimeException {
     public ApplicationException(String message) {

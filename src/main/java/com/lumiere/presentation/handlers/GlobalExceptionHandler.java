@@ -5,10 +5,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import com.lumiere.application.exceptions.EmailAlreadyExistsException;
-import com.lumiere.application.exceptions.InvalidCredentialsException;
-import com.lumiere.application.exceptions.TokenGenerationException;
-import com.lumiere.application.exceptions.UserNotFoundException;
+import com.lumiere.application.exceptions.auth.EmailAlreadyExistsException;
+import com.lumiere.application.exceptions.auth.InvalidCredentialsException;
+import com.lumiere.application.exceptions.auth.TokenGenerationException;
+import com.lumiere.application.exceptions.auth.UserNotFoundException;
 
 import java.util.Map;
 

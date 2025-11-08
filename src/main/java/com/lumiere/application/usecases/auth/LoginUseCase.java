@@ -8,10 +8,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.lumiere.application.dtos.auth.command.action.LoginDTO;
 import com.lumiere.application.dtos.auth.response.auth.LoginResponse;
-import com.lumiere.application.exceptions.InvalidCredentialsException;
-import com.lumiere.application.exceptions.TokenGenerationException;
-import com.lumiere.application.exceptions.UserNotFoundException;
-import com.lumiere.application.interfaces.ILoginUseCase;
+import com.lumiere.application.exceptions.auth.InvalidCredentialsException;
+import com.lumiere.application.exceptions.auth.TokenGenerationException;
+import com.lumiere.application.exceptions.auth.UserNotFoundException;
+import com.lumiere.application.interfaces.auth.ILoginUseCase;
 import com.lumiere.domain.entities.Auth;
 import com.lumiere.domain.repositories.AuthRepository;
 import com.lumiere.domain.services.AuthService;

@@ -1,4 +1,4 @@
-package com.lumiere.application.interfaces;
+package com.lumiere.application.interfaces.auth;
 
 import com.lumiere.application.dtos.auth.command.create.CreateUserDTO;
 import com.lumiere.application.dtos.auth.response.auth.CreateUserResponse;

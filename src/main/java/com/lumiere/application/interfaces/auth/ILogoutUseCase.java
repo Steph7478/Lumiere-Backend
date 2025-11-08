@@ -1,4 +1,4 @@
-package com.lumiere.application.interfaces;
+package com.lumiere.application.interfaces.auth;
 
 import jakarta.servlet.http.HttpServletRequest;
 import com.lumiere.application.dtos.auth.response.confirmation.LogoutResponse;

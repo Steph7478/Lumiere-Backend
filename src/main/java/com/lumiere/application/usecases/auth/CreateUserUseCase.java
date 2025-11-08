@@ -8,10 +8,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.lumiere.application.dtos.auth.command.create.CreateUserDTO;
 import com.lumiere.application.dtos.auth.response.auth.CreateUserResponse;
-import com.lumiere.application.exceptions.EmailAlreadyExistsException;
-import com.lumiere.application.exceptions.TokenGenerationException;
-import com.lumiere.application.interfaces.ICreateUserUseCase;
-import com.lumiere.application.mappers.CreateUserUseCaseMapper;
+import com.lumiere.application.exceptions.auth.EmailAlreadyExistsException;
+import com.lumiere.application.exceptions.auth.TokenGenerationException;
+import com.lumiere.application.interfaces.auth.ICreateUserUseCase;
+import com.lumiere.application.mappers.auth.CreateUserUseCaseMapper;
 import com.lumiere.domain.entities.Auth;
 import com.lumiere.domain.entities.User;
 import com.lumiere.domain.repositories.UserRepository;

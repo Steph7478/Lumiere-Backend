@@ -1,4 +1,4 @@
-package com.lumiere.application.mappers;
+package com.lumiere.application.mappers.auth;
 
 import org.springframework.stereotype.Component;
 
