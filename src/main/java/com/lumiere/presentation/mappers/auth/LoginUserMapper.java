@@ -2,8 +2,8 @@ package com.lumiere.presentation.mappers.auth;
 
 import org.springframework.stereotype.Component;
 
-import com.lumiere.application.dtos.command.auth.LoginDTO;
-import com.lumiere.application.dtos.response.auth.LoginResponse;
+import com.lumiere.application.dtos.auth.command.action.LoginDTO;
+import com.lumiere.application.dtos.auth.response.auth.LoginResponse;
 import com.lumiere.presentation.dtos.command.auth.LoginUserRequestDTO;
 import com.lumiere.presentation.dtos.response.auth.LoginUserResponseDTO;
 import com.lumiere.presentation.mappers.base.BaseRequestMapper;

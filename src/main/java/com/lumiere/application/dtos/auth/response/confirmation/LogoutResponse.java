@@ -1,4 +1,4 @@
-package com.lumiere.application.dtos.response.auth;
+package com.lumiere.application.dtos.auth.response.confirmation;
 
 import jakarta.servlet.http.Cookie;
 import java.util.List;

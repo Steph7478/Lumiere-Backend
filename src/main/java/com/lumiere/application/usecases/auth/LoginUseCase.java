@@ -6,8 +6,8 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.lumiere.application.dtos.command.auth.LoginDTO;
-import com.lumiere.application.dtos.response.auth.LoginResponse;
+import com.lumiere.application.dtos.auth.command.action.LoginDTO;
+import com.lumiere.application.dtos.auth.response.auth.LoginResponse;
 import com.lumiere.application.exceptions.InvalidCredentialsException;
 import com.lumiere.application.exceptions.TokenGenerationException;
 import com.lumiere.application.exceptions.UserNotFoundException;

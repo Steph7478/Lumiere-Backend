@@ -4,9 +4,9 @@ import java.util.UUID;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.lumiere.application.dtos.command.auth.UpdateUserInput;
-import com.lumiere.application.dtos.command.auth.UpdateUserRequestDTO;
-import com.lumiere.application.dtos.response.auth.UpdateUserResponseDTO;
+import com.lumiere.application.dtos.auth.command.update.UpdateUserInput;
+import com.lumiere.application.dtos.auth.command.update.UpdateUserRequestDTO;
+import com.lumiere.application.dtos.auth.response.confirmation.UpdateUserResponseDTO;
 import com.lumiere.application.exceptions.UserNotFoundException;
 import com.lumiere.application.interfaces.IUpdateUser;
 import com.lumiere.domain.entities.Auth;
