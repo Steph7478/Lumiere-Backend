@@ -30,12 +30,14 @@ public abstract class BaseRepositoryAdapter<D, E> implements BaseReader<D>, Base
         this.entityClass = Objects.requireNonNull(entityClass, "entityClass cannot be null");
     }
 
+    @Transactional(readOnly = true)
     @Override
     public Optional<D> findById(UUID id) {
         Objects.requireNonNull(id, "id cannot be null");
         return jpaRepository.findById(id).map(mapper::toDomain);
     }
 
+    @Transactional(readOnly = true)
     @Override
     public List<D> findAll() {
         return jpaRepository.findAll().stream()
@@ -43,6 +45,7 @@ public abstract class BaseRepositoryAdapter<D, E> implements BaseReader<D>, Base
                 .toList();
     }
 
+    @Transactional(readOnly = true)
     public List<D> findAllWithEager(String... relations) {
         final EntityGraph<E> graph = EntityGraphBuilder.build(entityManager, entityClass, Arrays.asList(relations));
 
@@ -56,6 +59,7 @@ public abstract class BaseRepositoryAdapter<D, E> implements BaseReader<D>, Base
                 .toList();
     }
 
+    @Transactional(readOnly = true)
     public Optional<D> findByIdWithEager(UUID id, String... relations) {
         Objects.requireNonNull(id, "ID must not be null");
 

@@ -5,6 +5,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.lumiere.domain.entities.User;
 import com.lumiere.domain.readmodels.AuthInfoView;
@@ -31,6 +32,7 @@ public class UserJpaRepositoryAdapter extends BaseRepositoryAdapter<User, UserJp
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Optional<User> findByIdWithRelations(
             UUID id,
             @ValidEntityGraphPaths(root = UserJpaEntity.class, allowedPaths = { "auth" }) String... relations) {
@@ -38,11 +40,13 @@ public class UserJpaRepositoryAdapter extends BaseRepositoryAdapter<User, UserJp
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<User> findAllWithRelations() {
         return findAllWithEager("auth");
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Optional<User> findByAuthEmail(String email) {
         return ((UserJpaRepository) jpaRepository)
                 .findByAuthEmail(email)
@@ -50,16 +54,19 @@ public class UserJpaRepositoryAdapter extends BaseRepositoryAdapter<User, UserJp
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Optional<User> findUserByAuthId(UUID id) {
         return ((UserJpaRepository) jpaRepository).findUserByAuthId(id).map(((UserMapper) mapper)::toDomain);
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Optional<UserInfoView> findUserInfoById(UUID id) {
         return ((UserJpaRepository) jpaRepository).findUserInfoById(id);
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Optional<AuthInfoView> findAuthInfoByAuthId(UUID id) {
         return ((UserJpaRepository) jpaRepository).findAuthInfoByAuthId(id);
     }
