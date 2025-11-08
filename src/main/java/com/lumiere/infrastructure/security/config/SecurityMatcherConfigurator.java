@@ -19,6 +19,7 @@ public final class SecurityMatcherConfigurator {
                     api + Routes.PUBLIC.AUTH.LOGIN).permitAll();
 
             auth.requestMatchers(
+                    api + Routes.PRIVATE.AUTH.LOGOUT,
                     api + Routes.PRIVATE.AUTH.ME,
                     api + Routes.PRIVATE.AUTH.UPDATE,
                     api + Routes.PRIVATE.USER.PROFILE,

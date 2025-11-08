@@ -16,17 +16,21 @@ import com.lumiere.application.dtos.auth.getMe.GetMeRequest;
 import com.lumiere.application.dtos.auth.getMe.GetMeResponse;
 import com.lumiere.application.dtos.auth.login.LoginDTO;
 import com.lumiere.application.dtos.auth.login.LoginResponse;
+import com.lumiere.application.dtos.auth.logout.LogoutResponse;
 import com.lumiere.application.dtos.auth.updateUser.UpdateUserInput;
 import com.lumiere.application.dtos.auth.updateUser.UpdateUserRequestDTO;
 import com.lumiere.application.dtos.auth.updateUser.UpdateUserResponseDTO;
 import com.lumiere.application.interfaces.ICreateUserUseCase;
 import com.lumiere.application.interfaces.IGetMeUseCase;
 import com.lumiere.application.interfaces.ILoginUseCase;
+import com.lumiere.application.interfaces.ILogoutUseCase;
 import com.lumiere.application.interfaces.IUpdateUser;
 import com.lumiere.infrastructure.http.cookies.CookieFactory;
 import com.lumiere.presentation.routes.Routes;
 import com.lumiere.shared.annotations.logs.Loggable;
 
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 
@@ -45,6 +49,7 @@ public class AuthController extends BaseController {
     private final ILoginUseCase loginUseCase;
     private final IGetMeUseCase getMeUseCase;
     private final IUpdateUser updateUser;
+    private final ILogoutUseCase logoutUseCase;
     private final CreateUserMapper createUserMapper;
     private final LoginUserMapper loginUserMapper;
     private final UpdateUserMapper updateUserMapper;
@@ -54,12 +59,14 @@ public class AuthController extends BaseController {
             ILoginUseCase loginUseCase,
             IGetMeUseCase getMeUseCase,
             IUpdateUser updateUser,
+            ILogoutUseCase logoutUseCase,
             CreateUserMapper createUserMapper,
             LoginUserMapper loginUserMapper,
             UpdateUserMapper updateUserMapper) {
         this.createUserUseCase = createUserUseCase;
         this.loginUseCase = loginUseCase;
         this.getMeUseCase = getMeUseCase;
+        this.logoutUseCase = logoutUseCase;
         this.createUserMapper = createUserMapper;
         this.loginUserMapper = loginUserMapper;
         this.updateUser = updateUser;
@@ -72,6 +79,17 @@ public class AuthController extends BaseController {
     public ResponseEntity<GetMeResponse> getMe(@AuthenticationPrincipal UUID userId) {
         GetMeRequest request = new GetMeRequest(userId);
         GetMeResponse response = getMeUseCase.execute(request);
+        return ResponseEntity.ok(response);
+    }
+
+    @Loggable
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
+    @PostMapping(Routes.PRIVATE.AUTH.LOGOUT)
+    public ResponseEntity<LogoutResponse> logout(HttpServletRequest req, HttpServletResponse res) {
+        LogoutResponse response = logoutUseCase.execute(req);
+        for (Cookie cookie : response.cookiesToClear()) {
+            res.addCookie(cookie);
+        }
         return ResponseEntity.ok(response);
     }
 
@@ -117,11 +135,8 @@ public class AuthController extends BaseController {
             return ResponseEntity.badRequest().build();
 
         UpdateUserRequestDTO partialRequestData = updateUserMapper.toApplicationDTO(requestDTO);
-
         UpdateUserInput appDTO = new UpdateUserInput(partialRequestData, userId);
-
         UpdateUserResponseDTO responseDTO = updateUser.execute(appDTO);
-
         UpdateUserResponse body = updateUserMapper.toPresentationDTO(responseDTO);
 
         return ResponseEntity.status(HttpStatus.ACCEPTED).body(body);
@@ -140,9 +155,7 @@ public class AuthController extends BaseController {
 
         UpdateUserRequestDTO partialRequestData = updateUserMapper.toApplicationDTO(requestDTO);
         UpdateUserInput appDTO = new UpdateUserInput(partialRequestData, userId);
-
         UpdateUserResponseDTO responseDTO = updateUser.execute(appDTO);
-
         UpdateUserResponse body = updateUserMapper.toPresentationDTO(responseDTO);
 
         return ResponseEntity.status(HttpStatus.ACCEPTED).body(body);
