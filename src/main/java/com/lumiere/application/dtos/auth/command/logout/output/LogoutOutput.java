@@ -1,4 +1,4 @@
-package com.lumiere.application.dtos.auth.query.logout.output;
+package com.lumiere.application.dtos.auth.command.logout.output;
 
 public record LogoutOutput(String message) {
     public LogoutOutput() {

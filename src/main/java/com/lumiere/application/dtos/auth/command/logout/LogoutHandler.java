@@ -1,4 +1,4 @@
-package com.lumiere.application.dtos.auth.query.logout;
+package com.lumiere.application.dtos.auth.command.logout;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.servlet.http.Cookie;
