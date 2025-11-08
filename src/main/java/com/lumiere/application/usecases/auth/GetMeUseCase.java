@@ -2,8 +2,8 @@ package com.lumiere.application.usecases.auth;
 
 import org.springframework.stereotype.Service;
 
-import com.lumiere.application.dtos.auth.query.GetMeRequest;
-import com.lumiere.application.dtos.auth.response.details.GetMeResponse;
+import com.lumiere.application.dtos.auth.query.me.GetMeInput;
+import com.lumiere.application.dtos.auth.query.me.output.GetMeOutput;
 import com.lumiere.application.exceptions.auth.UserNotFoundException;
 import com.lumiere.application.interfaces.auth.IGetMeUseCase;
 import com.lumiere.domain.readmodels.AuthInfoView;
@@ -23,10 +23,10 @@ public class GetMeUseCase implements IGetMeUseCase {
     @Loggable
     @Override
     @Transactional(readOnly = true)
-    public GetMeResponse execute(GetMeRequest request) {
+    public GetMeOutput execute(GetMeInput request) {
         AuthInfoView user = userRepository.findAuthInfoByAuthId(request.userId())
                 .orElseThrow(UserNotFoundException::new);
 
-        return new GetMeResponse(user);
+        return new GetMeOutput(user);
     }
 }

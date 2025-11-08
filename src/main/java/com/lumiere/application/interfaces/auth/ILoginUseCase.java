@@ -1,8 +1,8 @@
 package com.lumiere.application.interfaces.auth;
 
-import com.lumiere.application.dtos.auth.command.action.LoginDTO;
-import com.lumiere.application.dtos.auth.response.auth.LoginOutput;
+import com.lumiere.application.dtos.auth.command.login.LoginHandler;
+import com.lumiere.application.dtos.auth.command.login.LoginInput;
 import com.lumiere.application.interfaces.base.BaseUseCase;
 
-public interface ILoginUseCase extends BaseUseCase<LoginDTO, LoginOutput> {
+public interface ILoginUseCase extends BaseUseCase<LoginInput, LoginHandler> {
 }

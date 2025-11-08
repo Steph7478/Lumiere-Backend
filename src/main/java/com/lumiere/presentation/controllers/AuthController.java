@@ -1,20 +1,20 @@
 package com.lumiere.presentation.controllers;
 
 import com.lumiere.presentation.controllers.base.BaseController;
-import com.lumiere.application.dtos.auth.command.action.LoginDTO;
-import com.lumiere.application.dtos.auth.command.create.CreateUserDTO;
-import com.lumiere.application.dtos.auth.command.delete.DeleteUserRequest;
+import com.lumiere.application.dtos.auth.command.create.CreateUserHandler;
+import com.lumiere.application.dtos.auth.command.create.CreateUserInput;
+import com.lumiere.application.dtos.auth.command.create.output.CreateUserOutput;
+import com.lumiere.application.dtos.auth.command.delete.DeleteUserInput;
+import com.lumiere.application.dtos.auth.command.delete.output.DeleteUserOutput;
+import com.lumiere.application.dtos.auth.command.login.LoginHandler;
+import com.lumiere.application.dtos.auth.command.login.LoginInput;
 import com.lumiere.application.dtos.auth.command.update.UpdateUserInput;
-import com.lumiere.application.dtos.auth.command.update.UpdateUserRequestDTO;
-import com.lumiere.application.dtos.auth.query.GetMeRequest;
-import com.lumiere.application.dtos.auth.response.auth.CreateUserOutput;
-import com.lumiere.application.dtos.auth.response.auth.CreateUserResponse;
-import com.lumiere.application.dtos.auth.response.auth.LoginOutput;
-import com.lumiere.application.dtos.auth.response.auth.LoginResponse;
-import com.lumiere.application.dtos.auth.response.confirmation.DeleteUserResponse;
-import com.lumiere.application.dtos.auth.response.confirmation.LogoutResponse;
-import com.lumiere.application.dtos.auth.response.confirmation.UpdateUserResponseDTO;
-import com.lumiere.application.dtos.auth.response.details.GetMeResponse;
+import com.lumiere.application.dtos.auth.command.update.UpdateUserRequestData;
+import com.lumiere.application.dtos.auth.command.update.output.UpdateUserOutput;
+import com.lumiere.application.dtos.auth.query.logout.LogoutHandler;
+import com.lumiere.application.dtos.auth.query.logout.output.LogoutOutput;
+import com.lumiere.application.dtos.auth.query.me.GetMeInput;
+import com.lumiere.application.dtos.auth.query.me.output.GetMeOutput;
 import com.lumiere.application.interfaces.auth.ICreateUserUseCase;
 import com.lumiere.application.interfaces.auth.IDeleteUserUseCase;
 import com.lumiere.application.interfaces.auth.IGetMeUseCase;
@@ -67,52 +67,56 @@ public class AuthController extends BaseController {
     @Loggable
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     @GetMapping(Routes.PRIVATE.AUTH.ME)
-    public ResponseEntity<GetMeResponse> getMe(@AuthenticationPrincipal UUID userId) {
-        GetMeRequest request = new GetMeRequest(userId);
-        GetMeResponse response = getMeUseCase.execute(request);
+    public ResponseEntity<GetMeOutput> getMe(@AuthenticationPrincipal UUID userId) {
+        GetMeInput request = new GetMeInput(userId);
+        GetMeOutput response = getMeUseCase.execute(request);
         return ResponseEntity.ok(response);
     }
 
     @Loggable
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     @PostMapping(Routes.PRIVATE.AUTH.LOGOUT)
-    public ResponseEntity<LogoutResponse> logout(HttpServletRequest req, HttpServletResponse res) {
-        LogoutResponse response = logoutUseCase.execute(req);
-        for (Cookie cookie : response.cookiesToClear()) {
+    public ResponseEntity<LogoutOutput> logout(HttpServletRequest req, HttpServletResponse res) {
+        LogoutHandler result = logoutUseCase.execute(req);
+
+        for (Cookie cookie : result.cookiesToClear()) {
             res.addCookie(cookie);
         }
-        return ResponseEntity.ok(response);
+
+        LogoutOutput body = new LogoutOutput();
+
+        return ResponseEntity.ok(body);
     }
 
     // POST
 
     @Loggable
     @PostMapping(Routes.PUBLIC.AUTH.REGISTER)
-    public ResponseEntity<CreateUserResponse> registerUser(
-            @Valid @RequestBody CreateUserDTO requestDTO,
+    public ResponseEntity<CreateUserOutput> registerUser(
+            @Valid @RequestBody CreateUserInput requestDTO,
             HttpServletResponse response) {
 
-        CreateUserOutput responseDTO = createUserUseCase.execute(requestDTO);
+        CreateUserHandler responseDTO = createUserUseCase.execute(requestDTO);
 
         response.addCookie(CookieFactory.createAccessTokenCookie(responseDTO.accessToken()));
         response.addCookie(CookieFactory.createRefreshTokenCookie(responseDTO.refreshToken()));
 
-        CreateUserResponse body = new CreateUserResponse(responseDTO.name(), responseDTO.role());
+        CreateUserOutput body = new CreateUserOutput(responseDTO.name(), responseDTO.role());
 
         return ResponseEntity.status(HttpStatus.CREATED).body(body);
     }
 
     @Loggable
     @PostMapping(Routes.PUBLIC.AUTH.LOGIN)
-    public ResponseEntity<LoginResponse> loginUser(
-            @Valid @RequestBody LoginDTO requestDTO, HttpServletResponse response) {
+    public ResponseEntity<CreateUserOutput> loginUser(
+            @Valid @RequestBody LoginInput requestDTO, HttpServletResponse response) {
 
-        LoginOutput responseDTO = loginUseCase.execute(requestDTO);
+        LoginHandler responseDTO = loginUseCase.execute(requestDTO);
 
         response.addCookie(CookieFactory.createAccessTokenCookie(responseDTO.accessToken()));
         response.addCookie(CookieFactory.createRefreshTokenCookie(responseDTO.refreshToken()));
 
-        LoginResponse body = new LoginResponse(responseDTO.name(), responseDTO.role());
+        CreateUserOutput body = new CreateUserOutput(responseDTO.name(), responseDTO.role());
 
         return ResponseEntity.status(HttpStatus.ACCEPTED).body(body);
     }
@@ -122,15 +126,15 @@ public class AuthController extends BaseController {
     @Loggable
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     @PutMapping(Routes.PRIVATE.AUTH.UPDATE)
-    public ResponseEntity<UpdateUserResponseDTO> updatePutUser(@AuthenticationPrincipal UUID userId,
-            @Valid @RequestBody UpdateUserRequestDTO requestDTO,
+    public ResponseEntity<UpdateUserOutput> updatePutUser(@AuthenticationPrincipal UUID userId,
+            @Valid @RequestBody UpdateUserRequestData requestDTO,
             HttpServletResponse response) {
 
         if (!requestDTO.isCompleteUpdate())
             return ResponseEntity.badRequest().build();
 
         UpdateUserInput appDTO = new UpdateUserInput(requestDTO, userId);
-        UpdateUserResponseDTO responseDTO = updateUser.execute(appDTO);
+        UpdateUserOutput responseDTO = updateUser.execute(appDTO);
 
         return ResponseEntity.status(HttpStatus.ACCEPTED).body(responseDTO);
 
@@ -141,15 +145,15 @@ public class AuthController extends BaseController {
     @Loggable
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     @PatchMapping(Routes.PRIVATE.AUTH.UPDATE)
-    public ResponseEntity<UpdateUserResponseDTO> updatePatchUser(@AuthenticationPrincipal UUID userId,
-            @Valid @RequestBody UpdateUserRequestDTO requestDTO,
+    public ResponseEntity<UpdateUserOutput> updatePatchUser(@AuthenticationPrincipal UUID userId,
+            @Valid @RequestBody UpdateUserRequestData requestDTO,
             HttpServletResponse response) {
 
         if (!requestDTO.hasUpdates())
             return ResponseEntity.badRequest().build();
 
         UpdateUserInput appDTO = new UpdateUserInput(requestDTO, userId);
-        UpdateUserResponseDTO responseDTO = updateUser.execute(appDTO);
+        UpdateUserOutput responseDTO = updateUser.execute(appDTO);
 
         return ResponseEntity.status(HttpStatus.ACCEPTED).body(responseDTO);
     }
@@ -159,10 +163,10 @@ public class AuthController extends BaseController {
     @Loggable
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     @DeleteMapping(Routes.PRIVATE.AUTH.DELETE)
-    public ResponseEntity<DeleteUserResponse> deleteUser(@AuthenticationPrincipal UUID userId) {
+    public ResponseEntity<DeleteUserOutput> deleteUser(@AuthenticationPrincipal UUID userId) {
 
-        DeleteUserRequest request = new DeleteUserRequest(userId);
-        DeleteUserResponse response = deleteUserUseCase.execute(request);
+        DeleteUserInput request = new DeleteUserInput(userId);
+        DeleteUserOutput response = deleteUserUseCase.execute(request);
 
         return ResponseEntity.status(HttpStatus.ACCEPTED).body(response);
     }

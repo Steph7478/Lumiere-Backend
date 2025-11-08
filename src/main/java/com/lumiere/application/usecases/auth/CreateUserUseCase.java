@@ -6,8 +6,8 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.lumiere.application.dtos.auth.command.create.CreateUserDTO;
-import com.lumiere.application.dtos.auth.response.auth.CreateUserOutput;
+import com.lumiere.application.dtos.auth.command.create.CreateUserHandler;
+import com.lumiere.application.dtos.auth.command.create.CreateUserInput;
 import com.lumiere.application.exceptions.auth.EmailAlreadyExistsException;
 import com.lumiere.application.exceptions.auth.TokenGenerationException;
 import com.lumiere.application.interfaces.auth.ICreateUserUseCase;
@@ -35,7 +35,7 @@ public class CreateUserUseCase implements ICreateUserUseCase {
     @Override
     @Transactional
     @Loggable
-    public CreateUserOutput execute(CreateUserDTO dto) {
+    public CreateUserHandler execute(CreateUserInput dto) {
 
         if (userRepository.findByAuthEmail(dto.email()).isPresent()) {
             throw new EmailAlreadyExistsException(dto.email());
@@ -56,7 +56,7 @@ public class CreateUserUseCase implements ICreateUserUseCase {
             String accessToken = TokenService.generateAccessToken(auth.getId(), roles, permissions);
             String refreshToken = TokenService.generateRefreshToken(auth.getId(), roles, permissions);
 
-            return new CreateUserOutput(auth.getName(), accessToken, refreshToken, role.name());
+            return new CreateUserHandler(auth.getName(), accessToken, refreshToken, role.name());
         } catch (Exception e) {
             throw new TokenGenerationException("Failed to generate tokens", e);
         }

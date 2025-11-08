@@ -1,6 +1,6 @@
 package com.lumiere.application.usecases.auth;
 
-import com.lumiere.application.dtos.auth.response.confirmation.LogoutResponse;
+import com.lumiere.application.dtos.auth.query.logout.LogoutHandler;
 import com.lumiere.application.interfaces.auth.ILogoutUseCase;
 import com.lumiere.infrastructure.http.cookies.CookieFactory;
 
@@ -17,13 +17,13 @@ import java.util.Arrays;
 public class LogoutUseCase implements ILogoutUseCase {
 
     @Override
-    public LogoutResponse execute(HttpServletRequest req) {
+    public LogoutHandler execute(HttpServletRequest req) {
 
         Cookie accessTokenCookie = CookieFactory.cleanCookies(req, "access_token");
         Cookie refreshTokenCookie = CookieFactory.cleanCookies(req, "refresh_token");
 
         List<Cookie> cookiesToClear = Arrays.asList(accessTokenCookie, refreshTokenCookie);
 
-        return new LogoutResponse(cookiesToClear);
+        return new LogoutHandler(cookiesToClear);
     }
 }

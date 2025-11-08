@@ -5,8 +5,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.lumiere.application.dtos.auth.command.update.UpdateUserInput;
-import com.lumiere.application.dtos.auth.command.update.UpdateUserRequestDTO;
-import com.lumiere.application.dtos.auth.response.confirmation.UpdateUserResponseDTO;
+import com.lumiere.application.dtos.auth.command.update.UpdateUserRequestData;
+import com.lumiere.application.dtos.auth.command.update.output.UpdateUserOutput;
 import com.lumiere.application.exceptions.auth.UserNotFoundException;
 import com.lumiere.application.interfaces.auth.IUpdateUser;
 import com.lumiere.domain.entities.Auth;
@@ -25,9 +25,9 @@ public class UpdateUserUseCase implements IUpdateUser {
     @Loggable
     @Override
     @Transactional
-    public UpdateUserResponseDTO execute(UpdateUserInput input) {
+    public UpdateUserOutput execute(UpdateUserInput input) {
         UUID id = input.userId();
-        UpdateUserRequestDTO request = input.requestData();
+        UpdateUserRequestData request = input.requestData();
 
         Auth auth = authRepository.findById(id).orElseThrow(UserNotFoundException::new);
 
@@ -39,6 +39,6 @@ public class UpdateUserUseCase implements IUpdateUser {
 
         authRepository.save(auth);
 
-        return new UpdateUserResponseDTO();
+        return new UpdateUserOutput();
     }
 }

@@ -1,8 +1,8 @@
 package com.lumiere.application.interfaces.auth;
 
-import com.lumiere.application.dtos.auth.query.GetMeRequest;
-import com.lumiere.application.dtos.auth.response.details.GetMeResponse;
+import com.lumiere.application.dtos.auth.query.me.GetMeInput;
+import com.lumiere.application.dtos.auth.query.me.output.GetMeOutput;
 import com.lumiere.application.interfaces.base.BaseUseCase;
 
-public interface IGetMeUseCase extends BaseUseCase<GetMeRequest, GetMeResponse> {
+public interface IGetMeUseCase extends BaseUseCase<GetMeInput, GetMeOutput> {
 }
