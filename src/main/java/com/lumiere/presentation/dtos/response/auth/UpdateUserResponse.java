@@ -1,4 +1,4 @@
-package com.lumiere.presentation.dtos.auth.updateUser;
+package com.lumiere.presentation.dtos.response.auth;
 
 public record UpdateUserResponse(
         String message) {

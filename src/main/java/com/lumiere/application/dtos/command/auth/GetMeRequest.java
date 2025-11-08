@@ -1,4 +1,4 @@
-package com.lumiere.application.dtos.auth.getMe;
+package com.lumiere.application.dtos.command.auth;
 
 import java.util.UUID;
 

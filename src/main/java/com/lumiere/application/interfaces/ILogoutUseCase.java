@@ -1,6 +1,6 @@
 package com.lumiere.application.interfaces;
 
-import com.lumiere.application.dtos.auth.logout.LogoutResponse;
+import com.lumiere.application.dtos.response.auth.LogoutResponse;
 import com.lumiere.application.interfaces.base.BaseUseCase;
 
 import jakarta.servlet.http.HttpServletRequest;

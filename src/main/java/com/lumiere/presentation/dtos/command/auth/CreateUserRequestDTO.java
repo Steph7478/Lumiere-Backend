@@ -1,10 +1,10 @@
-package com.lumiere.presentation.dtos.auth.login;
+package com.lumiere.presentation.dtos.command.auth;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 
-public record LoginUserRequestDTO(
+public record CreateUserRequestDTO(
                 @NotBlank @Email String email,
+                @NotBlank String name,
                 @NotBlank String password) {
-
 }

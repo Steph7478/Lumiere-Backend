@@ -1,6 +1,6 @@
 package com.lumiere.application.usecases.auth;
 
-import com.lumiere.application.dtos.auth.logout.LogoutResponse;
+import com.lumiere.application.dtos.response.auth.LogoutResponse;
 import com.lumiere.application.interfaces.ILogoutUseCase;
 import com.lumiere.infrastructure.http.cookies.CookieFactory;
 

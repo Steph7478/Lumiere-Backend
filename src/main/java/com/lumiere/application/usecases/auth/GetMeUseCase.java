@@ -2,8 +2,8 @@ package com.lumiere.application.usecases.auth;
 
 import org.springframework.stereotype.Service;
 
-import com.lumiere.application.dtos.auth.getMe.GetMeRequest;
-import com.lumiere.application.dtos.auth.getMe.GetMeResponse;
+import com.lumiere.application.dtos.command.auth.GetMeRequest;
+import com.lumiere.application.dtos.response.auth.GetMeResponse;
 import com.lumiere.application.exceptions.UserNotFoundException;
 import com.lumiere.application.interfaces.IGetMeUseCase;
 import com.lumiere.domain.readmodels.AuthInfoView;
