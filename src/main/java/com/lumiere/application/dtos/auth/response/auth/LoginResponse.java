@@ -1,4 +1,6 @@
 package com.lumiere.application.dtos.auth.response.auth;
 
-public record LoginResponse(String accessToken, String refreshToken, String name, String role) {
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
+public record LoginResponse(@JsonIgnore String accessToken, @JsonIgnore String refreshToken, String name, String role) {
 }
