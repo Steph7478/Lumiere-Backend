@@ -15,16 +15,21 @@ public final class SecurityMatcherConfigurator {
         http.authorizeHttpRequests(auth -> {
 
             auth.requestMatchers(
+                    // AUTH
                     api + Routes.PUBLIC.AUTH.REGISTER,
                     api + Routes.PUBLIC.AUTH.LOGIN).permitAll();
-
             auth.requestMatchers(
+                    // AUTH
                     api + Routes.PRIVATE.AUTH.LOGOUT,
                     api + Routes.PRIVATE.AUTH.ME,
                     api + Routes.PRIVATE.AUTH.UPDATE,
-                    api + Routes.PRIVATE.USER.PROFILE,
-                    api + Routes.PRIVATE.ADMIN.BASE);
+                    api + Routes.PRIVATE.AUTH.DELETE,
 
+                    // PROFILE
+                    api + Routes.PRIVATE.USER.PROFILE,
+
+                    // ADMIN
+                    api + Routes.PRIVATE.ADMIN.BASE);
             auth.anyRequest().authenticated();
         });
     }

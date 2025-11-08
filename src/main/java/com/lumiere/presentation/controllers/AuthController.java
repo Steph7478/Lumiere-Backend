@@ -3,15 +3,18 @@ package com.lumiere.presentation.controllers;
 import com.lumiere.presentation.controllers.base.BaseController;
 import com.lumiere.application.dtos.auth.command.action.LoginDTO;
 import com.lumiere.application.dtos.auth.command.create.CreateUserDTO;
+import com.lumiere.application.dtos.auth.command.delete.DeleteUserRequest;
 import com.lumiere.application.dtos.auth.command.update.UpdateUserInput;
 import com.lumiere.application.dtos.auth.command.update.UpdateUserRequestDTO;
 import com.lumiere.application.dtos.auth.query.GetMeRequest;
 import com.lumiere.application.dtos.auth.response.auth.CreateUserResponse;
 import com.lumiere.application.dtos.auth.response.auth.LoginResponse;
+import com.lumiere.application.dtos.auth.response.confirmation.DeleteUserResponse;
 import com.lumiere.application.dtos.auth.response.confirmation.LogoutResponse;
 import com.lumiere.application.dtos.auth.response.confirmation.UpdateUserResponseDTO;
 import com.lumiere.application.dtos.auth.response.details.GetMeResponse;
 import com.lumiere.application.interfaces.auth.ICreateUserUseCase;
+import com.lumiere.application.interfaces.auth.IDeleteUserUseCase;
 import com.lumiere.application.interfaces.auth.IGetMeUseCase;
 import com.lumiere.application.interfaces.auth.ILoginUseCase;
 import com.lumiere.application.interfaces.auth.ILogoutUseCase;
@@ -41,18 +44,20 @@ public class AuthController extends BaseController {
     private final IGetMeUseCase getMeUseCase;
     private final IUpdateUser updateUser;
     private final ILogoutUseCase logoutUseCase;
+    private final IDeleteUserUseCase deleteUserUseCase;
 
     public AuthController(
             ICreateUserUseCase createUserUseCase,
             ILoginUseCase loginUseCase,
             IGetMeUseCase getMeUseCase,
             IUpdateUser updateUser,
-            ILogoutUseCase logoutUseCase) {
+            ILogoutUseCase logoutUseCase, IDeleteUserUseCase deleteUserUseCase) {
         this.createUserUseCase = createUserUseCase;
         this.loginUseCase = loginUseCase;
         this.getMeUseCase = getMeUseCase;
         this.logoutUseCase = logoutUseCase;
         this.updateUser = updateUser;
+        this.deleteUserUseCase = deleteUserUseCase;
     }
 
     @Loggable
@@ -133,5 +138,16 @@ public class AuthController extends BaseController {
         UpdateUserResponseDTO responseDTO = updateUser.execute(appDTO);
 
         return ResponseEntity.status(HttpStatus.ACCEPTED).body(responseDTO);
+    }
+
+    @Loggable
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
+    @DeleteMapping(Routes.PRIVATE.AUTH.DELETE)
+    public ResponseEntity<DeleteUserResponse> deleteUser(@AuthenticationPrincipal UUID userId) {
+
+        DeleteUserRequest request = new DeleteUserRequest(userId);
+        DeleteUserResponse response = deleteUserUseCase.execute(request);
+
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body(response);
     }
 }

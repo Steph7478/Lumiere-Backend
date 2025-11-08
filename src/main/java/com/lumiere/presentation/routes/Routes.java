@@ -19,6 +19,7 @@ public final class Routes {
             public static final String ME = "/auth/me";
             public static final String UPDATE = "/auth/update";
             public static final String LOGOUT = "/auth/logout";
+            public static final String DELETE = "/auth/delete";
         }
 
         public static final class USER {
