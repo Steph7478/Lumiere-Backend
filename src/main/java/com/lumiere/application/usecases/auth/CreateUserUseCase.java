@@ -8,7 +8,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.lumiere.application.dtos.auth.command.create.CreateUserDTO;
 import com.lumiere.application.dtos.auth.response.auth.CreateUserOutput;
-import com.lumiere.application.dtos.auth.response.auth.CreateUserResponse;
 import com.lumiere.application.exceptions.auth.EmailAlreadyExistsException;
 import com.lumiere.application.exceptions.auth.TokenGenerationException;
 import com.lumiere.application.interfaces.auth.ICreateUserUseCase;
