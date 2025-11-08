@@ -12,7 +12,6 @@ import com.lumiere.application.interfaces.auth.IUpdateUser;
 import com.lumiere.domain.entities.Auth;
 import com.lumiere.domain.repositories.AuthRepository;
 import com.lumiere.domain.services.AuthService;
-import com.lumiere.shared.annotations.logs.Loggable;
 
 @Service
 public class UpdateUserUseCase implements IUpdateUser {
@@ -22,7 +21,6 @@ public class UpdateUserUseCase implements IUpdateUser {
         this.authRepository = authRepository;
     }
 
-    @Loggable
     @Override
     @Transactional
     public UpdateUserOutput execute(UpdateUserInput input) {

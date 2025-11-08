@@ -8,7 +8,6 @@ import com.lumiere.application.exceptions.auth.UserNotFoundException;
 import com.lumiere.application.interfaces.auth.IGetMeUseCase;
 import com.lumiere.domain.readmodels.AuthInfoView;
 import com.lumiere.domain.repositories.UserRepository;
-import com.lumiere.shared.annotations.logs.Loggable;
 
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,7 +19,6 @@ public class GetMeUseCase implements IGetMeUseCase {
         this.userRepository = userRepository;
     }
 
-    @Loggable
     @Override
     @Transactional(readOnly = true)
     public GetMeOutput execute(GetMeInput request) {

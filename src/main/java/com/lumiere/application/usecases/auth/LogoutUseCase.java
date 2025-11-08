@@ -6,6 +6,7 @@ import com.lumiere.infrastructure.http.cookies.CookieFactory;
 
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.transaction.Transactional;
 
 import java.util.List;
 
@@ -17,6 +18,7 @@ import java.util.Arrays;
 public class LogoutUseCase implements ILogoutUseCase {
 
     @Override
+    @Transactional
     public LogoutHandler execute(HttpServletRequest req) {
 
         Cookie accessTokenCookie = CookieFactory.cleanCookies(req, "access_token");
