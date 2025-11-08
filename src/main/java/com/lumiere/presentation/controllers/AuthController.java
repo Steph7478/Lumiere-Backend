@@ -1,15 +1,6 @@
 package com.lumiere.presentation.controllers;
 
 import com.lumiere.presentation.controllers.base.BaseController;
-import com.lumiere.presentation.dtos.command.auth.CreateUserRequestDTO;
-import com.lumiere.presentation.dtos.command.auth.LoginUserRequestDTO;
-import com.lumiere.presentation.dtos.command.auth.UpdateUserRequest;
-import com.lumiere.presentation.dtos.response.auth.CreateUserResponseDTO;
-import com.lumiere.presentation.dtos.response.auth.LoginUserResponseDTO;
-import com.lumiere.presentation.dtos.response.auth.UpdateUserResponse;
-import com.lumiere.presentation.mappers.auth.CreateUserMapper;
-import com.lumiere.presentation.mappers.auth.LoginUserMapper;
-import com.lumiere.presentation.mappers.auth.UpdateUserMapper;
 import com.lumiere.application.dtos.auth.command.action.LoginDTO;
 import com.lumiere.application.dtos.auth.command.create.CreateUserDTO;
 import com.lumiere.application.dtos.auth.command.update.UpdateUserInput;
@@ -50,27 +41,18 @@ public class AuthController extends BaseController {
     private final IGetMeUseCase getMeUseCase;
     private final IUpdateUser updateUser;
     private final ILogoutUseCase logoutUseCase;
-    private final CreateUserMapper createUserMapper;
-    private final LoginUserMapper loginUserMapper;
-    private final UpdateUserMapper updateUserMapper;
 
     public AuthController(
             ICreateUserUseCase createUserUseCase,
             ILoginUseCase loginUseCase,
             IGetMeUseCase getMeUseCase,
             IUpdateUser updateUser,
-            ILogoutUseCase logoutUseCase,
-            CreateUserMapper createUserMapper,
-            LoginUserMapper loginUserMapper,
-            UpdateUserMapper updateUserMapper) {
+            ILogoutUseCase logoutUseCase) {
         this.createUserUseCase = createUserUseCase;
         this.loginUseCase = loginUseCase;
         this.getMeUseCase = getMeUseCase;
         this.logoutUseCase = logoutUseCase;
-        this.createUserMapper = createUserMapper;
-        this.loginUserMapper = loginUserMapper;
         this.updateUser = updateUser;
-        this.updateUserMapper = updateUserMapper;
     }
 
     @Loggable
@@ -95,69 +77,61 @@ public class AuthController extends BaseController {
 
     @Loggable
     @PostMapping(Routes.PUBLIC.AUTH.REGISTER)
-    public ResponseEntity<CreateUserResponseDTO> registerUser(
-            @Valid @RequestBody CreateUserRequestDTO requestDTO,
+    public ResponseEntity<CreateUserResponse> registerUser(
+            @Valid @RequestBody CreateUserDTO requestDTO,
             HttpServletResponse response) {
 
-        CreateUserDTO appDTO = createUserMapper.toApplicationDTO(requestDTO);
-        CreateUserResponse responseDTO = createUserUseCase.execute(appDTO);
+        CreateUserResponse responseDTO = createUserUseCase.execute(requestDTO);
 
         response.addCookie(CookieFactory.createAccessTokenCookie(responseDTO.accessToken()));
         response.addCookie(CookieFactory.createRefreshTokenCookie(responseDTO.refreshToken()));
 
-        CreateUserResponseDTO body = createUserMapper.toPresentationDTO(responseDTO);
-        return ResponseEntity.status(HttpStatus.CREATED).body(body);
+        return ResponseEntity.status(HttpStatus.CREATED).body(responseDTO);
     }
 
     @Loggable
     @PostMapping(Routes.PUBLIC.AUTH.LOGIN)
-    public ResponseEntity<LoginUserResponseDTO> loginUser(
-            @Valid @RequestBody LoginUserRequestDTO requestDTO, HttpServletResponse response) {
+    public ResponseEntity<LoginResponse> loginUser(
+            @Valid @RequestBody LoginDTO requestDTO, HttpServletResponse response) {
 
-        LoginDTO appDTO = loginUserMapper.toApplicationDTO(requestDTO);
-        LoginResponse responseDTO = loginUseCase.execute(appDTO);
+        LoginResponse responseDTO = loginUseCase.execute(requestDTO);
 
         response.addCookie(CookieFactory.createAccessTokenCookie(responseDTO.accessToken()));
         response.addCookie(CookieFactory.createRefreshTokenCookie(responseDTO.refreshToken()));
 
-        LoginUserResponseDTO body = loginUserMapper.toPresentationDTO(responseDTO);
-        return ResponseEntity.status(HttpStatus.ACCEPTED).body(body);
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body(responseDTO);
     }
 
     @Loggable
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     @PutMapping(Routes.PRIVATE.AUTH.UPDATE)
-    public ResponseEntity<UpdateUserResponse> updatePutUser(@AuthenticationPrincipal UUID userId,
-            @Valid @RequestBody UpdateUserRequest requestDTO,
+    public ResponseEntity<UpdateUserResponseDTO> updatePutUser(@AuthenticationPrincipal UUID userId,
+            @Valid @RequestBody UpdateUserRequestDTO requestDTO,
             HttpServletResponse response) {
 
         if (!requestDTO.isCompleteUpdate())
             return ResponseEntity.badRequest().build();
 
-        UpdateUserRequestDTO partialRequestData = updateUserMapper.toApplicationDTO(requestDTO);
-        UpdateUserInput appDTO = new UpdateUserInput(partialRequestData, userId);
+        UpdateUserInput appDTO = new UpdateUserInput(requestDTO, userId);
         UpdateUserResponseDTO responseDTO = updateUser.execute(appDTO);
-        UpdateUserResponse body = updateUserMapper.toPresentationDTO(responseDTO);
 
-        return ResponseEntity.status(HttpStatus.ACCEPTED).body(body);
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body(responseDTO);
 
     }
 
     @Loggable
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     @PatchMapping(Routes.PRIVATE.AUTH.UPDATE)
-    public ResponseEntity<UpdateUserResponse> updatePatchUser(@AuthenticationPrincipal UUID userId,
-            @Valid @RequestBody UpdateUserRequest requestDTO,
+    public ResponseEntity<UpdateUserResponseDTO> updatePatchUser(@AuthenticationPrincipal UUID userId,
+            @Valid @RequestBody UpdateUserRequestDTO requestDTO,
             HttpServletResponse response) {
 
         if (!requestDTO.hasUpdates())
             return ResponseEntity.badRequest().build();
 
-        UpdateUserRequestDTO partialRequestData = updateUserMapper.toApplicationDTO(requestDTO);
-        UpdateUserInput appDTO = new UpdateUserInput(partialRequestData, userId);
+        UpdateUserInput appDTO = new UpdateUserInput(requestDTO, userId);
         UpdateUserResponseDTO responseDTO = updateUser.execute(appDTO);
-        UpdateUserResponse body = updateUserMapper.toPresentationDTO(responseDTO);
 
-        return ResponseEntity.status(HttpStatus.ACCEPTED).body(body);
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body(responseDTO);
     }
 }
