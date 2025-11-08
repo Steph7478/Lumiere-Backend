@@ -5,17 +5,17 @@ import java.util.Optional;
 public record UpdateUserRequestDTO(
                 Optional<String> name,
                 Optional<String> email,
-                Optional<String> newPassword) {
+                Optional<String> password) {
 
         public boolean isCompleteUpdate() {
                 return name.isPresent() &&
                                 email.isPresent() &&
-                                newPassword.isPresent();
+                                password.isPresent();
         }
 
         public boolean hasUpdates() {
                 return name.isPresent() ||
                                 email.isPresent() ||
-                                newPassword.isPresent();
+                                password.isPresent();
         }
 }
