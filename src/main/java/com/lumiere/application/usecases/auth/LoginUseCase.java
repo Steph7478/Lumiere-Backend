@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.lumiere.application.dtos.auth.command.action.LoginDTO;
+import com.lumiere.application.dtos.auth.response.auth.LoginOutput;
 import com.lumiere.application.dtos.auth.response.auth.LoginResponse;
 import com.lumiere.application.exceptions.auth.InvalidCredentialsException;
 import com.lumiere.application.exceptions.auth.TokenGenerationException;
@@ -32,7 +33,7 @@ public class LoginUseCase implements ILoginUseCase {
     @Override
     @Loggable
     @Transactional(readOnly = true)
-    public LoginResponse execute(LoginDTO dto) {
+    public LoginOutput execute(LoginDTO dto) {
         Auth auth = authRepository.findByEmail(dto.email())
                 .orElseThrow(UserNotFoundException::new);
 
@@ -50,7 +51,7 @@ public class LoginUseCase implements ILoginUseCase {
         try {
             String accessToken = TokenService.generateAccessToken(auth.getId(), roles, permissions);
             String refreshToken = TokenService.generateRefreshToken(auth.getId(), roles, permissions);
-            return new LoginResponse(accessToken, refreshToken, auth.getName(), role.name());
+            return new LoginOutput(accessToken, refreshToken, auth.getName(), role.name());
         } catch (Exception e) {
             throw new TokenGenerationException("Failed to generate tokens", e);
         }

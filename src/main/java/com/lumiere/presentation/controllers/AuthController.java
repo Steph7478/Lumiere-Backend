@@ -7,7 +7,9 @@ import com.lumiere.application.dtos.auth.command.delete.DeleteUserRequest;
 import com.lumiere.application.dtos.auth.command.update.UpdateUserInput;
 import com.lumiere.application.dtos.auth.command.update.UpdateUserRequestDTO;
 import com.lumiere.application.dtos.auth.query.GetMeRequest;
+import com.lumiere.application.dtos.auth.response.auth.CreateUserOutput;
 import com.lumiere.application.dtos.auth.response.auth.CreateUserResponse;
+import com.lumiere.application.dtos.auth.response.auth.LoginOutput;
 import com.lumiere.application.dtos.auth.response.auth.LoginResponse;
 import com.lumiere.application.dtos.auth.response.confirmation.DeleteUserResponse;
 import com.lumiere.application.dtos.auth.response.confirmation.LogoutResponse;
@@ -60,6 +62,8 @@ public class AuthController extends BaseController {
         this.deleteUserUseCase = deleteUserUseCase;
     }
 
+    // GET
+
     @Loggable
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     @GetMapping(Routes.PRIVATE.AUTH.ME)
@@ -80,18 +84,22 @@ public class AuthController extends BaseController {
         return ResponseEntity.ok(response);
     }
 
+    // POST
+
     @Loggable
     @PostMapping(Routes.PUBLIC.AUTH.REGISTER)
     public ResponseEntity<CreateUserResponse> registerUser(
             @Valid @RequestBody CreateUserDTO requestDTO,
             HttpServletResponse response) {
 
-        CreateUserResponse responseDTO = createUserUseCase.execute(requestDTO);
+        CreateUserOutput responseDTO = createUserUseCase.execute(requestDTO);
 
         response.addCookie(CookieFactory.createAccessTokenCookie(responseDTO.accessToken()));
         response.addCookie(CookieFactory.createRefreshTokenCookie(responseDTO.refreshToken()));
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(responseDTO);
+        CreateUserResponse body = new CreateUserResponse(responseDTO.name(), responseDTO.role());
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(body);
     }
 
     @Loggable
@@ -99,13 +107,17 @@ public class AuthController extends BaseController {
     public ResponseEntity<LoginResponse> loginUser(
             @Valid @RequestBody LoginDTO requestDTO, HttpServletResponse response) {
 
-        LoginResponse responseDTO = loginUseCase.execute(requestDTO);
+        LoginOutput responseDTO = loginUseCase.execute(requestDTO);
 
         response.addCookie(CookieFactory.createAccessTokenCookie(responseDTO.accessToken()));
         response.addCookie(CookieFactory.createRefreshTokenCookie(responseDTO.refreshToken()));
 
-        return ResponseEntity.status(HttpStatus.ACCEPTED).body(responseDTO);
+        LoginResponse body = new LoginResponse(responseDTO.name(), responseDTO.role());
+
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body(body);
     }
+
+    // PUT
 
     @Loggable
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
@@ -124,6 +136,8 @@ public class AuthController extends BaseController {
 
     }
 
+    // PATCH
+
     @Loggable
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     @PatchMapping(Routes.PRIVATE.AUTH.UPDATE)
@@ -139,6 +153,8 @@ public class AuthController extends BaseController {
 
         return ResponseEntity.status(HttpStatus.ACCEPTED).body(responseDTO);
     }
+
+    // DELETE
 
     @Loggable
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
