@@ -1,6 +1,7 @@
 package com.lumiere.domain.entities;
 
 import com.lumiere.domain.entities.base.BaseEntity;
+import com.lumiere.domain.enums.CategoriesEnum.*;
 import com.lumiere.domain.vo.Money;
 import java.util.*;
 
@@ -81,19 +82,6 @@ public class Product extends BaseEntity {
         newRatings.add(Objects.requireNonNull(rating, "rating cannot be null"));
         return new Product(getId(), this.name, this.description, this.category,
                 this.subCategory, this.price, newRatings, this.stock);
-    }
-
-    // Enums
-    public enum Category {
-        ELECTRONICS, CLOTHING, BOOKS
-    }
-
-    public enum SubCategory {
-        PHONE, LAPTOP, SHIRT, NOVEL
-    }
-
-    public enum CurrencyType {
-        USD, EUR, BRL
     }
 
     // Factory

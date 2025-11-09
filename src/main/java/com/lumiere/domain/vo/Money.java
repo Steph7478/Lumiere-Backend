@@ -3,7 +3,7 @@ package com.lumiere.domain.vo;
 import java.math.BigDecimal;
 import java.util.Objects;
 
-import com.lumiere.domain.entities.Product.CurrencyType;
+import com.lumiere.domain.enums.CurrencyEnum.*;
 import com.lumiere.domain.vo.base.ValueObject;
 
 public class Money extends ValueObject<BigDecimal> {
