@@ -3,6 +3,8 @@ package com.lumiere.domain.entities;
 import com.lumiere.domain.entities.base.BaseEntity;
 import com.lumiere.domain.enums.CategoriesEnum.*;
 import com.lumiere.domain.vo.Money;
+import com.lumiere.domain.vo.Stock;
+
 import java.util.*;
 
 public class Product extends BaseEntity {
@@ -13,10 +15,10 @@ public class Product extends BaseEntity {
     private final SubCategory subCategory;
     private final Money price;
     private final List<Rating> ratings;
-    private final int stock;
+    private final Stock stock;
 
     private Product(UUID id, String name, String description, Category category,
-            SubCategory subCategory, Money price, List<Rating> ratings, int stock) {
+            SubCategory subCategory, Money price, List<Rating> ratings, Stock stock) {
 
         super(id);
         this.name = Objects.requireNonNull(name, "name cannot be null");
@@ -25,9 +27,7 @@ public class Product extends BaseEntity {
         this.subCategory = Objects.requireNonNull(subCategory, "subCategory cannot be null");
         this.price = Objects.requireNonNull(price, "price cannot be null");
         this.ratings = ratings != null ? new ArrayList<>(ratings) : new ArrayList<>();
-        if (stock < 0)
-            throw new IllegalArgumentException("stock cannot be negative");
-        this.stock = stock;
+        this.stock = Objects.requireNonNull(stock, "stock cannot be null");
     }
 
     // Getters
@@ -59,17 +59,33 @@ public class Product extends BaseEntity {
         return Collections.unmodifiableList(ratings);
     }
 
-    public int getStock() {
+    public Stock getStock() {
         return stock;
     }
 
-    // Métodos de domínio
     public Product adjustStock(int delta) {
-        int newStock = this.stock + delta;
-        if (newStock < 0)
-            throw new IllegalArgumentException("stock cannot be negative");
+        Stock newStock;
+
+        if (delta > 0) {
+            newStock = this.stock.add(delta);
+        } else if (delta < 0) {
+            newStock = this.stock.subtract(Math.abs(delta));
+        } else {
+            return this;
+        }
+
         return new Product(getId(), this.name, this.description, this.category,
                 this.subCategory, this.price, this.ratings, newStock);
+    }
+
+    public Product increaseStock(int quantity) {
+        return new Product(getId(), this.name, this.description, this.category,
+                this.subCategory, this.price, this.ratings, this.stock.add(quantity));
+    }
+
+    public Product decreaseStock(int quantity) {
+        return new Product(getId(), this.name, this.description, this.category,
+                this.subCategory, this.price, this.ratings, this.stock.subtract(quantity));
     }
 
     public Product updatePrice(Money newPrice) {
@@ -86,7 +102,7 @@ public class Product extends BaseEntity {
 
     // Factory
     public static Product createProduct(String name, String description, Category category,
-            SubCategory subCategory, Money price, int stock) {
+            SubCategory subCategory, Money price, Stock stock) {
         return new Product(null, name, description, category, subCategory, price, null, stock);
     }
 }
