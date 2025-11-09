@@ -83,6 +83,13 @@
 			<artifactId>h2</artifactId>
 		</dependency>
 
+		<!-- redis -->
+		<dependency>
+			<groupId>redis.clients</groupId>
+			<artifactId>jedis</artifactId>
+			<version>6.1.0</version>
+		</dependency>
+
 		<!-- Sqlite -->
 		<dependency>
 			<groupId>org.xerial</groupId>
