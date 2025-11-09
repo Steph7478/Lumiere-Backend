@@ -13,11 +13,9 @@ import com.lumiere.domain.entities.ProductCategory;
 public class RedisConfig {
 
     @Bean
-    public RedisTemplate<String, ProductCategory> productCategoryRedisTemplate(
-            RedisConnectionFactory connectionFactory) {
+    public RedisTemplate<String, ProductCategory> productCategoryTemplate(RedisConnectionFactory cf) {
         RedisTemplate<String, ProductCategory> template = new RedisTemplate<>();
-        template.setConnectionFactory(connectionFactory);
-
+        template.setConnectionFactory(cf);
         Jackson2JsonRedisSerializer<ProductCategory> serializer = new Jackson2JsonRedisSerializer<>(
                 ProductCategory.class);
 
@@ -29,4 +27,13 @@ public class RedisConfig {
         return template;
     }
 
+    @Bean
+    public RedisTemplate<String, String> stringRedisTemplate(RedisConnectionFactory cf) {
+        RedisTemplate<String, String> template = new RedisTemplate<>();
+        template.setConnectionFactory(cf);
+        template.setKeySerializer(new StringRedisSerializer());
+        template.setValueSerializer(new StringRedisSerializer());
+        template.afterPropertiesSet();
+        return template;
+    }
 }
