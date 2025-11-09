@@ -1,7 +1,6 @@
 package com.lumiere.domain.entities;
 
 import com.lumiere.domain.entities.base.BaseEntity;
-import com.lumiere.domain.enums.CategoriesEnum.*;
 import com.lumiere.domain.vo.Money;
 import com.lumiere.domain.vo.Stock;
 
