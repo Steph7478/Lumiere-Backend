@@ -2,28 +2,36 @@ package com.lumiere.domain.vo;
 
 import java.math.BigDecimal;
 import java.util.Objects;
+import java.util.stream.Stream;
 
-import com.lumiere.domain.enums.CurrencyEnum.*;
+import com.lumiere.domain.enums.CurrencyEnum.CurrencyType;
 import com.lumiere.domain.vo.base.ValueObject;
 
-public class Money extends ValueObject<BigDecimal> {
+public class Money extends ValueObject {
 
+    private final BigDecimal amount;
     private final CurrencyType currency;
 
     public Money(BigDecimal amount, CurrencyType currency) {
-        super(Objects.requireNonNull(amount, "amount cannot be null"));
+        this.amount = Objects.requireNonNull(amount, "amount cannot be null");
         this.currency = Objects.requireNonNull(currency, "currency cannot be null");
+        validate();
+    }
+
+    @Override
+    protected Stream<Object> getAtomicValues() {
+        return Stream.of(amount, currency);
     }
 
     @Override
     protected void validate() {
-        if (value.compareTo(BigDecimal.ZERO) < 0) {
+        if (amount.compareTo(BigDecimal.ZERO) < 0) {
             throw new IllegalArgumentException("amount cannot be negative");
         }
     }
 
     public BigDecimal getAmount() {
-        return value;
+        return amount;
     }
 
     public CurrencyType getCurrency() {
@@ -34,14 +42,14 @@ public class Money extends ValueObject<BigDecimal> {
         if (!this.currency.equals(other.currency)) {
             throw new IllegalArgumentException("Currencies must match");
         }
-        return new Money(this.value.add(other.value), this.currency);
+        return new Money(this.amount.add(other.amount), this.currency);
     }
 
     public Money subtract(Money other) {
         if (!this.currency.equals(other.currency)) {
             throw new IllegalArgumentException("Currencies must match");
         }
-        BigDecimal result = this.value.subtract(other.value);
+        BigDecimal result = this.amount.subtract(other.amount);
         if (result.compareTo(BigDecimal.ZERO) < 0) {
             throw new IllegalArgumentException("result cannot be negative");
         }

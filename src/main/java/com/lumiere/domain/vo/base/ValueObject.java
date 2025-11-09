@@ -1,18 +1,13 @@
 package com.lumiere.domain.vo.base;
 
-public abstract class ValueObject<T> {
+import java.util.Arrays;
+import java.util.Objects;
+import java.util.stream.Stream;
 
-    protected final T value;
+public abstract class ValueObject {
+    protected abstract Stream<Object> getAtomicValues();
 
-    protected ValueObject(T value) {
-        this.value = value;
-        validate();
-    }
-
-    protected abstract void validate();
-
-    public T getValue() {
-        return value;
+    protected void validate() {
     }
 
     @Override
@@ -23,12 +18,14 @@ public abstract class ValueObject<T> {
         if (obj == null || this.getClass() != obj.getClass())
             return false;
 
-        ValueObject<?> other = (ValueObject<?>) obj;
-        return value.equals(other.value);
+        ValueObject other = (ValueObject) obj;
+
+        return Arrays.equals(this.getAtomicValues().toArray(),
+                other.getAtomicValues().toArray());
     }
 
     @Override
     public int hashCode() {
-        return value.hashCode();
+        return Objects.hash(getAtomicValues().toArray());
     }
 }
