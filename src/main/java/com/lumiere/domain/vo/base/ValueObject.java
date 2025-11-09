@@ -19,8 +19,10 @@ public abstract class ValueObject<T> {
     public boolean equals(Object obj) {
         if (this == obj)
             return true;
-        if (!(obj instanceof ValueObject))
+
+        if (obj == null || this.getClass() != obj.getClass())
             return false;
+
         ValueObject<?> other = (ValueObject<?>) obj;
         return value.equals(other.value);
     }
