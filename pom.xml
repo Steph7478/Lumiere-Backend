@@ -83,11 +83,10 @@
 			<artifactId>h2</artifactId>
 		</dependency>
 
-		<!-- redis -->
+		<!-- Redis -->
 		<dependency>
-			<groupId>redis.clients</groupId>
-			<artifactId>jedis</artifactId>
-			<version>6.1.0</version>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-redis</artifactId>
 		</dependency>
 
 		<!-- Sqlite -->
