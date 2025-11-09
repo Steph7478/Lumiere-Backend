@@ -1,9 +1,9 @@
-package com.lumiere.infrastructure.persistence.entities;
+package com.lumiere.infrastructure.persistence.jpa.entities;
 
 import java.util.UUID;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.lumiere.infrastructure.persistence.entities.base.BaseJpaEntity;
+import com.lumiere.infrastructure.persistence.jpa.entities.base.BaseJpaEntity;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;

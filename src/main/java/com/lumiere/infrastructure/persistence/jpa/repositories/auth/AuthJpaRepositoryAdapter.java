@@ -1,4 +1,4 @@
-package com.lumiere.infrastructure.persistence.repositories.auth;
+package com.lumiere.infrastructure.persistence.jpa.repositories.auth;
 
 import java.util.List;
 import java.util.Objects;
@@ -12,8 +12,8 @@ import com.lumiere.domain.entities.Auth;
 import com.lumiere.domain.entities.User;
 import com.lumiere.domain.repositories.AuthRepository;
 import com.lumiere.infrastructure.mappers.AuthMapper;
-import com.lumiere.infrastructure.persistence.entities.AuthJpaEntity;
-import com.lumiere.infrastructure.persistence.repositories.base.BaseRepositoryAdapter;
+import com.lumiere.infrastructure.persistence.jpa.entities.AuthJpaEntity;
+import com.lumiere.infrastructure.persistence.jpa.repositories.base.BaseRepositoryAdapter;
 import com.lumiere.shared.annotations.validators.ValidEntityGraphPaths;
 
 import jakarta.persistence.EntityManager;

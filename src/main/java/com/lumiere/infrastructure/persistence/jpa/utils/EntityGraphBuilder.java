@@ -1,4 +1,4 @@
-package com.lumiere.infrastructure.persistence.utils;
+package com.lumiere.infrastructure.persistence.jpa.utils;
 
 import jakarta.persistence.EntityGraph;
 import jakarta.persistence.EntityManager;

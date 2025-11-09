@@ -1,4 +1,4 @@
-package com.lumiere.infrastructure.persistence.repositories.user;
+package com.lumiere.infrastructure.persistence.jpa.repositories.user;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -8,7 +8,7 @@ import org.springframework.stereotype.Repository;
 
 import com.lumiere.domain.readmodels.AuthInfoView;
 import com.lumiere.domain.readmodels.UserInfoView;
-import com.lumiere.infrastructure.persistence.entities.UserJpaEntity;
+import com.lumiere.infrastructure.persistence.jpa.entities.UserJpaEntity;
 
 @Repository
 public interface UserJpaRepository extends JpaRepository<UserJpaEntity, UUID> {

@@ -85,8 +85,7 @@ public class Product extends BaseEntity {
     }
 
     // Factory
-    public static Product createProduct(String name, String description, Category category,
-            SubCategory subCategory, Money price, Stock stock) {
+    public static Product createProduct(String name, String description, Money price, Stock stock) {
         return new Product(null, name, description, price, null, stock);
     }
 }

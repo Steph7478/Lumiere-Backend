@@ -5,8 +5,8 @@ import org.springframework.stereotype.Component;
 import com.lumiere.domain.entities.Auth;
 import com.lumiere.domain.entities.User;
 import com.lumiere.infrastructure.mappers.base.BaseMapper;
-import com.lumiere.infrastructure.persistence.entities.AuthJpaEntity;
-import com.lumiere.infrastructure.persistence.entities.UserJpaEntity;
+import com.lumiere.infrastructure.persistence.jpa.entities.AuthJpaEntity;
+import com.lumiere.infrastructure.persistence.jpa.entities.UserJpaEntity;
 
 @Component
 public class UserMapper implements BaseMapper<User, UserJpaEntity> {

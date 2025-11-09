@@ -1,4 +1,4 @@
-package com.lumiere.infrastructure.persistence.repositories.base;
+package com.lumiere.infrastructure.persistence.jpa.repositories.base;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityGraph;
@@ -11,7 +11,7 @@ import java.util.*;
 
 import com.lumiere.domain.entities.base.BaseEntity;
 import com.lumiere.infrastructure.mappers.base.BaseMapper;
-import com.lumiere.infrastructure.persistence.utils.EntityGraphBuilder;
+import com.lumiere.infrastructure.persistence.jpa.utils.EntityGraphBuilder;
 
 public abstract class BaseRepositoryAdapter<D, E> implements BaseReader<D>, BaseWriter<D> {
 

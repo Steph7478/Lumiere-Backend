@@ -1,4 +1,4 @@
-package com.lumiere.infrastructure.persistence.entities;
+package com.lumiere.infrastructure.persistence.jpa.entities;
 
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -6,7 +6,7 @@ import lombok.Getter;
 import java.util.UUID;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.lumiere.infrastructure.persistence.entities.base.BaseJpaEntity;
+import com.lumiere.infrastructure.persistence.jpa.entities.base.BaseJpaEntity;
 
 @Getter
 @Entity
