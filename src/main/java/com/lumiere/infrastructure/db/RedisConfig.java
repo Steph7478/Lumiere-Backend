@@ -1,4 +1,4 @@
-package com.lumiere.infrastructure.security.config;
+package com.lumiere.infrastructure.db;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
