@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 
+import com.lumiere.domain.entities.base.BaseEntity;
 import com.lumiere.infrastructure.mappers.base.BaseMapper;
 import com.lumiere.infrastructure.persistence.utils.EntityGraphBuilder;
 
@@ -77,6 +78,8 @@ public abstract class BaseRepositoryAdapter<D, E> implements BaseReader<D>, Base
     @Transactional
     public D save(D domain) {
         Objects.requireNonNull(domain, "domain cannot be null");
+        if (domain instanceof BaseEntity baseDomain)
+            baseDomain.updateTimestamp();
         E entity = Objects.requireNonNull(mapper.toJpa(domain), "entity cannot be null");
         E saved = jpaRepository.save(entity);
         return mapper.toDomain(saved);
@@ -86,6 +89,8 @@ public abstract class BaseRepositoryAdapter<D, E> implements BaseReader<D>, Base
     @Transactional
     public D update(D domain) {
         Objects.requireNonNull(domain, "domain cannot be null");
+        if (domain instanceof BaseEntity baseDomain)
+            baseDomain.updateTimestamp();
         E entity = Objects.requireNonNull(mapper.toJpa(domain), "entity cannot be null");
         E updated = jpaRepository.save(entity);
         return mapper.toDomain(updated);
