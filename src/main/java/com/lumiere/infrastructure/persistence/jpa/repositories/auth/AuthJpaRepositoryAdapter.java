@@ -5,6 +5,9 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Caching; // Importação necessária!
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -35,6 +38,7 @@ public class AuthJpaRepositoryAdapter extends BaseRepositoryAdapter<Auth, AuthJp
     }
 
     @Override
+    @Cacheable(value = "authJpa", key = "#id")
     @Transactional(readOnly = true)
     public Optional<Auth> findById(UUID id) {
         Objects.requireNonNull(id, "id cannot be null");
@@ -42,6 +46,7 @@ public class AuthJpaRepositoryAdapter extends BaseRepositoryAdapter<Auth, AuthJp
     }
 
     @Override
+    @Cacheable(value = "authJpa", key = "#email")
     @Transactional(readOnly = true)
     public Optional<Auth> findByEmail(String email) {
         Objects.requireNonNull(email, "email cannot be null");
@@ -60,5 +65,32 @@ public class AuthJpaRepositoryAdapter extends BaseRepositoryAdapter<Auth, AuthJp
     @Transactional(readOnly = true)
     public List<User> findAllWithRelations() {
         throw new UnsupportedOperationException("Unimplemented method 'findAllWithRelations'");
+    }
+
+    @Override
+    @Caching(evict = {
+            @CacheEvict(value = "authJpa", key = "#domain.id"),
+            @CacheEvict(value = "authJpa", key = "#domain.email")
+    })
+    @Transactional
+    public Auth save(Auth domain) {
+        return super.save(domain);
+    }
+
+    @Override
+    @Caching(evict = {
+            @CacheEvict(value = "authJpa", key = "#domain.id"),
+            @CacheEvict(value = "authJpa", key = "#domain.email")
+    })
+    @Transactional
+    public Auth update(Auth domain) {
+        return super.update(domain);
+    }
+
+    @Override
+    @CacheEvict(value = "authJpa", key = "#id")
+    @Transactional
+    public void deleteById(UUID id) {
+        super.deleteById(id);
     }
 }
