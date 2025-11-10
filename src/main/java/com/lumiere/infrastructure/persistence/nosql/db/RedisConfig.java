@@ -1,13 +1,12 @@
-package com.lumiere.infrastructure.db;
+package com.lumiere.infrastructure.persistence.nosql.db;
 
+import com.lumiere.domain.entities.ProductCategory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
-
-import com.lumiere.domain.entities.ProductCategory;
 
 @Configuration
 public class RedisConfig {
@@ -21,8 +20,6 @@ public class RedisConfig {
 
         template.setKeySerializer(new StringRedisSerializer());
         template.setValueSerializer(serializer);
-        template.setHashKeySerializer(new StringRedisSerializer());
-        template.setHashValueSerializer(serializer);
         template.afterPropertiesSet();
         return template;
     }
