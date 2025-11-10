@@ -1,9 +1,16 @@
 package com.lumiere.domain.repositories;
 
-public interface NoSqlRepository<T> {
-    void save(String id, T obj);
+import java.util.List;
 
-    T search(String id, Class<T> clazz);
+public interface NoSqlRepository<T> {
+
+    void save(String id, T entity);
 
     void delete(String id);
+
+    T findById(String id);
+
+    List<T> findBySubcategory(String subcategory);
+
+    List<T> findByCategory(String category);
 }
