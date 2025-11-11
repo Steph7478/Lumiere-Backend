@@ -3,20 +3,21 @@ package com.lumiere.infrastructure.persistence.nosql.repository;
 import com.lumiere.domain.entities.ProductCategory;
 import com.lumiere.domain.repositories.NoSqlRepository;
 
-import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
+@Primary
 @Repository
 public class ProductCategoryRepositoryAdapter implements NoSqlRepository<ProductCategory> {
 
     private final NoSqlRepository<ProductCategory> dataStore;
 
     public ProductCategoryRepositoryAdapter(
-            @Qualifier("redisJsonRepository") NoSqlRepository<ProductCategory> dataStore) {
+            NoSqlRepository<ProductCategory> dataStore) {
         this.dataStore = dataStore;
     }
 

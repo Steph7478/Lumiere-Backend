@@ -2,6 +2,8 @@ package com.lumiere.infrastructure.persistence.nosql.repository;
 
 import com.lumiere.domain.entities.ProductCategory;
 import com.lumiere.domain.repositories.NoSqlRepository;
+
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Repository;
 
@@ -16,9 +18,9 @@ public class RedisJsonRepository implements NoSqlRepository<ProductCategory> {
     private final RedisTemplate<String, UUID> uuidTemplate;
 
     public RedisJsonRepository(
-            RedisTemplate<String, ProductCategory> objectTemplate,
-            RedisTemplate<String, String> stringRedisTemplate,
-            RedisTemplate<String, UUID> uuidRedisTemplate) {
+            @Qualifier("productCategoryRedisTemplate") RedisTemplate<String, ProductCategory> objectTemplate,
+            @Qualifier("customStringRedisTemplate") RedisTemplate<String, String> stringRedisTemplate,
+            @Qualifier("uuidRedisTemplate") RedisTemplate<String, UUID> uuidRedisTemplate) {
         this.objectTemplate = objectTemplate;
         this.stringTemplate = stringRedisTemplate;
         this.uuidTemplate = uuidRedisTemplate;
