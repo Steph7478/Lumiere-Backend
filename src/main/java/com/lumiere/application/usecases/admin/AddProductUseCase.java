@@ -33,7 +33,6 @@ public class AddProductUseCase implements IAddProductUseCase {
     @Override
     @Transactional
     @RequireAdmin
-    @PreAuthorize("hasRole('ADMIN') and hasAuthority('ADD_PRODUCT')")
     public AddProductOutput execute(AddProductInput input) {
 
         Product product = addProductMapper.toEntity(input);
