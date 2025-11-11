@@ -18,6 +18,7 @@ import com.lumiere.infrastructure.http.auth.token.TokenValidator;
 import com.lumiere.infrastructure.http.cookies.CookieFactory;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -59,9 +60,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             ActingUser actingUser = ActingUserExtractor.fromToken(accessToken);
 
             List<SimpleGrantedAuthority> authorities = actingUser.getRoles().stream()
-                    .map(r -> "ROLE_" + r)
+                    .map(r -> new SimpleGrantedAuthority("ROLE_" + r))
+                    .collect(Collectors.toCollection(ArrayList::new));
+
+            actingUser.getPermissions().stream()
                     .map(SimpleGrantedAuthority::new)
-                    .collect(Collectors.toList());
+                    .forEach(authorities::add);
 
             SecurityContextHolder.getContext().setAuthentication(
                     new UsernamePasswordAuthenticationToken(
