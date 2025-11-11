@@ -13,7 +13,7 @@ import java.util.UUID;
 public class RedisConfig {
 
     @Bean
-    public RedisTemplate<String, String> stringRedisTemplate(RedisConnectionFactory cf) {
+    public RedisTemplate<String, String> customStringRedisTemplate(RedisConnectionFactory cf) {
 
         RedisTemplate<String, String> template = new RedisTemplate<>();
         template.setConnectionFactory(cf);
