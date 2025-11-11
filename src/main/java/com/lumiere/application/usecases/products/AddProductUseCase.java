@@ -11,8 +11,6 @@ import com.lumiere.domain.entities.Product;
 import com.lumiere.domain.entities.ProductCategory;
 import com.lumiere.domain.repositories.NoSqlRepository;
 import com.lumiere.domain.repositories.ProductRepository;
-import com.lumiere.domain.services.ProductCategoryService;
-import com.lumiere.domain.services.ProductService;
 
 import jakarta.transaction.Transactional;
 
@@ -38,10 +36,7 @@ public class AddProductUseCase implements IAddProductUseCase {
         Product product = addProductMapper.toEntity(input);
         Product savedProduct = productRepository.save(product);
 
-        ProductCategory category = ProductCategoryService.createProductCategory(
-                savedProduct.getId(),
-                input.category(),
-                input.subcategory());
+        ProductCategory category = addProductMapper.toProductCategoryEntity(input, savedProduct.getId());
 
         categoryRepository.save(category);
 

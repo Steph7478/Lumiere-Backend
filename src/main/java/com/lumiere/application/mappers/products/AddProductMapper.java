@@ -1,10 +1,14 @@
 package com.lumiere.application.mappers.products;
 
+import java.util.UUID;
+
 import org.springframework.stereotype.Component;
 
 import com.lumiere.application.dtos.product.command.add.AddProductInput;
 import com.lumiere.application.mappers.base.BaseMapper;
 import com.lumiere.domain.entities.Product;
+import com.lumiere.domain.entities.ProductCategory;
+import com.lumiere.domain.services.ProductCategoryService;
 import com.lumiere.domain.services.ProductService;
 import com.lumiere.domain.vo.Money;
 import com.lumiere.domain.vo.Stock;
@@ -29,5 +33,9 @@ public class AddProductMapper implements BaseMapper<Product, AddProductInput> {
         Money price = new Money(dto.priceAmount(), dto.currency());
         Stock stock = new Stock(dto.stockQuantity());
         return ProductService.createProduct(dto.name(), dto.description(), price, stock);
+    }
+
+    public ProductCategory toProductCategoryEntity(AddProductInput dto, UUID productId) {
+        return ProductCategoryService.createProductCategory(productId, dto.category(), dto.subcategory());
     }
 }
