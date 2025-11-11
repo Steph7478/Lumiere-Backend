@@ -25,9 +25,6 @@ public class Product extends BaseEntity {
     }
 
     // Getters
-    public UUID getId() {
-        return getId();
-    }
 
     public String getName() {
         return name;
