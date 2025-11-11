@@ -1,6 +1,5 @@
 package com.lumiere.application.usecases.admin;
 
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import com.lumiere.application.dtos.admin.command.add.AddProductInput;
