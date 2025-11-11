@@ -1,27 +1,39 @@
 package com.lumiere.domain.entities;
 
-public class ProductCategory {
+import java.util.UUID;
 
-    private String productId;
-    private String category;
-    private String subcategory;
+import com.lumiere.domain.entities.base.BaseEntity;
+import com.lumiere.domain.enums.CategoriesEnum.Category;
+import com.lumiere.domain.enums.CategoriesEnum.SubCategory;
 
-    public ProductCategory(String productId, String category, String subcategory) {
-        this.productId = productId;
+public class ProductCategory extends BaseEntity {
+
+    private Category category;
+    private SubCategory subcategory;
+
+    public ProductCategory(UUID productId, Category category, SubCategory subcategory) {
+        super(productId);
         this.category = category;
         this.subcategory = subcategory;
     }
 
-    public String getProductId() {
-        return productId;
-    }
-
-    public String getCategory() {
+    public Category getCategory() {
         return category;
     }
 
-    public String getSubcategory() {
+    public SubCategory getSubcategory() {
         return subcategory;
     }
 
+    public void setCategory(Category category) {
+        this.category = category;
+    }
+
+    public void setSubcategory(SubCategory subcategory) {
+        this.subcategory = subcategory;
+    }
+
+    public static ProductCategory createProductCategory(UUID productId, Category category, SubCategory subcategory) {
+        return new ProductCategory(productId, category, subcategory);
+    }
 }
