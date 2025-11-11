@@ -35,9 +35,9 @@ public class LoginUseCase implements ILoginUseCase {
                 .orElseThrow(UserNotFoundException::new);
 
         boolean isPasswordValid = AuthService.checkPassword(auth, dto.password());
-        if (!isPasswordValid) {
+
+        if (!isPasswordValid)
             throw new InvalidCredentialsException();
-        }
 
         Roles role = auth.isAdmin() ? Roles.ADMIN : Roles.USER;
         Set<String> roles = Set.of(role.name());
