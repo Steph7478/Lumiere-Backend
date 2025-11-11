@@ -31,13 +31,13 @@ public class AddProductUseCase implements IAddProductUseCase {
 
     @Override
     @Transactional
-    @PreAuthorize("hasRole('ADMIN') and hasAuthority('CREATE_PRODUCT')")
+    @PreAuthorize("hasRole('ADMIN') and hasAuthority('ADD_PRODUCT')")
     public AddProductOutput execute(AddProductInput input) {
+
         Product product = addProductMapper.toEntity(input);
         Product savedProduct = productRepository.save(product);
 
         ProductCategory category = addProductMapper.toProductCategoryEntity(input, savedProduct.getId());
-
         categoryRepository.save(category);
 
         return new AddProductOutput(savedProduct, category);
