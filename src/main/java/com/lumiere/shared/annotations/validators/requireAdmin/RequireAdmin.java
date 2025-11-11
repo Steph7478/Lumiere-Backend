@@ -6,15 +6,10 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 import jakarta.validation.Constraint;
-import jakarta.validation.Payload;
 
 @Target({ ElementType.METHOD, ElementType.MODULE })
 @Retention(RetentionPolicy.RUNTIME)
 @Constraint(validatedBy = RequireAdminValidator.class)
 public @interface RequireAdmin {
     String message() default "User must be an admin";
-
-    Class<?>[] groups() default {};
-
-    Class<? extends Payload>[] payload() default {};
 }
