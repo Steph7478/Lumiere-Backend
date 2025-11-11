@@ -35,14 +35,7 @@ public class AddProductUseCase implements IAddProductUseCase {
     @Transactional
     @PreAuthorize("hasRole('ADMIN') and hasAuthority('CREATE_PRODUCT')")
     public AddProductOutput execute(AddProductInput input) {
-        Product entity = addProductMapper.toEntity(input);
-
-        Product product = ProductService.createProduct(
-                entity.getName(),
-                entity.getDescription(),
-                entity.getPrice(),
-                entity.getStock());
-
+        Product product = addProductMapper.toEntity(input);
         Product savedProduct = productRepository.save(product);
 
         ProductCategory category = ProductCategoryService.createProductCategory(
@@ -52,6 +45,7 @@ public class AddProductUseCase implements IAddProductUseCase {
 
         categoryRepository.save(category);
 
-        return new AddProductOutput(product, category);
+        return new AddProductOutput(savedProduct, category);
     }
+
 }
