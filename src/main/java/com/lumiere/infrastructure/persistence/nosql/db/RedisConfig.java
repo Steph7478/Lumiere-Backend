@@ -14,23 +14,25 @@ public class RedisConfig {
 
     @Bean
     public RedisTemplate<String, String> stringRedisTemplate(RedisConnectionFactory cf) {
+
         RedisTemplate<String, String> template = new RedisTemplate<>();
         template.setConnectionFactory(cf);
         template.setKeySerializer(new StringRedisSerializer());
         template.setValueSerializer(new StringRedisSerializer());
         template.afterPropertiesSet();
+
         return template;
     }
 
     @Bean
     public RedisTemplate<String, UUID> uuidRedisTemplate(RedisConnectionFactory cf) {
+
         RedisTemplate<String, UUID> template = new RedisTemplate<>();
         template.setConnectionFactory(cf);
         template.setKeySerializer(new StringRedisSerializer());
-
         template.setValueSerializer(new GenericToStringSerializer<>(UUID.class));
-
         template.afterPropertiesSet();
+
         return template;
     }
 }
