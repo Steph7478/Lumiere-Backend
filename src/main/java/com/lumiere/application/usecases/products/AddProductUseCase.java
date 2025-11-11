@@ -11,6 +11,7 @@ import com.lumiere.domain.entities.Product;
 import com.lumiere.domain.entities.ProductCategory;
 import com.lumiere.domain.repositories.NoSqlRepository;
 import com.lumiere.domain.repositories.ProductRepository;
+import com.lumiere.shared.annotations.validators.requireAdmin.RequireAdmin;
 
 import jakarta.transaction.Transactional;
 
@@ -31,6 +32,7 @@ public class AddProductUseCase implements IAddProductUseCase {
 
     @Override
     @Transactional
+    @RequireAdmin
     @PreAuthorize("hasRole('ADMIN') and hasAuthority('ADD_PRODUCT')")
     public AddProductOutput execute(AddProductInput input) {
 

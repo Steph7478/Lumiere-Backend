@@ -15,7 +15,7 @@ import com.lumiere.infrastructure.mappers.UserMapper;
 import com.lumiere.infrastructure.persistence.jpa.entities.UserJpaEntity;
 import com.lumiere.infrastructure.persistence.jpa.repositories.auth.AuthJpaRepository;
 import com.lumiere.infrastructure.persistence.jpa.repositories.base.BaseRepositoryAdapter;
-import com.lumiere.shared.annotations.validators.ValidEntityGraphPaths;
+import com.lumiere.shared.annotations.validators.validEntityGraphPath.ValidEntityGraphPaths;
 
 import jakarta.persistence.EntityManager;
 

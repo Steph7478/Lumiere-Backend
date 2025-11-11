@@ -6,8 +6,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import com.lumiere.shared.annotations.validators.ValidEntityGraphPathsValidator;
-import com.lumiere.shared.annotations.validators.ValidEntityGraphPaths;
+import com.lumiere.shared.annotations.validators.validEntityGraphPath.ValidEntityGraphPaths;
+import com.lumiere.shared.annotations.validators.validEntityGraphPath.ValidEntityGraphPathsValidator;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.metamodel.EntityType;

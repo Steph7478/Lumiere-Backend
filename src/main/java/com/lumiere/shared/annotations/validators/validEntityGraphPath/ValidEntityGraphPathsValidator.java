@@ -1,4 +1,4 @@
-package com.lumiere.shared.annotations.validators;
+package com.lumiere.shared.annotations.validators.validEntityGraphPath;
 
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
