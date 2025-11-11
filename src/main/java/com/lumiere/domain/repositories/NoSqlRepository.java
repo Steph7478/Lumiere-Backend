@@ -1,14 +1,15 @@
 package com.lumiere.domain.repositories;
 
 import java.util.List;
+import java.util.UUID;
 
 public interface NoSqlRepository<T> {
 
-    void save(String id, T entity);
+    void save(T entity);
 
-    void delete(String id);
+    void delete(UUID id);
 
-    T findById(String id);
+    T findById(UUID id);
 
     List<T> findBySubcategory(String subcategory);
 

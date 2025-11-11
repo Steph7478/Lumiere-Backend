@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.UUID;
 
 @Repository
 public class ProductCategoryRepositoryAdapter implements NoSqlRepository<ProductCategory> {
@@ -20,20 +21,20 @@ public class ProductCategoryRepositoryAdapter implements NoSqlRepository<Product
     }
 
     @Override
-    public void save(String id, ProductCategory product) {
-        Objects.requireNonNull(id);
+    public void save(ProductCategory product) {
+        Objects.requireNonNull(product.getId());
         Objects.requireNonNull(product);
-        dataStore.save(id, product);
+        dataStore.save(product);
     }
 
     @Override
-    public ProductCategory findById(String id) {
+    public ProductCategory findById(UUID id) {
         Objects.requireNonNull(id);
         return dataStore.findById(id);
     }
 
     @Override
-    public void delete(String id) {
+    public void delete(UUID id) {
         Objects.requireNonNull(id);
         dataStore.delete(id);
     }
