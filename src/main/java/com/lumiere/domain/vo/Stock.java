@@ -25,7 +25,7 @@ public class Stock extends ValueObject {
             throw new IllegalArgumentException("Stock cannot be negative");
     }
 
-    public Integer getStock() {
+    public Integer getQuantity() {
         return stock;
     }
 

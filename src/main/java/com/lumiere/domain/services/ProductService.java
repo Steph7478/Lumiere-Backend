@@ -5,8 +5,10 @@ import com.lumiere.domain.vo.Money;
 import com.lumiere.domain.vo.Stock;
 
 public class ProductService {
+    private ProductService() {
+    }
 
-    public Product createProduct(
+    public static Product createProduct(
             String name,
             String description,
             Money price,

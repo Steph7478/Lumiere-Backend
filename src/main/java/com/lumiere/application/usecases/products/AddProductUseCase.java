@@ -22,17 +22,12 @@ public class AddProductUseCase implements IAddProductUseCase {
 
     private final ProductRepository productRepository;
     private final NoSqlRepository<ProductCategory> categoryRepository;
-    private final ProductService productService;
-    private final ProductCategoryService productCategoryService;
 
     public AddProductUseCase(
             ProductRepository productRepository,
-            NoSqlRepository<ProductCategory> categoryRepository,
-            ProductService productService, ProductCategoryService productCategoryService) {
+            NoSqlRepository<ProductCategory> categoryRepository) {
         this.productRepository = productRepository;
         this.categoryRepository = categoryRepository;
-        this.productService = productService;
-        this.productCategoryService = productCategoryService;
     }
 
     @Override
@@ -42,7 +37,7 @@ public class AddProductUseCase implements IAddProductUseCase {
         Money price = new Money(input.priceAmount(), input.currency());
         Stock stock = new Stock(input.stockQuantity());
 
-        Product product = productService.createProduct(
+        Product product = ProductService.createProduct(
                 input.name(),
                 input.description(),
                 price,
@@ -50,13 +45,13 @@ public class AddProductUseCase implements IAddProductUseCase {
 
         Product savedProduct = productRepository.save(product);
 
-        ProductCategory category = productCategoryService.createProductCategory(
+        ProductCategory category = ProductCategoryService.createProductCategory(
                 savedProduct.getId(),
                 input.category(),
                 input.subcategory());
 
         categoryRepository.save(category);
 
-        return new AddProductOutput();
+        return new AddProductOutput(product, category);
     }
 }
