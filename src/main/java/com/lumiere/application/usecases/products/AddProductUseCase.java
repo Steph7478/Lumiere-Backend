@@ -6,14 +6,13 @@ import org.springframework.stereotype.Service;
 import com.lumiere.application.dtos.product.command.add.AddProductInput;
 import com.lumiere.application.dtos.product.command.add.output.AddProductOutput;
 import com.lumiere.application.interfaces.products.IAddProductUseCase;
+import com.lumiere.application.mappers.products.AddProductMapper;
 import com.lumiere.domain.entities.Product;
 import com.lumiere.domain.entities.ProductCategory;
 import com.lumiere.domain.repositories.NoSqlRepository;
 import com.lumiere.domain.repositories.ProductRepository;
 import com.lumiere.domain.services.ProductCategoryService;
 import com.lumiere.domain.services.ProductService;
-import com.lumiere.domain.vo.Money;
-import com.lumiere.domain.vo.Stock;
 
 import jakarta.transaction.Transactional;
 
@@ -22,26 +21,27 @@ public class AddProductUseCase implements IAddProductUseCase {
 
     private final ProductRepository productRepository;
     private final NoSqlRepository<ProductCategory> categoryRepository;
+    private final AddProductMapper addProductMapper;
 
     public AddProductUseCase(
             ProductRepository productRepository,
-            NoSqlRepository<ProductCategory> categoryRepository) {
+            NoSqlRepository<ProductCategory> categoryRepository, AddProductMapper addProductMapper) {
         this.productRepository = productRepository;
         this.categoryRepository = categoryRepository;
+        this.addProductMapper = addProductMapper;
     }
 
     @Override
     @Transactional
     @PreAuthorize("hasRole('ADMIN') and hasAuthority('CREATE_PRODUCT')")
     public AddProductOutput execute(AddProductInput input) {
-        Money price = new Money(input.priceAmount(), input.currency());
-        Stock stock = new Stock(input.stockQuantity());
+        Product entity = addProductMapper.toEntity(input);
 
         Product product = ProductService.createProduct(
-                input.name(),
-                input.description(),
-                price,
-                stock);
+                entity.getName(),
+                entity.getDescription(),
+                entity.getPrice(),
+                entity.getStock());
 
         Product savedProduct = productRepository.save(product);
 
