@@ -1,4 +1,4 @@
-package com.lumiere.application.dtos.auth.command.delete.output;
+package com.lumiere.application.dtos.auth.command.delete;
 
 public record DeleteUserOutput(String message) {
     public DeleteUserOutput() {

@@ -5,8 +5,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.lumiere.application.dtos.auth.command.update.UpdateUserInput;
+import com.lumiere.application.dtos.auth.command.update.UpdateUserOutput;
 import com.lumiere.application.dtos.auth.command.update.UpdateUserRequestData;
-import com.lumiere.application.dtos.auth.command.update.output.UpdateUserOutput;
 import com.lumiere.application.exceptions.auth.UserNotFoundException;
 import com.lumiere.application.interfaces.auth.IUpdateUser;
 import com.lumiere.domain.entities.Auth;

@@ -3,7 +3,7 @@ package com.lumiere.application.usecases.auth;
 import org.springframework.stereotype.Service;
 
 import com.lumiere.application.dtos.auth.command.delete.DeleteUserInput;
-import com.lumiere.application.dtos.auth.command.delete.output.DeleteUserOutput;
+import com.lumiere.application.dtos.auth.command.delete.DeleteUserOutput;
 import com.lumiere.application.exceptions.auth.UserNotFoundException;
 import com.lumiere.application.interfaces.auth.IDeleteUserUseCase;
 import com.lumiere.domain.entities.Auth;
