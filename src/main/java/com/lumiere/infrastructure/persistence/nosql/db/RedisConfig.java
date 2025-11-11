@@ -1,28 +1,16 @@
 package com.lumiere.infrastructure.persistence.nosql.db;
 
-import com.lumiere.domain.entities.ProductCategory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
+import org.springframework.data.redis.serializer.GenericToStringSerializer;
+
+import java.util.UUID;
 
 @Configuration
 public class RedisConfig {
-
-    @Bean
-    public RedisTemplate<String, ProductCategory> productCategoryTemplate(RedisConnectionFactory cf) {
-        RedisTemplate<String, ProductCategory> template = new RedisTemplate<>();
-        template.setConnectionFactory(cf);
-        Jackson2JsonRedisSerializer<ProductCategory> serializer = new Jackson2JsonRedisSerializer<>(
-                ProductCategory.class);
-
-        template.setKeySerializer(new StringRedisSerializer());
-        template.setValueSerializer(serializer);
-        template.afterPropertiesSet();
-        return template;
-    }
 
     @Bean
     public RedisTemplate<String, String> stringRedisTemplate(RedisConnectionFactory cf) {
@@ -30,6 +18,18 @@ public class RedisConfig {
         template.setConnectionFactory(cf);
         template.setKeySerializer(new StringRedisSerializer());
         template.setValueSerializer(new StringRedisSerializer());
+        template.afterPropertiesSet();
+        return template;
+    }
+
+    @Bean
+    public RedisTemplate<String, UUID> uuidRedisTemplate(RedisConnectionFactory cf) {
+        RedisTemplate<String, UUID> template = new RedisTemplate<>();
+        template.setConnectionFactory(cf);
+        template.setKeySerializer(new StringRedisSerializer());
+
+        template.setValueSerializer(new GenericToStringSerializer<>(UUID.class));
+
         template.afterPropertiesSet();
         return template;
     }
