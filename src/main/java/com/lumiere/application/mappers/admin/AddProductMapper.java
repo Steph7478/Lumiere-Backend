@@ -1,10 +1,10 @@
-package com.lumiere.application.mappers.products;
+package com.lumiere.application.mappers.admin;
 
 import java.util.UUID;
 
 import org.springframework.stereotype.Component;
 
-import com.lumiere.application.dtos.product.command.add.AddProductInput;
+import com.lumiere.application.dtos.admin.command.add.AddProductInput;
 import com.lumiere.application.mappers.base.BaseMapper;
 import com.lumiere.domain.entities.Product;
 import com.lumiere.domain.entities.ProductCategory;

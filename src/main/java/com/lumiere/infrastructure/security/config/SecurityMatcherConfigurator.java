@@ -29,7 +29,7 @@ public final class SecurityMatcherConfigurator {
                     api + Routes.PRIVATE.USER.PROFILE,
 
                     // ADMIN
-                    api + Routes.PRIVATE.ADMIN.BASE);
+                    api + Routes.PRIVATE.ADMIN.ADD_PRODUCT);
             auth.anyRequest().authenticated();
         });
     }

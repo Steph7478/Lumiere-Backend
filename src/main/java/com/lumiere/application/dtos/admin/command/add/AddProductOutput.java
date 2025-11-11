@@ -1,4 +1,4 @@
-package com.lumiere.application.dtos.product.command.add;
+package com.lumiere.application.dtos.admin.command.add;
 
 public record AddProductOutput(Object product, Object category) {
 }

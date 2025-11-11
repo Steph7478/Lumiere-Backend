@@ -28,6 +28,7 @@ public final class Routes {
 
         public static final class ADMIN {
             public static final String BASE = "/admin/**";
+            public static final String ADD_PRODUCT = "/admin/add-product";
         }
     }
 }

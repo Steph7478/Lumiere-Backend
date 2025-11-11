@@ -1,12 +1,12 @@
-package com.lumiere.application.usecases.products;
+package com.lumiere.application.usecases.admin;
 
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
-import com.lumiere.application.dtos.product.command.add.AddProductInput;
-import com.lumiere.application.dtos.product.command.add.AddProductOutput;
-import com.lumiere.application.interfaces.products.IAddProductUseCase;
-import com.lumiere.application.mappers.products.AddProductMapper;
+import com.lumiere.application.dtos.admin.command.add.AddProductInput;
+import com.lumiere.application.dtos.admin.command.add.AddProductOutput;
+import com.lumiere.application.interfaces.admin.IAddProductUseCase;
+import com.lumiere.application.mappers.admin.AddProductMapper;
 import com.lumiere.domain.entities.Product;
 import com.lumiere.domain.entities.ProductCategory;
 import com.lumiere.domain.repositories.NoSqlRepository;
