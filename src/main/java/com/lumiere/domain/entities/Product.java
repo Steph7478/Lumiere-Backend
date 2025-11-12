@@ -8,8 +8,8 @@ import java.util.*;
 
 public class Product extends BaseEntity {
 
-    private final String name;
-    private final String description;
+    private String name;
+    private String description;
     private final Money price;
     private final List<Rating> ratings;
     private final Stock stock;
@@ -46,20 +46,6 @@ public class Product extends BaseEntity {
         return stock.getQuantity();
     }
 
-    public Product adjustStock(int delta) {
-        Stock newStock;
-
-        if (delta > 0) {
-            newStock = this.stock.add(delta);
-        } else if (delta < 0) {
-            newStock = this.stock.subtract(Math.abs(delta));
-        } else {
-            return this;
-        }
-
-        return new Product(getId(), this.name, this.description, this.price, this.ratings, newStock);
-    }
-
     public Product increaseStock(int quantity) {
         return new Product(getId(), this.name, this.description, this.price, this.ratings, this.stock.add(quantity));
     }
@@ -78,6 +64,11 @@ public class Product extends BaseEntity {
         List<Rating> newRatings = new ArrayList<>(this.ratings);
         newRatings.add(Objects.requireNonNull(rating, "rating cannot be null"));
         return new Product(getId(), this.name, this.description, this.price, newRatings, this.stock);
+    }
+
+    public void updateProduct(Optional<String> newName, Optional<String> newDescription) {
+        newName.ifPresent(name -> this.name = name);
+        newDescription.ifPresent(desc -> this.description = desc);
     }
 
     // Factory
