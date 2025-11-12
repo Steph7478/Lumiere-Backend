@@ -2,10 +2,21 @@ package com.lumiere.domain.enums;
 
 public class CategoriesEnum {
     public enum Category {
-        ELECTRONICS, CLOTHING, BOOKS
+        ELECTRONICS,
+        CLOTHING,
+        HOME,
+        BOOKS
     }
 
     public enum SubCategory {
-        PHONE, LAPTOP, SHIRT, NOVEL
+        LAPTOP,
+        SMARTPHONE,
+        ACCESSORIES,
+        TSHIRT,
+        PANTS,
+        SHIRT,
+        DECORATION,
+        KITCHEN,
+        NOVEL
     }
 }
