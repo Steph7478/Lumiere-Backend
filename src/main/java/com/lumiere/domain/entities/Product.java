@@ -42,8 +42,8 @@ public class Product extends BaseEntity {
         return Collections.unmodifiableList(ratings);
     }
 
-    public Stock getStock() {
-        return stock;
+    public Integer getStock() {
+        return stock.getQuantity();
     }
 
     public Product adjustStock(int delta) {

@@ -23,7 +23,7 @@ public class AddProductMapper implements BaseMapper<Product, AddProductInput> {
                 entity.getDescription(),
                 entity.getPrice().getAmount(),
                 entity.getPrice().getCurrency(),
-                entity.getStock().getQuantity(),
+                entity.getStock(),
                 null,
                 null);
     }

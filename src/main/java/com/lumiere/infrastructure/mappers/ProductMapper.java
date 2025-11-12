@@ -20,7 +20,7 @@ public final class ProductMapper implements BaseMapper<Product, ProductJpaEntity
                 domain.getDescription(),
                 domain.getPrice().getAmount(),
                 domain.getPrice().getCurrency().name(),
-                domain.getStock().getQuantity());
+                domain.getStock());
     }
 
     @Override

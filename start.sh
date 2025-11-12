@@ -20,18 +20,7 @@ if [ -z "$REDIS_PORT" ]; then
 fi
 
 echo "-> Starting Redis Server on port $REDIS_PORT..."
-redis-server --port "$REDIS_PORT" --requirepass "$REDIS_PASSWORD" &
-
-REDIS_PID=$!
-
-echo "-> Waiting 3 seconds for Redis to warm up (PID: $REDIS_PID)..."
-sleep 3
-
-echo ""
-echo "-> Starting Spring Boot Application (mvn spring-boot:run)..."
-echo ""
-
-mvn spring-boot:run -Dspring.profiles.active="$SPRING_PROFILE"
+redis-server --port "$REDIS_PORT" --requirepass "$REDIS_PASSWORD"
 
 echo ""
 echo "=========================================================="
