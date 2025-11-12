@@ -5,6 +5,7 @@ import com.lumiere.domain.repositories.NoSqlRepository;
 
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Repository;
 
 import java.util.*;
@@ -13,17 +14,13 @@ import java.util.stream.Collectors;
 @Repository
 public class RedisJsonRepository implements NoSqlRepository<ProductCategory> {
 
-    private final RedisTemplate<String, ProductCategory> objectTemplate;
-    private final RedisTemplate<String, String> stringTemplate;
-    private final RedisTemplate<String, Object> genericTemplate;
+    private final RedisTemplate<String, Object> genericJsonRedisTemplate;
+    private final ValueOperations<String, Object> valueOperations;
 
     public RedisJsonRepository(
-            @Qualifier("productCategoryRedisTemplate") RedisTemplate<String, ProductCategory> objectTemplate,
-            @Qualifier("customStringRedisTemplate") RedisTemplate<String, String> stringRedisTemplate,
-            @Qualifier("genericObjectTemplate") RedisTemplate<String, Object> genericTemplate) {
-        this.objectTemplate = objectTemplate;
-        this.stringTemplate = stringRedisTemplate;
-        this.genericTemplate = genericTemplate;
+            @Qualifier("genericJsonRedisTemplate") RedisTemplate<String, Object> genericJsonRedisTemplate) {
+        this.genericJsonRedisTemplate = genericJsonRedisTemplate;
+        this.valueOperations = genericJsonRedisTemplate.opsForValue();
     }
 
     @Override
@@ -33,23 +30,26 @@ public class RedisJsonRepository implements NoSqlRepository<ProductCategory> {
 
         String subcategoryString = obj.getSubcategory().toString();
         String categoryString = obj.getCategory().toString();
+        valueOperations.set(key, obj);
 
-        objectTemplate.opsForValue().set(key, obj);
-        genericTemplate.opsForSet().add("subcategory:" + subcategoryString, obj.getId());
-        stringTemplate.opsForSet().add("category:" + categoryString, subcategoryString);
+        genericJsonRedisTemplate.opsForSet().add("subcategory:" + subcategoryString, obj.getId());
+        genericJsonRedisTemplate.opsForSet().add("category:" + categoryString, subcategoryString);
     }
 
     @Override
     public ProductCategory findById(UUID id) {
         String key = Objects.requireNonNull(id.toString());
-        ProductCategory result = objectTemplate.opsForValue().get(key);
 
-        return Objects.requireNonNull(result, "ProductCategory not found for ID: " + id);
+        Object result = valueOperations.get(key);
+        if (result == null)
+            throw new NoSuchElementException("ProductCategory not found for ID: " + id);
+
+        return (ProductCategory) result;
     }
 
     @Override
     public List<ProductCategory> findBySubcategory(String subcategory) {
-        Set<Object> objSet = genericTemplate.opsForSet().members("subcategory:" + subcategory);
+        Set<Object> objSet = genericJsonRedisTemplate.opsForSet().members("subcategory:" + subcategory);
 
         if (objSet == null || objSet.isEmpty())
             return Collections.emptyList();
@@ -60,18 +60,26 @@ public class RedisJsonRepository implements NoSqlRepository<ProductCategory> {
                 .collect(Collectors.toSet());
 
         Objects.requireNonNull(ids);
+        List<Object> results = valueOperations.multiGet(ids);
 
-        List<ProductCategory> results = objectTemplate.opsForValue().multiGet(ids);
-
-        return results != null ? results.stream().filter(Objects::nonNull).collect(Collectors.toList())
+        return results != null ? results.stream()
+                .filter(Objects::nonNull)
+                .map(item -> (ProductCategory) item)
+                .collect(Collectors.toList())
                 : Collections.emptyList();
     }
 
     @Override
     public List<ProductCategory> findByCategory(String category) {
+        Set<Object> subcategoryObjects = genericJsonRedisTemplate.opsForSet().members("category:" + category);
 
-        Set<String> subcategories = stringTemplate.opsForSet().members("category:" + category);
-        Objects.requireNonNull(subcategories);
+        Set<String> subcategories = subcategoryObjects != null ? subcategoryObjects.stream()
+                .filter(Objects::nonNull)
+                .map(Object::toString)
+                .collect(Collectors.toSet()) : Collections.emptySet();
+
+        if (subcategories.isEmpty())
+            return Collections.emptyList();
 
         Set<String> allIds = subcategories.stream()
                 .flatMap(sub -> getUuidSetMembersAsString("subcategory:" + sub).stream())
@@ -80,9 +88,12 @@ public class RedisJsonRepository implements NoSqlRepository<ProductCategory> {
         if (allIds.isEmpty())
             return Collections.emptyList();
 
-        List<ProductCategory> results = objectTemplate.opsForValue().multiGet(allIds);
+        List<Object> results = valueOperations.multiGet(allIds);
 
-        return results != null ? results.stream().filter(Objects::nonNull).collect(Collectors.toList())
+        return results != null ? results.stream()
+                .filter(Objects::nonNull)
+                .map(item -> (ProductCategory) item)
+                .collect(Collectors.toList())
                 : Collections.emptyList();
     }
 
@@ -90,27 +101,24 @@ public class RedisJsonRepository implements NoSqlRepository<ProductCategory> {
     public void delete(UUID id) {
         String key = id.toString();
         Objects.requireNonNull(key);
-
-        ProductCategory obj = objectTemplate.opsForValue().get(key);
-        Objects.requireNonNull(obj, "ProductCategory to delete not found for ID: " + id);
+        ProductCategory obj = findById(id);
 
         String subcategoryString = obj.getSubcategory().toString();
         String categoryString = obj.getCategory().toString();
 
-        genericTemplate.opsForSet().remove("subcategory:" + subcategoryString, id);
+        genericJsonRedisTemplate.opsForSet().remove("subcategory:" + subcategoryString, id);
+        Long size = genericJsonRedisTemplate.opsForSet().size("subcategory:" + subcategoryString);
 
-        Long size = genericTemplate.opsForSet().size("subcategory:" + subcategoryString);
         long subcategorySize = Objects.requireNonNullElse(size, 0L);
-
         if (subcategorySize == 0)
-            stringTemplate.opsForSet().remove("category:" + categoryString, subcategoryString);
+            genericJsonRedisTemplate.opsForSet().remove("category:" + categoryString, subcategoryString);
 
-        objectTemplate.delete(key);
+        genericJsonRedisTemplate.delete(key);
     }
 
     private Set<String> getUuidSetMembersAsString(String key) {
         Objects.requireNonNull(key);
-        Set<Object> objMembers = genericTemplate.opsForSet().members(key);
+        Set<Object> objMembers = genericJsonRedisTemplate.opsForSet().members(key);
 
         return objMembers != null ? objMembers.stream()
                 .filter(Objects::nonNull)
