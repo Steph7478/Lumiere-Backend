@@ -5,9 +5,9 @@ import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 public enum Permissions {
-    PRODUCT_ADD("PRODUCT_ADD"),
-    PRODUCT_DELETE("PRODUCT_DELETE"),
-    PRODUCT_UPDATE("PRODUCT_UPDATE"),
+    ADMIN_PRODUCT_ADD("PRODUCT_ADD"),
+    ADMIN_PRODUCT_DELETE("PRODUCT_DELETE"),
+    ADMIN_PRODUCT_UPDATE("PRODUCT_UPDATE"),
 
     USER_READ("READ_ONLY");
 

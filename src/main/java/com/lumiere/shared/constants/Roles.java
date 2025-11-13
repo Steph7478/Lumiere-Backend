@@ -13,9 +13,9 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public enum Roles {
     ADMIN(EnumSet.of(
-            Permissions.PRODUCT_ADD,
-            Permissions.PRODUCT_DELETE,
-            Permissions.PRODUCT_UPDATE)),
+            Permissions.ADMIN_PRODUCT_ADD,
+            Permissions.ADMIN_PRODUCT_DELETE,
+            Permissions.ADMIN_PRODUCT_UPDATE)),
 
     USER(EnumSet.of(Permissions.USER_READ));
 
