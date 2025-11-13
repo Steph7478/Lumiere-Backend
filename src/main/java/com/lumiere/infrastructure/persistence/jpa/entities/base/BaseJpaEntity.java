@@ -7,9 +7,6 @@ import jakarta.persistence.PrePersist;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-import org.hibernate.annotations.JdbcTypeCode;
-import org.hibernate.type.SqlTypes;
-
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -21,7 +18,6 @@ import lombok.NoArgsConstructor;
 public abstract class BaseJpaEntity {
 
     @Id
-    @JdbcTypeCode(SqlTypes.CHAR)
     private UUID id;
 
     @Column(nullable = false, updatable = false)
