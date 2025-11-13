@@ -27,11 +27,11 @@ public class DecreaseStockUseCase implements IDecreaseStockUseCase {
         Product product = productRepository.findById(input.id())
                 .orElseThrow(() -> new ProductNotFoundException(input.id()));
 
-        ProductService.decreaseStock(product, requestData.quantity());
+        Product updatedProduct = ProductService.decreaseStock(product, requestData.quantity());
 
-        productRepository.update(product);
+        productRepository.update(updatedProduct);
 
-        return new DecreaseStockOutput(product.getId(), product.getStock().getQuantity());
+        return new DecreaseStockOutput(updatedProduct.getId(), updatedProduct.getStock().getQuantity());
     }
 
 }

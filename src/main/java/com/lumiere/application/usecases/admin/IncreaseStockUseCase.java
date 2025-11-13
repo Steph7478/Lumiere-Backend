@@ -28,11 +28,11 @@ public class IncreaseStockUseCase implements IIncreaseStockUseCase {
         Product product = productRepository.findById(input.id())
                 .orElseThrow(() -> new ProductNotFoundException(input.id()));
 
-        ProductService.increaseStock(product, requestData.quantity());
+        Product updatedProduct = ProductService.increaseStock(product, requestData.quantity());
 
-        productRepository.update(product);
+        productRepository.update(updatedProduct);
 
-        return new IncreaseStockOutput(product.getId(), product.getStock().getQuantity());
+        return new IncreaseStockOutput(updatedProduct.getId(), updatedProduct.getStock().getQuantity());
     }
 
 }
