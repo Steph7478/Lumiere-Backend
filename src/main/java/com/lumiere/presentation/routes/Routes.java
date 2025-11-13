@@ -29,6 +29,8 @@ public final class Routes {
         public static final class ADMIN {
             public static final String ADD_PRODUCT = "/admin/add-product";
             public static final String UPDATE_PRODUCT = "/admin/update-product";
+            public static final String INCREASE_STOCK = "/admin/increase-stock";
+            public static final String DECREASE_STOCK = "/admin/decrease-stock";
         }
     }
 }
