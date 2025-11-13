@@ -13,17 +13,21 @@ import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSeriali
 import org.springframework.data.redis.serializer.RedisSerializationContext.SerializationPair;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 @Configuration
 @SuppressWarnings("null")
 public class CacheConfig {
 
     private static final Duration DEFAULT_TTL = Duration.ofMinutes(15);
+    private final ObjectMapper objectMapper;
+
+    public CacheConfig(ObjectMapper objectMapper) {
+        this.objectMapper = objectMapper;
+    }
 
     @Bean
     public RedisCacheManager cacheManager(RedisConnectionFactory connectionFactory) {
-        RedisCacheConfiguration defaultCacheConfig = configureDefaultCache(DEFAULT_TTL);
+        RedisCacheConfiguration defaultCacheConfig = configureDefaultCache(DEFAULT_TTL, objectMapper);
 
         Map<String, RedisCacheConfiguration> cacheConfigurations = new HashMap<>();
 
@@ -37,10 +41,7 @@ public class CacheConfig {
                 .build();
     }
 
-    private RedisCacheConfiguration configureDefaultCache(Duration ttl) {
-        ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.registerModule(new JavaTimeModule());
-
+    private RedisCacheConfiguration configureDefaultCache(Duration ttl, ObjectMapper objectMapper) {
         GenericJackson2JsonRedisSerializer jsonSerializer = new GenericJackson2JsonRedisSerializer(objectMapper);
 
         return RedisCacheConfiguration.defaultCacheConfig()
