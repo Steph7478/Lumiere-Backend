@@ -6,14 +6,14 @@ import com.lumiere.application.dtos.admin.command.modify.ModifyProductInput;
 import com.lumiere.application.dtos.admin.command.modify.ModifyProductOutput;
 import com.lumiere.application.dtos.admin.command.modify.ModifyProductRequestData;
 import com.lumiere.application.exceptions.product.ProductNotFoundException;
-import com.lumiere.application.interfaces.admin.IModifyProduct;
+import com.lumiere.application.interfaces.admin.IModifyProductUseCase;
 import com.lumiere.domain.entities.Product;
 import com.lumiere.domain.repositories.ProductRepository;
 import com.lumiere.domain.services.ProductService;
 import com.lumiere.shared.annotations.validators.requireAdmin.RequireAdmin;
 
 @Service
-public class ModifyProductUseCase implements IModifyProduct {
+public class ModifyProductUseCase implements IModifyProductUseCase {
     private final ProductRepository productRepository;
 
     public ModifyProductUseCase(ProductRepository productRepository) {
