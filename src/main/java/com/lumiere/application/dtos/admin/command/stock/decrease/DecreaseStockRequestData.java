@@ -1,5 +1,7 @@
 package com.lumiere.application.dtos.admin.command.stock.decrease;
 
-public record DecreaseStockRequestData(int quantity) {
+import com.lumiere.domain.vo.Stock;
+
+public record DecreaseStockRequestData(Stock quantity) {
 
 }

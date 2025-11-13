@@ -2,11 +2,9 @@ package com.lumiere.infrastructure.persistence.jpa.entities;
 
 import jakarta.persistence.*;
 import lombok.Getter;
-
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.UUID;
-
 import com.lumiere.infrastructure.persistence.jpa.entities.base.BaseJpaEntity;
 
 @Getter
@@ -28,7 +26,12 @@ public class ProductJpaEntity extends BaseJpaEntity implements Serializable {
     @Column(nullable = false)
     private Integer stockQuantity;
 
-    public ProductJpaEntity(UUID id, String name, String description, BigDecimal priceAmount, String priceCurrency,
+    protected ProductJpaEntity() {
+        super(null);
+    }
+
+    public ProductJpaEntity(UUID id, String name, String description,
+            BigDecimal priceAmount, String priceCurrency,
             Integer stockQuantity) {
         super(id);
         this.name = name;
@@ -36,9 +39,5 @@ public class ProductJpaEntity extends BaseJpaEntity implements Serializable {
         this.priceAmount = priceAmount;
         this.priceCurrency = priceCurrency;
         this.stockQuantity = stockQuantity;
-    }
-
-    protected ProductJpaEntity() {
-        super(null);
     }
 }
