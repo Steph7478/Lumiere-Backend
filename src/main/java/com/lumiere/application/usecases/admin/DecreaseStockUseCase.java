@@ -29,7 +29,7 @@ public class DecreaseStockUseCase implements IDecreaseStockUseCase {
 
         ProductService.decreaseStock(product, requestData.quantity());
 
-        productRepository.save(product);
+        productRepository.update(product);
 
         return new DecreaseStockOutput(product.getId(), product.getStock().getQuantity());
     }

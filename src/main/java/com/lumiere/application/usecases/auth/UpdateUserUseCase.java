@@ -35,7 +35,7 @@ public class UpdateUserUseCase implements IUpdateUser {
                 request.email(),
                 request.password());
 
-        authRepository.save(auth);
+        authRepository.update(auth);
 
         return new UpdateUserOutput();
     }

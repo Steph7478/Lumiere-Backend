@@ -30,7 +30,7 @@ public class IncreaseStockUseCase implements IIncreaseStockUseCase {
 
         ProductService.increaseStock(product, requestData.quantity());
 
-        productRepository.save(product);
+        productRepository.update(product);
 
         return new IncreaseStockOutput(product.getId(), product.getStock().getQuantity());
     }
