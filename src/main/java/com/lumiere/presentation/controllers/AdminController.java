@@ -20,8 +20,10 @@ import com.lumiere.application.dtos.admin.command.modify.ModifyProductOutput;
 import com.lumiere.application.dtos.admin.command.modify.ModifyProductRequestData;
 import com.lumiere.application.dtos.admin.command.stock.decrease.DecreaseStockInput;
 import com.lumiere.application.dtos.admin.command.stock.decrease.DecreaseStockOutput;
+import com.lumiere.application.dtos.admin.command.stock.decrease.DecreaseStockRequestData;
 import com.lumiere.application.dtos.admin.command.stock.increase.IncreaseStockInput;
 import com.lumiere.application.dtos.admin.command.stock.increase.IncreaseStockOutput;
+import com.lumiere.application.dtos.admin.command.stock.increase.IncreaseStockRequestData;
 import com.lumiere.application.interfaces.admin.IAddProductUseCase;
 import com.lumiere.application.interfaces.admin.IDecreaseStockUseCase;
 import com.lumiere.application.interfaces.admin.IIncreaseStockUseCase;
@@ -91,9 +93,9 @@ public class AdminController extends BaseController {
     @PreAuthorize("hasRole('ADMIN') and hasAuthority('PRODUCT_UPDATE')")
     @PatchMapping(Routes.PRIVATE.ADMIN.INCREASE_STOCK + "/{id}")
     public ResponseEntity<IncreaseStockOutput> increaseStock(@PathVariable UUID id,
-            @Valid @RequestBody IncreaseStockInput req, HttpServletResponse res) {
+            @Valid @RequestBody IncreaseStockRequestData req, HttpServletResponse res) {
 
-        IncreaseStockInput appDTO = new IncreaseStockInput(id, req.quantity());
+        IncreaseStockInput appDTO = new IncreaseStockInput(id, req);
         IncreaseStockOutput responseDTO = increaseStockUseCase.execute(appDTO);
 
         return ResponseEntity.status(HttpStatus.ACCEPTED).body(responseDTO);
@@ -103,9 +105,9 @@ public class AdminController extends BaseController {
     @PreAuthorize("hasRole('ADMIN') and hasAuthority('PRODUCT_UPDATE')")
     @PatchMapping(Routes.PRIVATE.ADMIN.DECREASE_STOCK + "/{id}")
     public ResponseEntity<DecreaseStockOutput> decreaseStock(@PathVariable UUID id,
-            @Valid @RequestBody DecreaseStockInput req, HttpServletResponse res) {
+            @Valid @RequestBody DecreaseStockRequestData req, HttpServletResponse res) {
 
-        DecreaseStockInput appDTO = new DecreaseStockInput(id, req.quantity());
+        DecreaseStockInput appDTO = new DecreaseStockInput(id, req);
         DecreaseStockOutput responseDTO = decreaseStockUseCase.execute(appDTO);
 
         return ResponseEntity.status(HttpStatus.ACCEPTED).body(responseDTO);

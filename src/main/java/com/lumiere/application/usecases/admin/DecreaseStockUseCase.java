@@ -4,6 +4,7 @@ import org.springframework.stereotype.Service;
 
 import com.lumiere.application.dtos.admin.command.stock.decrease.DecreaseStockInput;
 import com.lumiere.application.dtos.admin.command.stock.decrease.DecreaseStockOutput;
+import com.lumiere.application.dtos.admin.command.stock.decrease.DecreaseStockRequestData;
 import com.lumiere.application.exceptions.product.ProductNotFoundException;
 import com.lumiere.application.interfaces.admin.IDecreaseStockUseCase;
 import com.lumiere.domain.entities.Product;
@@ -22,10 +23,11 @@ public class DecreaseStockUseCase implements IDecreaseStockUseCase {
     @Override
     @RequireAdmin
     public DecreaseStockOutput execute(DecreaseStockInput input) {
+        DecreaseStockRequestData requestData = input.requestData();
         Product product = productRepository.findById(input.id())
                 .orElseThrow(() -> new ProductNotFoundException(input.id()));
 
-        ProductService.increaseStock(product, input.quantity());
+        ProductService.increaseStock(product, requestData.quantity());
 
         productRepository.save(product);
 
