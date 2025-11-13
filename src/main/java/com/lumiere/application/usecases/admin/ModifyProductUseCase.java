@@ -1,7 +1,5 @@
 package com.lumiere.application.usecases.admin;
 
-import java.util.UUID;
-
 import org.springframework.stereotype.Service;
 
 import com.lumiere.application.dtos.admin.command.modify.ModifyProductInput;
