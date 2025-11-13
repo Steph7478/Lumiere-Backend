@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 
 import com.lumiere.application.dtos.admin.command.modify.ModifyProductInput;
 import com.lumiere.application.dtos.admin.command.modify.ModifyProductOutput;
+import com.lumiere.application.dtos.admin.command.modify.ModifyProductRequestData;
 import com.lumiere.application.exceptions.product.ProductNotFoundException;
 import com.lumiere.application.interfaces.admin.IModifyProduct;
 import com.lumiere.domain.entities.Product;
@@ -24,12 +25,12 @@ public class ModifyProductUseCase implements IModifyProduct {
     @Override
     @RequireAdmin
     public ModifyProductOutput execute(ModifyProductInput input) {
-        UUID id = input.id();
+        ModifyProductRequestData request = input.requestData();
 
-        Product product = productRepository.findById(id)
-                .orElseThrow(() -> new ProductNotFoundException(id));
+        Product product = productRepository.findById(input.id())
+                .orElseThrow(() -> new ProductNotFoundException(input.id()));
 
-        ProductService.update(product, input.name(), input.description());
+        ProductService.update(product, request.name(), request.description());
 
         productRepository.save(product);
 
