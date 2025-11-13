@@ -25,9 +25,17 @@ public final class ProductMapper implements BaseMapper<Product, ProductJpaEntity
 
     @Override
     public Product toDomain(ProductJpaEntity jpaEntity) {
-        Money price = new Money(jpaEntity.getPriceAmount(), CurrencyType.valueOf(jpaEntity.getPriceCurrency()));
+        Money price = new Money(
+                jpaEntity.getPriceAmount(),
+                CurrencyType.valueOf(jpaEntity.getPriceCurrency()));
         Stock stock = new Stock(jpaEntity.getStockQuantity());
-        return Product.createProduct(jpaEntity.getName(), jpaEntity.getDescription(), price, stock);
-    }
 
+        return Product.from(
+                jpaEntity.getId(),
+                jpaEntity.getName(),
+                jpaEntity.getDescription(),
+                price,
+                stock);
+
+    }
 }

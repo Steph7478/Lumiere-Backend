@@ -75,4 +75,8 @@ public class Product extends BaseEntity {
     public static Product createProduct(String name, String description, Money price, Stock stock) {
         return new Product(null, name, description, price, null, stock);
     }
+
+    public static Product from(UUID id, String name, String description, Money price, Stock stock) {
+        return new Product(id, name, description, price, null, stock);
+    }
 }
