@@ -37,7 +37,7 @@ public class AddProductMapper implements BaseMapper<Product, AddProductInput> {
         return ProductService.createProduct(dto.name(), dto.description(), price, stock);
     }
 
-    public ProductCategory toProductCategoryEntity(AddProductInput dto, UUID productId) {
+    public ProductCategory toProductCategoryEntity(UUID productId, AddProductInput dto) {
         return ProductCategoryService.createProductCategory(productId, dto.category(), dto.subcategory());
     }
 
