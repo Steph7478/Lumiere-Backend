@@ -43,7 +43,7 @@ public class AdminController extends BaseController {
         return ResponseEntity.status(HttpStatus.ACCEPTED).body(appDTO);
     }
 
-    @PreAuthorize("hasRole('ADMIN') and hasAuthority('PRODUCT_ADD')")
+    @PreAuthorize("hasRole('ADMIN') and hasAuthority('PRODUCT_UPDATE')")
     @PutMapping(Routes.PRIVATE.ADMIN.UPDATE_PRODUCT)
     public ResponseEntity<ModifyProductOutput> putProduct(@PathVariable UUID id,
             @Valid @RequestBody ModifyProductInput req,
@@ -58,7 +58,7 @@ public class AdminController extends BaseController {
         return ResponseEntity.status(HttpStatus.ACCEPTED).body(responseDTO);
     }
 
-    @PreAuthorize("hasRole('ADMIN') and hasAuthority('PRODUCT_ADD')")
+    @PreAuthorize("hasRole('ADMIN') and hasAuthority('PRODUCT_UPDATE')")
     @PatchMapping(Routes.PRIVATE.ADMIN.UPDATE_PRODUCT)
     public ResponseEntity<ModifyProductOutput> patchProduct(@PathVariable UUID id,
             @Valid @RequestBody ModifyProductInput req,
