@@ -1,5 +1,7 @@
 package com.lumiere.application.usecases.admin;
 
+import java.util.UUID;
+
 import org.springframework.stereotype.Service;
 
 import com.lumiere.application.dtos.admin.command.modify.ModifyProductInput;
@@ -22,9 +24,10 @@ public class ModifyProductUseCase implements IModifyProduct {
     @Override
     @RequireAdmin
     public ModifyProductOutput execute(ModifyProductInput input) {
+        UUID id = input.id();
 
-        Product product = productRepository.findById(input.id())
-                .orElseThrow(() -> new ProductNotFoundException(input.id()));
+        Product product = productRepository.findById(id)
+                .orElseThrow(() -> new ProductNotFoundException(id));
 
         ProductService.update(product, input.name(), input.description());
 
