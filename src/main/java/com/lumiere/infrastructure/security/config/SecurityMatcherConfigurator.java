@@ -30,7 +30,7 @@ public final class SecurityMatcherConfigurator {
 
                     // ADMIN
                     api + Routes.PRIVATE.ADMIN.ADD_PRODUCT,
-                    api + Routes.PRIVATE.ADMIN.UPDATE_PRODUCT);
+                    api + Routes.PRIVATE.ADMIN.UPDATE_PRODUCT + "/**");
             auth.anyRequest().authenticated();
         });
     }

@@ -5,6 +5,7 @@ import java.util.UUID;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -25,6 +26,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 
 @RestController
+@Validated
 public class AdminController extends BaseController {
     private final AddProductUseCase addProductUseCase;
     private final ModifyProductUseCase modifyProductUseCase;
@@ -44,7 +46,7 @@ public class AdminController extends BaseController {
     }
 
     @PreAuthorize("hasRole('ADMIN') and hasAuthority('PRODUCT_UPDATE')")
-    @PutMapping(Routes.PRIVATE.ADMIN.UPDATE_PRODUCT)
+    @PutMapping(Routes.PRIVATE.ADMIN.UPDATE_PRODUCT + "/{id}")
     public ResponseEntity<ModifyProductOutput> putProduct(@PathVariable UUID id,
             @Valid @RequestBody ModifyProductInput req,
             HttpServletResponse res) {
@@ -59,10 +61,11 @@ public class AdminController extends BaseController {
     }
 
     @PreAuthorize("hasRole('ADMIN') and hasAuthority('PRODUCT_UPDATE')")
-    @PatchMapping(Routes.PRIVATE.ADMIN.UPDATE_PRODUCT)
+    @PatchMapping(Routes.PRIVATE.ADMIN.UPDATE_PRODUCT + "/{id}")
     public ResponseEntity<ModifyProductOutput> patchProduct(@PathVariable UUID id,
             @Valid @RequestBody ModifyProductInput req,
             HttpServletResponse res) {
+
         if (!req.hasUpdates())
             return ResponseEntity.badRequest().build();
 
