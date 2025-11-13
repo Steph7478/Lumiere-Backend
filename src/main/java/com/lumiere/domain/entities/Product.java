@@ -10,9 +10,9 @@ public class Product extends BaseEntity {
 
     private String name;
     private String description;
-    private final Money price;
-    private final List<Rating> ratings;
-    private final Stock stock;
+    private Money price;
+    private List<Rating> ratings;
+    private Stock stock;
 
     private Product(UUID id, String name, String description, Money price, List<Rating> ratings, Stock stock) {
 
@@ -47,23 +47,23 @@ public class Product extends BaseEntity {
     }
 
     public Product increaseStock(int quantity) {
-        return new Product(getId(), this.name, this.description, this.price, this.ratings, this.stock.add(quantity));
+        this.stock = this.stock.add(quantity);
+        return this;
     }
 
     public Product decreaseStock(int quantity) {
-        return new Product(getId(), this.name, this.description, this.price, this.ratings,
-                this.stock.subtract(quantity));
+        this.stock = this.stock.subtract(quantity);
+        return this;
     }
 
     public Product updatePrice(Money newPrice) {
-        return new Product(getId(), this.name, this.description,
-                Objects.requireNonNull(newPrice, "price cannot be null"), this.ratings, this.stock);
+        this.price = Objects.requireNonNull(newPrice, "price cannot be null");
+        return this;
     }
 
     public Product addRating(Rating rating) {
-        List<Rating> newRatings = new ArrayList<>(this.ratings);
-        newRatings.add(Objects.requireNonNull(rating, "rating cannot be null"));
-        return new Product(getId(), this.name, this.description, this.price, newRatings, this.stock);
+        this.ratings.add(Objects.requireNonNull(rating, "rating cannot be null"));
+        return this;
     }
 
     public void updateProduct(Optional<String> newName, Optional<String> newDescription) {
