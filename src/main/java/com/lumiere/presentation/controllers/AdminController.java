@@ -5,6 +5,7 @@ import java.util.UUID;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -17,22 +18,34 @@ import com.lumiere.application.dtos.admin.command.add.AddProductOutput;
 import com.lumiere.application.dtos.admin.command.modify.ModifyProductInput;
 import com.lumiere.application.dtos.admin.command.modify.ModifyProductOutput;
 import com.lumiere.application.dtos.admin.command.modify.ModifyProductRequestData;
-import com.lumiere.application.usecases.admin.AddProductUseCase;
-import com.lumiere.application.usecases.admin.ModifyProductUseCase;
+import com.lumiere.application.dtos.admin.command.stock.decrease.DecreaseStockInput;
+import com.lumiere.application.dtos.admin.command.stock.decrease.DecreaseStockOutput;
+import com.lumiere.application.dtos.admin.command.stock.increase.IncreaseStockInput;
+import com.lumiere.application.dtos.admin.command.stock.increase.IncreaseStockOutput;
+import com.lumiere.application.interfaces.admin.IAddProductUseCase;
+import com.lumiere.application.interfaces.admin.IDecreaseStockUseCase;
+import com.lumiere.application.interfaces.admin.IIncreaseStockUseCase;
+import com.lumiere.application.interfaces.admin.IModifyProductUseCase;
 import com.lumiere.presentation.controllers.base.BaseController;
 import com.lumiere.presentation.routes.Routes;
 
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 
+@Validated
 @RestController
 public class AdminController extends BaseController {
-    private final AddProductUseCase addProductUseCase;
-    private final ModifyProductUseCase modifyProductUseCase;
+    private final IAddProductUseCase addProductUseCase;
+    private final IModifyProductUseCase modifyProductUseCase;
+    private final IIncreaseStockUseCase increaseStockUseCase;
+    private final IDecreaseStockUseCase decreaseStockUseCase;
 
-    public AdminController(AddProductUseCase addProductUseCase, ModifyProductUseCase modifyProductUseCase) {
+    public AdminController(IAddProductUseCase addProductUseCase, IModifyProductUseCase modifyProductUseCase,
+            IIncreaseStockUseCase increaseStockUseCase, IDecreaseStockUseCase decreaseStockUseCase) {
         this.addProductUseCase = addProductUseCase;
         this.modifyProductUseCase = modifyProductUseCase;
+        this.increaseStockUseCase = increaseStockUseCase;
+        this.decreaseStockUseCase = decreaseStockUseCase;
     }
 
     @PreAuthorize("hasRole('ADMIN') and hasAuthority('PRODUCT_ADD')")
@@ -74,4 +87,28 @@ public class AdminController extends BaseController {
 
         return ResponseEntity.status(HttpStatus.ACCEPTED).body(responseDTO);
     }
+
+    @PreAuthorize("hasRole('ADMIN') and hasAuthority('PRODUCT_UPDATE')")
+    @PatchMapping(Routes.PRIVATE.ADMIN.INCREASE_STOCK + "/{id}")
+    public ResponseEntity<IncreaseStockOutput> increaseStock(@PathVariable UUID id,
+            @Valid @RequestBody IncreaseStockInput req, HttpServletResponse res) {
+
+        IncreaseStockInput appDTO = new IncreaseStockInput(id, req.quantity());
+        IncreaseStockOutput responseDTO = increaseStockUseCase.execute(appDTO);
+
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body(responseDTO);
+
+    }
+
+    @PreAuthorize("hasRole('ADMIN') and hasAuthority('PRODUCT_UPDATE')")
+    @PatchMapping(Routes.PRIVATE.ADMIN.DECREASE_STOCK + "/{id}")
+    public ResponseEntity<DecreaseStockOutput> decreaseStock(@PathVariable UUID id,
+            @Valid @RequestBody DecreaseStockInput req, HttpServletResponse res) {
+
+        DecreaseStockInput appDTO = new DecreaseStockInput(id, req.quantity());
+        DecreaseStockOutput responseDTO = decreaseStockUseCase.execute(appDTO);
+
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body(responseDTO);
+    }
+
 }
