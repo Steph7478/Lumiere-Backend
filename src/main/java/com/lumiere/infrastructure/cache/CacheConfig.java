@@ -9,11 +9,10 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.cache.RedisCacheConfiguration;
 import org.springframework.data.redis.cache.RedisCacheManager;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
-import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
+import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.RedisSerializationContext.SerializationPair;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.lumiere.domain.entities.Product;
 
 @Configuration
 @SuppressWarnings("null")
@@ -43,13 +42,11 @@ public class CacheConfig {
     }
 
     private RedisCacheConfiguration configureDefaultCache(Duration ttl, ObjectMapper objectMapper) {
-        Jackson2JsonRedisSerializer<Product> productSerializer = new Jackson2JsonRedisSerializer<>(objectMapper,
-                Product.class);
-
         return RedisCacheConfiguration.defaultCacheConfig()
                 .entryTtl(ttl)
                 .serializeKeysWith(SerializationPair.fromSerializer(new StringRedisSerializer()))
-                .serializeValuesWith(SerializationPair.fromSerializer(productSerializer))
+                .serializeValuesWith(
+                        SerializationPair.fromSerializer(new GenericJackson2JsonRedisSerializer(objectMapper)))
                 .disableCachingNullValues();
     }
 
