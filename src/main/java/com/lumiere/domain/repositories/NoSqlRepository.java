@@ -11,6 +11,8 @@ public interface NoSqlRepository<T> {
 
     T findById(UUID id);
 
+    List<T> findByIds(List<UUID> ids);
+
     List<T> findBySubcategory(String subcategory);
 
     List<T> findByCategory(String category);
