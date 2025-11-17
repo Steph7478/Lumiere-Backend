@@ -42,11 +42,12 @@ public class ProductDetailReadAdapter implements ProductDetailReadPort {
     public Page<ProductDetailReadModel> findProductsByCriteria(ProductSearchCriteria criteria) {
 
         List<UUID> filteredProductIds = null;
+        List<ProductCategory> categories = null;
 
         if (criteria.category() != null || criteria.subCategory() != null) {
-            List<ProductCategory> categories = nosqlRepository.findByCategory(
-                    criteria.category() != null ? criteria.category().name() : null);
+            String categoryName = criteria.category() != null ? criteria.category().name() : null;
 
+            categories = nosqlRepository.findByCategory(categoryName);
             filteredProductIds = categories.stream().map(ProductCategory::getId).toList();
         }
 
@@ -54,19 +55,25 @@ public class ProductDetailReadAdapter implements ProductDetailReadPort {
         Pageable pageable = PageRequest.of(criteria.page(), criteria.size(), Sort.by(criteria.sortBy()));
 
         Page<ProductJpaEntity> productPage = sqlRepository.findAll(spec, pageable);
-        List<UUID> productIds = productPage.getContent().stream()
-                .map(ProductJpaEntity::getId)
-                .toList();
+        Map<UUID, ProductCategory> categoryDataMap;
 
-        List<ProductCategory> productCategories = nosqlRepository.findByIds(productIds);
+        if (categories != null) {
+            categoryDataMap = categories.stream()
+                    .collect(Collectors.toMap(ProductCategory::getId, Function.identity()));
+        } else {
+            List<UUID> productIds = productPage.getContent().stream()
+                    .map(ProductJpaEntity::getId)
+                    .toList();
 
-        Map<UUID, ProductCategory> categoryDataMap = productCategories.stream()
-                .collect(Collectors.toMap(ProductCategory::getId, Function.identity()));
+            List<ProductCategory> productCategories = nosqlRepository.findByIds(productIds);
+
+            categoryDataMap = productCategories.stream()
+                    .collect(Collectors.toMap(ProductCategory::getId, Function.identity()));
+        }
 
         List<ProductDetailReadModel> readModels = productPage.getContent().stream()
                 .map(jpaEntity -> mapToReadModelWithNoSql(jpaEntity, categoryDataMap))
                 .toList();
-
         Objects.requireNonNull(readModels);
 
         return new PageImpl<>(readModels, pageable, productPage.getTotalElements());
