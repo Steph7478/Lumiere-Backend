@@ -44,7 +44,6 @@ public class ProductDetailReadAdapter implements ProductDetailReadPort {
         List<UUID> filteredProductIds = null;
 
         if (criteria.category() != null || criteria.subCategory() != null) {
-
             List<ProductCategory> categories = nosqlRepository.findByCategory(
                     criteria.category() != null ? criteria.category().name() : null);
 
@@ -93,6 +92,13 @@ public class ProductDetailReadAdapter implements ProductDetailReadPort {
         if (criteria.name() != null && !criteria.name().isBlank())
             specifications.add((root, query, cb) -> cb.like(cb.lower(root.get("name")),
                     "%" + criteria.name().toLowerCase() + "%"));
+
+        if (criteria.priceMin() != null)
+            specifications
+                    .add((root, query, cb) -> cb.greaterThanOrEqualTo(root.get("priceAmount"), criteria.priceMin()));
+
+        if (criteria.priceMax() != null)
+            specifications.add((root, query, cb) -> cb.lessThanOrEqualTo(root.get("priceAmount"), criteria.priceMax()));
 
         if (includedIds != null && !includedIds.isEmpty())
             specifications.add((root, query, cb) -> root.get("id").in(includedIds));
