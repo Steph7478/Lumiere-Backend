@@ -11,6 +11,10 @@ public class ProductCategory extends BaseEntity {
     private Category category;
     private SubCategory subcategory;
 
+    public ProductCategory() {
+        super(null);
+    }
+
     public ProductCategory(UUID productId, Category category, SubCategory subcategory) {
         super(productId);
         this.category = category;

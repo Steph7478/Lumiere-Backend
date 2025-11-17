@@ -11,6 +11,10 @@ public final class Routes {
             public static final String REGISTER = "/auth/register";
             public static final String LOGIN = "/auth/login";
         }
+
+        public static final class PRODUCTS {
+            public static final String FILTER = "/products/filter";
+        }
     }
 
     public static final class PRIVATE {

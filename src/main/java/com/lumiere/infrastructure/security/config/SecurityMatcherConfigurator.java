@@ -17,7 +17,11 @@ public final class SecurityMatcherConfigurator {
             auth.requestMatchers(
                     // AUTH
                     api + Routes.PUBLIC.AUTH.REGISTER,
-                    api + Routes.PUBLIC.AUTH.LOGIN).permitAll();
+                    api + Routes.PUBLIC.AUTH.LOGIN,
+
+                    // PRODUCTS
+                    api + Routes.PUBLIC.PRODUCTS.FILTER)
+                    .permitAll();
             auth.requestMatchers(
                     // AUTH
                     api + Routes.PRIVATE.AUTH.LOGOUT,
