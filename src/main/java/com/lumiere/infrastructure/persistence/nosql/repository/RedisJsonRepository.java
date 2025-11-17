@@ -126,4 +126,22 @@ public class RedisJsonRepository implements NoSqlRepository<ProductCategory> {
                 .collect(Collectors.toSet())
                 : Collections.emptySet();
     }
+
+    @Override
+    public List<ProductCategory> findByIds(List<UUID> ids) {
+        List<String> keys = ids.stream()
+                .filter(Objects::nonNull)
+                .map(UUID::toString)
+                .collect(Collectors.toList());
+
+        if (keys.isEmpty())
+            return Collections.emptyList();
+
+        List<Object> results = valueOperations.multiGet(keys);
+        return results != null ? results.stream()
+                .filter(Objects::nonNull)
+                .map(item -> (ProductCategory) item)
+                .collect(Collectors.toList())
+                : Collections.emptyList();
+    }
 }
