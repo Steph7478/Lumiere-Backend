@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.lumiere.application.dtos.product.query.ProductDetailsOutput;
 import com.lumiere.application.dtos.product.query.ProductSearchCriteria;
 import com.lumiere.application.handlers.FindProductsQueryHandler;
 import com.lumiere.domain.enums.CategoriesEnum.*;
@@ -25,7 +26,7 @@ public class ProductController extends BaseController {
     }
 
     @GetMapping(Routes.PUBLIC.PRODUCTS.FILTER)
-    public ResponseEntity<Page<ProductDetailReadModel>> findProducts(
+    public ResponseEntity<ProductDetailsOutput> findProducts(
             @RequestParam(required = false) String name,
             @RequestParam(required = false) Category category,
             @RequestParam(required = false) SubCategory subCategory,
@@ -46,6 +47,6 @@ public class ProductController extends BaseController {
                 sortBy);
 
         Page<ProductDetailReadModel> resultPage = queryHandler.handle(criteria);
-        return ResponseEntity.ok(resultPage);
+        return ResponseEntity.ok(ProductDetailsOutput.fromPage(resultPage));
     }
 }
