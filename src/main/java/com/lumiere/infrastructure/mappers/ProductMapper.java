@@ -4,13 +4,13 @@ import org.springframework.stereotype.Component;
 
 import com.lumiere.domain.entities.Product;
 import com.lumiere.domain.entities.ProductCategory;
-import com.lumiere.domain.enums.CategoriesEnum;
 import com.lumiere.domain.enums.CurrencyEnum.CurrencyType;
 import com.lumiere.domain.readmodels.ProductDetailReadModel;
 import com.lumiere.domain.vo.Money;
 import com.lumiere.domain.vo.Stock;
 import com.lumiere.infrastructure.mappers.base.BaseMapper;
 import com.lumiere.infrastructure.persistence.jpa.entities.ProductJpaEntity;
+import com.lumiere.domain.enums.CategoriesEnum.*;
 
 import java.util.Collections;
 
@@ -50,8 +50,8 @@ public final class ProductMapper implements BaseMapper<Product, ProductJpaEntity
                                 jpaEntity.getPriceAmount(),
                                 CurrencyType.valueOf(jpaEntity.getPriceCurrency()));
 
-                final CategoriesEnum.Category category = nosqlCategory != null ? nosqlCategory.getCategory() : null;
-                final CategoriesEnum.SubCategory subCategory = nosqlCategory != null ? nosqlCategory.getSubcategory()
+                final Category category = nosqlCategory != null ? nosqlCategory.getCategory() : null;
+                final SubCategory subCategory = nosqlCategory != null ? nosqlCategory.getSubcategory()
                                 : null;
 
                 return new ProductDetailReadModel(
