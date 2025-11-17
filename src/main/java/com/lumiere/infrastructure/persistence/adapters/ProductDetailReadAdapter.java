@@ -28,11 +28,13 @@ public class ProductDetailReadAdapter implements ProductDetailReadPort {
     private final NoSqlRepository<ProductCategory> nosqlRepository;
     private final ProductMapper productDetailMapper;
 
+    private record CategoryFilterResult(List<UUID> filteredProductIds, List<ProductCategory> categories) {
+    }
+
     public ProductDetailReadAdapter(
             ProductJpaRepository sqlRepository,
             NoSqlRepository<ProductCategory> nosqlRepository,
             ProductMapper productDetailMapper) {
-
         this.sqlRepository = Objects.requireNonNull(sqlRepository);
         this.nosqlRepository = Objects.requireNonNull(nosqlRepository);
         this.productDetailMapper = Objects.requireNonNull(productDetailMapper);
@@ -40,53 +42,25 @@ public class ProductDetailReadAdapter implements ProductDetailReadPort {
 
     @Override
     public Page<ProductDetailReadModel> findProductsByCriteria(ProductSearchCriteria criteria) {
+        CategoryFilterResult filterResult = getFilteredProductIdsAndCategories(criteria);
 
-        List<UUID> filteredProductIds = null;
-        List<ProductCategory> categories = null;
-
-        boolean hasCategoryFilter = criteria.category() != null;
-        boolean hasSubCategoryFilter = criteria.subCategory() != null;
-
-        if (hasCategoryFilter || hasSubCategoryFilter) {
-
-            String categoryName = hasCategoryFilter ? criteria.category().name() : null;
-            String subCategoryName = hasSubCategoryFilter ? criteria.subCategory().name() : null;
-
-            if (hasCategoryFilter && hasSubCategoryFilter) {
-                categories = nosqlRepository.findByCategoryAndSubcategory(categoryName, subCategoryName);
-            } else if (hasSubCategoryFilter) {
-                categories = nosqlRepository.findBySubcategory(subCategoryName);
-            } else {
-                categories = nosqlRepository.findByCategory(categoryName);
-            }
-
-            if (categories != null) {
-                filteredProductIds = categories.stream().map(ProductCategory::getId).toList();
-            }
-        }
-
-        Specification<ProductJpaEntity> spec = buildSqlSpecification(criteria, filteredProductIds);
+        Specification<ProductJpaEntity> spec = buildSqlSpecification(criteria, filterResult.filteredProductIds());
         Pageable pageable = PageRequest.of(criteria.page(), criteria.size(), Sort.by(criteria.sortBy()));
 
         Page<ProductJpaEntity> productPage = sqlRepository.findAll(spec, pageable);
-        Map<UUID, ProductCategory> categoryDataMap;
+        List<UUID> productIdsOnPage = productPage.getContent().stream()
+                .map(ProductJpaEntity::getId).toList();
 
-        if (categories != null) {
-            categoryDataMap = categories.stream()
-                    .collect(Collectors.toMap(ProductCategory::getId, Function.identity()));
-        } else {
-            List<UUID> productIds = productPage.getContent().stream()
-                    .map(ProductJpaEntity::getId)
-                    .toList();
-
-            List<ProductCategory> productCategories = nosqlRepository.findByIds(productIds);
-
-            categoryDataMap = productCategories.stream()
-                    .collect(Collectors.toMap(ProductCategory::getId, Function.identity()));
+        List<ProductCategory> categoriesToMap = filterResult.categories();
+        if (categoriesToMap == null) {
+            categoriesToMap = nosqlRepository.findByIds(productIdsOnPage);
         }
 
+        Map<UUID, ProductCategory> categoryDataMap = categoriesToMap.stream()
+                .collect(Collectors.toMap(ProductCategory::getId, Function.identity()));
+
         List<ProductDetailReadModel> readModels = productPage.getContent().stream()
-                .map(jpaEntity -> mapToReadModelWithNoSql(jpaEntity, categoryDataMap))
+                .map(jpaEntity -> productDetailMapper.toReadModel(jpaEntity, categoryDataMap.get(jpaEntity.getId())))
                 .toList();
 
         Objects.requireNonNull(readModels);
@@ -94,15 +68,29 @@ public class ProductDetailReadAdapter implements ProductDetailReadPort {
         return new PageImpl<>(readModels, pageable, productPage.getTotalElements());
     }
 
-    private ProductDetailReadModel mapToReadModelWithNoSql(
-            ProductJpaEntity jpaEntity,
-            Map<UUID, ProductCategory> categoryDataMap) {
+    private CategoryFilterResult getFilteredProductIdsAndCategories(ProductSearchCriteria criteria) {
+        if (criteria.category() == null && criteria.subCategory() == null) {
+            return new CategoryFilterResult(null, null);
+        }
 
-        ProductCategory nosqlCategory = null;
-        if (categoryDataMap != null)
-            nosqlCategory = categoryDataMap.get(jpaEntity.getId());
+        List<ProductCategory> categories;
+        boolean hasCategory = criteria.category() != null;
+        boolean hasSubCategory = criteria.subCategory() != null;
 
-        return productDetailMapper.toReadModel(jpaEntity, nosqlCategory);
+        if (hasCategory && hasSubCategory) {
+            categories = nosqlRepository.findByCategoryAndSubcategory(
+                    criteria.category().name(), criteria.subCategory().name());
+        } else if (hasSubCategory) {
+            categories = nosqlRepository.findBySubcategory(criteria.subCategory().name());
+        } else {
+            categories = nosqlRepository.findByCategory(criteria.category().name());
+        }
+
+        List<UUID> filteredProductIds = (categories != null)
+                ? categories.stream().map(ProductCategory::getId).toList()
+                : null;
+
+        return new CategoryFilterResult(filteredProductIds, categories);
     }
 
     private Specification<ProductJpaEntity> buildSqlSpecification(
@@ -111,19 +99,23 @@ public class ProductDetailReadAdapter implements ProductDetailReadPort {
 
         List<Specification<ProductJpaEntity>> specifications = new ArrayList<>();
 
-        if (criteria.name() != null && !criteria.name().isBlank())
-            specifications.add((root, query, cb) -> cb.like(cb.lower(root.get("name")),
-                    "%" + criteria.name().toLowerCase() + "%"));
+        if (criteria.name() != null && !criteria.name().isBlank()) {
+            String searchName = "%" + criteria.name().toLowerCase() + "%";
+            specifications.add((root, query, cb) -> cb.like(cb.lower(root.get("name")), searchName));
+        }
 
-        if (criteria.priceMin() != null)
+        if (criteria.priceMin() != null) {
             specifications
                     .add((root, query, cb) -> cb.greaterThanOrEqualTo(root.get("priceAmount"), criteria.priceMin()));
+        }
 
-        if (criteria.priceMax() != null)
+        if (criteria.priceMax() != null) {
             specifications.add((root, query, cb) -> cb.lessThanOrEqualTo(root.get("priceAmount"), criteria.priceMax()));
+        }
 
-        if (includedIds != null && !includedIds.isEmpty())
+        if (includedIds != null && !includedIds.isEmpty()) {
             specifications.add((root, query, cb) -> root.get("id").in(includedIds));
+        }
 
         return Specification.allOf(specifications);
     }
