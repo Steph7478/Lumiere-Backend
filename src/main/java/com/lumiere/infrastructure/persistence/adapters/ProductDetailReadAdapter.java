@@ -52,9 +52,8 @@ public class ProductDetailReadAdapter implements ProductDetailReadPort {
                 .map(ProductJpaEntity::getId).toList();
 
         List<ProductCategory> categoriesToMap = filterResult.categories();
-        if (categoriesToMap == null) {
+        if (categoriesToMap == null)
             categoriesToMap = nosqlRepository.findByIds(productIdsOnPage);
-        }
 
         Map<UUID, ProductCategory> categoryDataMap = categoriesToMap.stream()
                 .collect(Collectors.toMap(ProductCategory::getId, Function.identity()));
@@ -69,9 +68,8 @@ public class ProductDetailReadAdapter implements ProductDetailReadPort {
     }
 
     private CategoryFilterResult getFilteredProductIdsAndCategories(ProductSearchCriteria criteria) {
-        if (criteria.category() == null && criteria.subCategory() == null) {
+        if (criteria.category() == null && criteria.subCategory() == null)
             return new CategoryFilterResult(null, null);
-        }
 
         List<ProductCategory> categories;
         boolean hasCategory = criteria.category() != null;
@@ -104,18 +102,15 @@ public class ProductDetailReadAdapter implements ProductDetailReadPort {
             specifications.add((root, query, cb) -> cb.like(cb.lower(root.get("name")), searchName));
         }
 
-        if (criteria.priceMin() != null) {
+        if (criteria.priceMin() != null)
             specifications
                     .add((root, query, cb) -> cb.greaterThanOrEqualTo(root.get("priceAmount"), criteria.priceMin()));
-        }
 
-        if (criteria.priceMax() != null) {
+        if (criteria.priceMax() != null)
             specifications.add((root, query, cb) -> cb.lessThanOrEqualTo(root.get("priceAmount"), criteria.priceMax()));
-        }
 
-        if (includedIds != null && !includedIds.isEmpty()) {
+        if (includedIds != null && !includedIds.isEmpty())
             specifications.add((root, query, cb) -> root.get("id").in(includedIds));
-        }
 
         return Specification.allOf(specifications);
     }
