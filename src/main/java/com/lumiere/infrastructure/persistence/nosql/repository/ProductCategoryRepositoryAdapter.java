@@ -54,4 +54,9 @@ public class ProductCategoryRepositoryAdapter implements NoSqlRepository<Product
     public List<ProductCategory> findByIds(List<UUID> ids) {
         return dataStore.findByIds(ids);
     }
+
+    @Override
+    public List<ProductCategory> findByCategoryAndSubcategory(String category, String subcategory) {
+        return dataStore.findByCategoryAndSubcategory(category, subcategory);
+    }
 }

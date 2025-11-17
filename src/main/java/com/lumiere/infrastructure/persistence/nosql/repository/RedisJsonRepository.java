@@ -127,6 +127,35 @@ public class RedisJsonRepository implements NoSqlRepository<ProductCategory> {
     }
 
     @Override
+    public List<ProductCategory> findByCategoryAndSubcategory(String category, String subcategory) {
+        Objects.requireNonNull(category, "Category cannot be null for combined search.");
+        Objects.requireNonNull(subcategory, "Subcategory cannot be null for combined search.");
+
+        Set<Object> objSet = genericJsonRedisTemplate.opsForSet().members("subcategory:" + subcategory);
+
+        if (objSet == null || objSet.isEmpty())
+            return Collections.emptyList();
+
+        Set<String> ids = objSet.stream()
+                .filter(Objects::nonNull)
+                .map(Object::toString)
+                .collect(Collectors.toSet());
+
+        Objects.requireNonNull(ids);
+
+        List<Object> results = valueOperations.multiGet(ids);
+
+        if (results == null)
+            return Collections.emptyList();
+
+        return results.stream()
+                .filter(Objects::nonNull)
+                .map(this::convertToProductCategory)
+                .filter(pc -> category.equals(pc.getCategory().toString()))
+                .collect(Collectors.toList());
+    }
+
+    @Override
     public List<ProductCategory> findByIds(List<UUID> ids) {
         List<String> keys = ids.stream()
                 .filter(Objects::nonNull)

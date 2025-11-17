@@ -16,4 +16,6 @@ public interface NoSqlRepository<T> {
     List<T> findBySubcategory(String subcategory);
 
     List<T> findByCategory(String category);
+
+    List<T> findByCategoryAndSubcategory(String category, String subcategory);
 }

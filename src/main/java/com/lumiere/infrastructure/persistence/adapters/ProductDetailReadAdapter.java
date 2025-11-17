@@ -44,11 +44,25 @@ public class ProductDetailReadAdapter implements ProductDetailReadPort {
         List<UUID> filteredProductIds = null;
         List<ProductCategory> categories = null;
 
-        if (criteria.category() != null || criteria.subCategory() != null) {
-            String categoryName = criteria.category() != null ? criteria.category().name() : null;
+        boolean hasCategoryFilter = criteria.category() != null;
+        boolean hasSubCategoryFilter = criteria.subCategory() != null;
 
-            categories = nosqlRepository.findByCategory(categoryName);
-            filteredProductIds = categories.stream().map(ProductCategory::getId).toList();
+        if (hasCategoryFilter || hasSubCategoryFilter) {
+
+            String categoryName = hasCategoryFilter ? criteria.category().name() : null;
+            String subCategoryName = hasSubCategoryFilter ? criteria.subCategory().name() : null;
+
+            if (hasCategoryFilter && hasSubCategoryFilter) {
+                categories = nosqlRepository.findByCategoryAndSubcategory(categoryName, subCategoryName);
+            } else if (hasSubCategoryFilter) {
+                categories = nosqlRepository.findBySubcategory(subCategoryName);
+            } else {
+                categories = nosqlRepository.findByCategory(categoryName);
+            }
+
+            if (categories != null) {
+                filteredProductIds = categories.stream().map(ProductCategory::getId).toList();
+            }
         }
 
         Specification<ProductJpaEntity> spec = buildSqlSpecification(criteria, filteredProductIds);
@@ -74,6 +88,7 @@ public class ProductDetailReadAdapter implements ProductDetailReadPort {
         List<ProductDetailReadModel> readModels = productPage.getContent().stream()
                 .map(jpaEntity -> mapToReadModelWithNoSql(jpaEntity, categoryDataMap))
                 .toList();
+
         Objects.requireNonNull(readModels);
 
         return new PageImpl<>(readModels, pageable, productPage.getTotalElements());
