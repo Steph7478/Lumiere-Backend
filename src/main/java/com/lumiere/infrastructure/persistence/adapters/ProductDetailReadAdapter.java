@@ -46,15 +46,12 @@ public class ProductDetailReadAdapter implements ProductDetailReadPort {
 
         Specification<ProductJpaEntity> spec = buildSqlSpecification(criteria, filterResult.filteredProductIds());
         Pageable pageable = PageRequest.of(criteria.page(), criteria.size(), Sort.by(criteria.sortBy()));
-
         Page<ProductJpaEntity> productPage = sqlRepository.findAll(spec, pageable);
+
         List<UUID> productIdsOnPage = productPage.getContent().stream()
                 .map(ProductJpaEntity::getId).toList();
 
-        List<ProductCategory> categoriesToMap = filterResult.categories();
-        if (categoriesToMap == null)
-            categoriesToMap = nosqlRepository.findByIds(productIdsOnPage);
-
+        List<ProductCategory> categoriesToMap = nosqlRepository.findByIds(productIdsOnPage);
         Map<UUID, ProductCategory> categoryDataMap = categoriesToMap.stream()
                 .collect(Collectors.toMap(ProductCategory::getId, Function.identity()));
 
