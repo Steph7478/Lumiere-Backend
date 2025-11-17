@@ -3,11 +3,15 @@ package com.lumiere.infrastructure.mappers;
 import org.springframework.stereotype.Component;
 
 import com.lumiere.domain.entities.Product;
+import com.lumiere.domain.entities.ProductCategory;
 import com.lumiere.domain.enums.CurrencyEnum.CurrencyType;
+import com.lumiere.domain.readmodels.ProductDetailReadModel;
 import com.lumiere.domain.vo.Money;
 import com.lumiere.domain.vo.Stock;
 import com.lumiere.infrastructure.mappers.base.BaseMapper;
 import com.lumiere.infrastructure.persistence.jpa.entities.ProductJpaEntity;
+
+import java.util.Collections;
 
 @Component
 public final class ProductMapper implements BaseMapper<Product, ProductJpaEntity> {
@@ -36,6 +40,28 @@ public final class ProductMapper implements BaseMapper<Product, ProductJpaEntity
                 jpaEntity.getDescription(),
                 price,
                 stock);
+    }
 
+    public ProductDetailReadModel toReadModel(
+            ProductJpaEntity jpaEntity,
+            ProductCategory nosqlCategory) {
+        Money price = new Money(
+                jpaEntity.getPriceAmount(),
+                CurrencyType.valueOf(jpaEntity.getPriceCurrency()));
+
+        final var category = nosqlCategory != null ? nosqlCategory.getCategory() : null;
+        final var subCategory = nosqlCategory != null ? nosqlCategory.getSubcategory() : null;
+
+        return new ProductDetailReadModel(
+                jpaEntity.getId() != null ? jpaEntity.getId().toString() : null,
+                jpaEntity.getName(),
+                jpaEntity.getDescription(),
+                price,
+                Collections.emptyList(),
+                jpaEntity.getStockQuantity(),
+                jpaEntity.getCreatedAt(),
+                jpaEntity.getUpdatedAt(),
+                category,
+                subCategory);
     }
 }
