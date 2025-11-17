@@ -27,9 +27,8 @@ public class RedisJsonRepository implements NoSqlRepository<ProductCategory> {
     }
 
     private ProductCategory convertToProductCategory(Object item) {
-        if (item == null) {
+        if (item == null)
             return null;
-        }
         return objectMapper.convertValue(item, ProductCategory.class);
     }
 
