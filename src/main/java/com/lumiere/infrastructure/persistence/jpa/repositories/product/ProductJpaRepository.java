@@ -3,13 +3,17 @@ package com.lumiere.infrastructure.persistence.jpa.repositories.product;
 import com.lumiere.infrastructure.persistence.jpa.entities.ProductJpaEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.lang.NonNull;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Repository;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Repository
@@ -35,4 +39,8 @@ public interface ProductJpaRepository extends JpaRepository<ProductJpaEntity, UU
                         @Param("priceMin") BigDecimal priceMin,
                         @Param("priceMax") BigDecimal priceMax,
                         Pageable pageable);
+
+        @NonNull
+        @EntityGraph(attributePaths = "ratings")
+        Optional<ProductJpaEntity> findById(@Nullable UUID id);
 }
