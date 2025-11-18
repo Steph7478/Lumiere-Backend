@@ -14,6 +14,10 @@ public class Product extends BaseEntity {
     private List<Rating> ratings;
     private Stock stock;
 
+    public Product() {
+        super(null);
+    }
+
     private Product(UUID id, String name, String description, Money price, List<Rating> ratings, Stock stock) {
 
         super(id);
