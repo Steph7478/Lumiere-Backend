@@ -10,79 +10,58 @@ import org.springframework.data.redis.cache.RedisCacheConfiguration;
 import org.springframework.data.redis.cache.RedisCacheManager;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
-import org.springframework.data.redis.serializer.RedisSerializationContext;
-import org.springframework.data.redis.serializer.RedisSerializationContext.SerializationPair;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
+import org.springframework.data.redis.serializer.RedisSerializationContext.SerializationPair;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.databind.jsontype.BasicPolymorphicTypeValidator;
-
-import com.lumiere.domain.vo.Money;
-import com.lumiere.domain.vo.Stock;
-import com.lumiere.infrastructure.cache.DomainMixins.MoneyMixin;
-import com.lumiere.infrastructure.cache.DomainMixins.StockMixin;
 
 @Configuration
 @SuppressWarnings("null")
 public class CacheConfig {
 
         private static final Duration DEFAULT_TTL = Duration.ofMinutes(15);
-        private final ObjectMapper objectMapper;
+        private final ObjectMapper globalMapper;
 
-        private static final Map<Class<?>, Class<?>> IMMUTABLE_MIXINS = Map.of(
-                        Money.class, MoneyMixin.class,
-                        Stock.class, StockMixin.class);
-
-        public CacheConfig(ObjectMapper objectMapper) {
-                this.objectMapper = objectMapper;
+        public CacheConfig(ObjectMapper globalMapper) {
+                this.globalMapper = globalMapper;
         }
 
         @Bean
         public RedisCacheManager cacheManager(RedisConnectionFactory connectionFactory) {
-                RedisCacheConfiguration defaultCacheConfig = configureDefaultCache(DEFAULT_TTL, objectMapper);
+
+                RedisCacheConfiguration defaultCache = createCacheConfig(DEFAULT_TTL);
 
                 Map<String, RedisCacheConfiguration> cacheConfigurations = new HashMap<>();
-
-                cacheConfigurations.put("authJpa", createCacheConfig(defaultCacheConfig, Duration.ofMinutes(5)));
-                cacheConfigurations.put("userJpa", createCacheConfig(defaultCacheConfig, Duration.ofMinutes(10)));
-                cacheConfigurations.put("productJpa", createCacheConfig(defaultCacheConfig, Duration.ofMinutes(15)));
+                cacheConfigurations.put("authJpa", defaultCache.entryTtl(Duration.ofMinutes(5)));
+                cacheConfigurations.put("userJpa", defaultCache.entryTtl(Duration.ofMinutes(10)));
+                cacheConfigurations.put("productJpa", defaultCache.entryTtl(Duration.ofMinutes(15)));
 
                 return RedisCacheManager.builder(connectionFactory)
-                                .cacheDefaults(defaultCacheConfig)
+                                .cacheDefaults(defaultCache)
                                 .withInitialCacheConfigurations(cacheConfigurations)
                                 .build();
         }
 
-        private RedisCacheConfiguration configureDefaultCache(Duration ttl, ObjectMapper objectMapper) {
-                ObjectMapper cacheObjectMapper = objectMapper.copy();
+        private RedisCacheConfiguration createCacheConfig(Duration ttl) {
+                ObjectMapper mapper = globalMapper.copy();
 
-                IMMUTABLE_MIXINS.forEach(cacheObjectMapper::addMixIn);
                 BasicPolymorphicTypeValidator ptv = BasicPolymorphicTypeValidator.builder()
                                 .allowIfBaseType(Object.class)
                                 .build();
 
-                cacheObjectMapper.activateDefaultTyping(
+                mapper.activateDefaultTyping(
                                 ptv,
                                 ObjectMapper.DefaultTyping.NON_FINAL,
                                 JsonTypeInfo.As.PROPERTY);
 
-                GenericJackson2JsonRedisSerializer jacksonSerializer = new GenericJackson2JsonRedisSerializer(
-                                cacheObjectMapper);
-
-                RedisSerializationContext.SerializationPair<Object> valueSerializationPair = SerializationPair
-                                .fromSerializer(jacksonSerializer);
+                GenericJackson2JsonRedisSerializer serializer = new GenericJackson2JsonRedisSerializer(mapper);
 
                 return RedisCacheConfiguration.defaultCacheConfig()
                                 .entryTtl(ttl)
                                 .serializeKeysWith(SerializationPair.fromSerializer(new StringRedisSerializer()))
-                                .serializeValuesWith(valueSerializationPair)
+                                .serializeValuesWith(SerializationPair.fromSerializer(serializer))
                                 .disableCachingNullValues();
-        }
-
-        private RedisCacheConfiguration createCacheConfig(
-                        RedisCacheConfiguration baseConfig,
-                        Duration specificTtl) {
-                return baseConfig.entryTtl(specificTtl);
         }
 }
