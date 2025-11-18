@@ -8,7 +8,8 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
-import org.springframework.data.jpa.repository.Query;
+import org.springframework.lang.NonNull;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Repository;
 
 import com.lumiere.infrastructure.persistence.jpa.entities.ProductJpaEntity;
@@ -18,9 +19,9 @@ public interface ProductJpaRepository
                 extends JpaRepository<ProductJpaEntity, UUID>,
                 JpaSpecificationExecutor<ProductJpaEntity> {
 
-        @Query("SELECT p FROM ProductJpaEntity p")
         @EntityGraph(attributePaths = { "ratings" })
-        Page<ProductJpaEntity> findAllWithRatingsEager(
-                        Specification<ProductJpaEntity> spec,
-                        Pageable pageable);
+        @NonNull
+        Page<ProductJpaEntity> findAll(
+                        @Nullable Specification<ProductJpaEntity> spec,
+                        @Nullable Pageable pageable);
 }
