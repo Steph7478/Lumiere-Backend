@@ -1,4 +1,4 @@
-package com.lumiere.infrastructure.config;
+package com.lumiere.infrastructure.config.serialization;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;

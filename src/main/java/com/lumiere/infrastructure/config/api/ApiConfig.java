@@ -1,4 +1,4 @@
-package com.lumiere.infrastructure.config;
+package com.lumiere.infrastructure.config.api;
 
 public final class ApiConfig {
 

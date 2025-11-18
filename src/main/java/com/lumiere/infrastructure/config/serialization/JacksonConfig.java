@@ -1,4 +1,4 @@
-package com.lumiere.infrastructure.config;
+package com.lumiere.infrastructure.config.serialization;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -12,8 +12,8 @@ import org.springframework.context.annotation.Configuration;
 
 import com.lumiere.domain.vo.Money;
 import com.lumiere.domain.vo.Stock;
-import com.lumiere.infrastructure.config.DomainMixins.MoneyMixin;
-import com.lumiere.infrastructure.config.DomainMixins.StockMixin;
+import com.lumiere.infrastructure.config.serialization.DomainMixins.MoneyMixin;
+import com.lumiere.infrastructure.config.serialization.DomainMixins.StockMixin;
 
 import java.util.Map;
 

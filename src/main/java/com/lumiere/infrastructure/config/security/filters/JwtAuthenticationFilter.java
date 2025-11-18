@@ -1,4 +1,4 @@
-package com.lumiere.infrastructure.security.filters;
+package com.lumiere.infrastructure.config.security.filters;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

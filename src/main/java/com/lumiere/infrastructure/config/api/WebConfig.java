@@ -1,4 +1,4 @@
-package com.lumiere.infrastructure.config;
+package com.lumiere.infrastructure.config.api;
 
 import com.lumiere.infrastructure.logging.HttpLoggingInterceptor;
 import org.springframework.context.annotation.Configuration;

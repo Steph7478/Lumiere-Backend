@@ -1,6 +1,4 @@
-package com.lumiere.infrastructure.security.config;
-
-import com.lumiere.infrastructure.security.filters.JwtAuthenticationFilter;
+package com.lumiere.infrastructure.config.security.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -9,6 +7,8 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfigurationSource;
+
+import com.lumiere.infrastructure.config.security.filters.JwtAuthenticationFilter;
 
 @Configuration
 @EnableMethodSecurity(securedEnabled = true, prePostEnabled = true)

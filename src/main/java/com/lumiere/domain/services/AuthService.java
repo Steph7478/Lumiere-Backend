@@ -1,7 +1,7 @@
 package com.lumiere.domain.services;
 
 import com.lumiere.domain.entities.Auth;
-import com.lumiere.infrastructure.security.utils.PasswordHasher;
+import com.lumiere.infrastructure.config.security.utils.PasswordHasher;
 
 import java.util.Optional;
 import java.util.UUID;
