@@ -3,8 +3,8 @@ package com.lumiere.application.handlers;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
-import com.lumiere.application.dtos.product.query.ProductDetailReadPort;
-import com.lumiere.application.dtos.product.query.ProductSearchCriteria;
+import com.lumiere.application.dtos.product.query.filter.ProductDetailReadPort;
+import com.lumiere.application.dtos.product.query.filter.ProductSearchCriteria;
 import com.lumiere.domain.readmodels.ProductDetailReadModel;
 
 @Service

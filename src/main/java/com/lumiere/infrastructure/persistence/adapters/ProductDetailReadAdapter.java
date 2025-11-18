@@ -1,33 +1,58 @@
 package com.lumiere.infrastructure.persistence.adapters;
 
-import com.lumiere.application.dtos.product.query.ProductDetailReadPort;
-import com.lumiere.application.dtos.product.query.ProductSearchCriteria;
+import com.lumiere.application.dtos.product.query.filter.ProductDetailReadPort;
+import com.lumiere.application.dtos.product.query.filter.ProductSearchCriteria;
+import com.lumiere.domain.entities.Product;
 import com.lumiere.domain.entities.ProductCategory;
 import com.lumiere.domain.readmodels.ProductDetailReadModel;
 import com.lumiere.domain.repositories.NoSqlRepository;
 import com.lumiere.infrastructure.mappers.ProductMapper;
 import com.lumiere.infrastructure.persistence.jpa.entities.ProductJpaEntity;
 import com.lumiere.infrastructure.persistence.jpa.repositories.product.ProductJpaRepository;
+import com.lumiere.infrastructure.persistence.jpa.repositories.product.ProductJpaRepositoryAdapter;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Service
+@Transactional(readOnly = true)
 public class ProductDetailReadAdapter implements ProductDetailReadPort {
 
     private final ProductJpaRepository sqlRepository;
+    private final ProductJpaRepositoryAdapter sqlRepositoryAdapter;
     private final NoSqlRepository<ProductCategory> nosqlRepository;
     private final ProductMapper productDetailMapper;
 
-    public ProductDetailReadAdapter(ProductJpaRepository sqlRepository,
+    public ProductDetailReadAdapter(
+            ProductJpaRepository sqlRepository,
+            ProductJpaRepositoryAdapter sqlRepositoryAdapter,
             NoSqlRepository<ProductCategory> nosqlRepository,
             ProductMapper productDetailMapper) {
         this.sqlRepository = sqlRepository;
+        this.sqlRepositoryAdapter = sqlRepositoryAdapter;
         this.nosqlRepository = nosqlRepository;
         this.productDetailMapper = productDetailMapper;
+    }
+
+    @Override
+    public Optional<ProductDetailReadModel> findProductDetailById(UUID id) {
+        Optional<Product> productDomainOptional = sqlRepositoryAdapter.findById(id);
+
+        if (productDomainOptional.isEmpty()) {
+            return Optional.empty();
+        }
+
+        ProductJpaEntity productJpa = productDetailMapper.toJpa(productDomainOptional.get());
+
+        ProductCategory category = nosqlRepository.findById(productJpa.getId());
+
+        ProductDetailReadModel readModel = productDetailMapper.toReadModel(productJpa, category);
+
+        return Optional.of(readModel);
     }
 
     @SuppressWarnings("null")
