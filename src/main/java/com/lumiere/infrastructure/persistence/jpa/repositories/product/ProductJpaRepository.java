@@ -15,8 +15,15 @@ import java.util.UUID;
 @Repository
 public interface ProductJpaRepository extends JpaRepository<ProductJpaEntity, UUID> {
 
-        @Query("""
-                        SELECT p FROM ProductJpaEntity p
+        @Query(value = """
+                        SELECT DISTINCT p FROM ProductJpaEntity p
+                        LEFT JOIN FETCH p.ratings
+                        WHERE (:#{#productIds.size()} = 0 OR p.id IN :productIds)
+                        AND (:name IS NULL OR lower(p.name) LIKE lower(concat('%', :name, '%')))
+                        AND (:priceMin IS NULL OR p.priceAmount >= :priceMin)
+                        AND (:priceMax IS NULL OR p.priceAmount <= :priceMax)
+                        """, countQuery = """
+                        SELECT count(p) FROM ProductJpaEntity p
                         WHERE (:#{#productIds.size()} = 0 OR p.id IN :productIds)
                         AND (:name IS NULL OR lower(p.name) LIKE lower(concat('%', :name, '%')))
                         AND (:priceMin IS NULL OR p.priceAmount >= :priceMin)
