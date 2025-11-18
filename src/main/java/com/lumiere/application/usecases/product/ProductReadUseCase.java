@@ -1,9 +1,10 @@
 package com.lumiere.application.usecases.product;
 
-import com.lumiere.application.dtos.product.query.filter.ProductDetailReadPort;
-import com.lumiere.application.dtos.product.query.filter.ProductDetailsOutput;
-import com.lumiere.application.dtos.product.query.filter.ProductSearchCriteria;
+import com.lumiere.application.dtos.product.query.ProductDetailsOutput;
+import com.lumiere.application.dtos.product.query.ProductSearchCriteria;
+import com.lumiere.application.ports.ProductDetailReadPort;
 import com.lumiere.domain.readmodels.ProductDetailReadModel;
+
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

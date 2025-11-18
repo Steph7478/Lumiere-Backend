@@ -1,4 +1,4 @@
-package com.lumiere.application.dtos.product.query.filter;
+package com.lumiere.application.dtos.product.query;
 
 import java.util.List;
 import org.springframework.data.domain.Page;

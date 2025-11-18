@@ -1,7 +1,7 @@
 package com.lumiere.infrastructure.persistence.adapters;
 
-import com.lumiere.application.dtos.product.query.filter.ProductDetailReadPort;
-import com.lumiere.application.dtos.product.query.filter.ProductSearchCriteria;
+import com.lumiere.application.dtos.product.query.ProductSearchCriteria;
+import com.lumiere.application.ports.ProductDetailReadPort;
 import com.lumiere.domain.entities.Product;
 import com.lumiere.domain.entities.ProductCategory;
 import com.lumiere.domain.readmodels.ProductDetailReadModel;
