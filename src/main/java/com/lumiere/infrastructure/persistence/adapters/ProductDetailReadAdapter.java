@@ -18,6 +18,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.ArrayList;
 
@@ -39,23 +40,19 @@ public class ProductDetailReadAdapter implements ProductDetailReadPort {
 
     @Override
     public Page<ProductDetailReadModel> findProductsByCriteria(ProductSearchCriteria criteria) {
-
         List<ProductCategory> categories = getCategoriesByCriteria(criteria);
-        List<UUID> filteredIds = categories.stream().map(ProductCategory::getId).toList();
 
-        Map<UUID, ProductCategory> categoryDataMap = categories.stream()
-                .collect(Collectors.toMap(ProductCategory::getId, cat -> cat));
+        List<UUID> filteredProductIds = extractProductIds(categories);
+        Specification<ProductJpaEntity> spec = buildConciseSpecification(criteria, filteredProductIds);
 
         Pageable pageable = PageRequest.of(criteria.page(), criteria.size(), Sort.by(criteria.sortBy()));
+        Page<ProductJpaEntity> productPage = sqlRepository.findAll(spec, pageable);
 
-        Specification<ProductJpaEntity> spec = buildConciseSpecification(criteria, filteredIds);
-
-        Page<ProductJpaEntity> productPage = sqlRepository.findAllWithRatingsEager(spec, pageable);
+        Map<UUID, ProductCategory> categoryDataMap = categories.stream()
+                .collect(Collectors.toMap(ProductCategory::getId, Function.identity()));
 
         List<ProductDetailReadModel> readModels = productPage.getContent().stream()
-                .map(jpaEntity -> productDetailMapper.toReadModel(
-                        jpaEntity,
-                        categoryDataMap.get(jpaEntity.getId())))
+                .map(jpaEntity -> productDetailMapper.toReadModel(jpaEntity, categoryDataMap.get(jpaEntity.getId())))
                 .toList();
 
         Objects.requireNonNull(readModels);
@@ -74,9 +71,20 @@ public class ProductDetailReadAdapter implements ProductDetailReadPort {
                     criteria.category().name(), criteria.subCategory().name());
         } else if (hasSubCategory) {
             return nosqlRepository.findBySubcategory(criteria.subCategory().name());
-        } else {
+        } else if (hasCategory) {
             return nosqlRepository.findByCategory(criteria.category().name());
         }
+        return List.of();
+    }
+
+    private List<UUID> extractProductIds(List<ProductCategory> categories) {
+        if (categories == null || categories.isEmpty()) {
+            return List.of();
+        }
+        return categories.stream()
+                .map(ProductCategory::getId)
+                .filter(Objects::nonNull)
+                .toList();
     }
 
     private Specification<ProductJpaEntity> buildConciseSpecification(
@@ -100,7 +108,7 @@ public class ProductDetailReadAdapter implements ProductDetailReadPort {
                 .ifPresent(max -> specifications
                         .add((root, query, cb) -> cb.lessThanOrEqualTo(root.get("priceAmount"), max)));
 
-        if (!includedIds.isEmpty() && includedIds != null)
+        if (includedIds != null && !includedIds.isEmpty())
             specifications.add((root, query, cb) -> root.get("id").in(includedIds));
 
         return Specification.allOf(specifications);
