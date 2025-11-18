@@ -11,12 +11,13 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
-
+import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
 @Entity
+@Table(name = "user")
 @NoArgsConstructor(access = lombok.AccessLevel.PROTECTED)
 public class UserJpaEntity extends BaseJpaEntity implements Serializable {
 

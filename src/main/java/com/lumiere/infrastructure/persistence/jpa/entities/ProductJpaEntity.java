@@ -11,6 +11,7 @@ import com.lumiere.infrastructure.persistence.jpa.entities.base.BaseJpaEntity;
 
 @Getter
 @Entity
+@Table(name = "products")
 @NoArgsConstructor(access = lombok.AccessLevel.PROTECTED)
 public class ProductJpaEntity extends BaseJpaEntity implements Serializable {
 

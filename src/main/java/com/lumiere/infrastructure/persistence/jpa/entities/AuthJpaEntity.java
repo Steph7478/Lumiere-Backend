@@ -12,6 +12,7 @@ import com.lumiere.infrastructure.persistence.jpa.entities.base.BaseJpaEntity;
 
 @Getter
 @Entity
+@Table(name = "auth")
 @NoArgsConstructor(access = lombok.AccessLevel.PROTECTED)
 public class AuthJpaEntity extends BaseJpaEntity implements Serializable {
 

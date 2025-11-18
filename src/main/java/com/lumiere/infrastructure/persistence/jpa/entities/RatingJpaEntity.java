@@ -10,6 +10,7 @@ import com.lumiere.infrastructure.persistence.jpa.entities.base.BaseJpaEntity;
 
 @Getter
 @Entity
+@Table(name = "ratings")
 @NoArgsConstructor(access = lombok.AccessLevel.PROTECTED)
 public class RatingJpaEntity extends BaseJpaEntity implements Serializable {
 
