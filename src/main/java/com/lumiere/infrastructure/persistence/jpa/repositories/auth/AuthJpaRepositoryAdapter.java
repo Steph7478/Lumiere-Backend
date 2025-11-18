@@ -1,6 +1,5 @@
 package com.lumiere.infrastructure.persistence.jpa.repositories.auth;
 
-import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
@@ -12,12 +11,10 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.lumiere.domain.entities.Auth;
-import com.lumiere.domain.entities.User;
 import com.lumiere.domain.repositories.AuthRepository;
 import com.lumiere.infrastructure.mappers.AuthMapper;
 import com.lumiere.infrastructure.persistence.jpa.entities.AuthJpaEntity;
 import com.lumiere.infrastructure.persistence.jpa.repositories.base.BaseRepositoryAdapter;
-import com.lumiere.shared.annotations.validators.validEntityGraphPath.ValidEntityGraphPaths;
 
 import jakarta.persistence.EntityManager;
 
@@ -52,19 +49,6 @@ public class AuthJpaRepositoryAdapter extends BaseRepositoryAdapter<Auth, AuthJp
         Objects.requireNonNull(email, "email cannot be null");
         return authRepo.findByEmail(email)
                 .map(authMapper::toDomain);
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public Optional<Auth> findByIdWithRelations(UUID id,
-            @ValidEntityGraphPaths(root = AuthJpaEntity.class, allowedPaths = { "user" }) String... relations) {
-        return findByIdWithEager(id, relations);
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public List<User> findAllWithRelations() {
-        throw new UnsupportedOperationException("Unimplemented method 'findAllWithRelations'");
     }
 
     @Override

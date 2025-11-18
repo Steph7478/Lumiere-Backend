@@ -3,6 +3,7 @@ package com.lumiere.infrastructure.persistence.jpa.repositories.auth;
 import java.util.Optional;
 import java.util.UUID;
 
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -14,4 +15,7 @@ public interface AuthJpaRepository extends JpaRepository<AuthJpaEntity, UUID> {
     boolean existsByEmail(String email);
 
     Optional<AuthJpaEntity> findByEmail(String email);
+
+    @EntityGraph(attributePaths = { "user" })
+    Optional<AuthJpaEntity> findByIdWithUserEager(UUID id);
 }

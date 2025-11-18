@@ -50,7 +50,7 @@ public class ProductDetailReadAdapter implements ProductDetailReadPort {
 
         Specification<ProductJpaEntity> spec = buildConciseSpecification(criteria, filteredIds);
 
-        Page<ProductJpaEntity> productPage = sqlRepository.findAll(spec, pageable);
+        Page<ProductJpaEntity> productPage = sqlRepository.findAllWithRatingsEager(spec, pageable);
 
         List<ProductDetailReadModel> readModels = productPage.getContent().stream()
                 .map(jpaEntity -> productDetailMapper.toReadModel(

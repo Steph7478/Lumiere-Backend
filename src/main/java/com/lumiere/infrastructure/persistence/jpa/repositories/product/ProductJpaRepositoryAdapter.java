@@ -1,6 +1,5 @@
 package com.lumiere.infrastructure.persistence.jpa.repositories.product;
 
-import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
@@ -12,12 +11,10 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.lumiere.domain.entities.Product;
-import com.lumiere.domain.entities.User;
 import com.lumiere.domain.repositories.ProductRepository;
 import com.lumiere.infrastructure.mappers.ProductMapper;
 import com.lumiere.infrastructure.persistence.jpa.entities.ProductJpaEntity;
 import com.lumiere.infrastructure.persistence.jpa.repositories.base.BaseRepositoryAdapter;
-import com.lumiere.shared.annotations.validators.validEntityGraphPath.ValidEntityGraphPaths;
 
 import jakarta.persistence.EntityManager;
 
@@ -38,17 +35,6 @@ public class ProductJpaRepositoryAdapter extends BaseRepositoryAdapter<Product, 
     public Optional<Product> findById(UUID id) {
         Objects.requireNonNull(id, "id cannot be null");
         return super.findById(id);
-    }
-
-    @Override
-    public Optional<Product> findByIdWithRelations(UUID id,
-            @ValidEntityGraphPaths(root = ProductJpaEntity.class, allowedPaths = {}) String... relations) {
-        return findByIdWithEager(id, relations);
-    }
-
-    @Override
-    public List<User> findAllWithRelations() {
-        throw new UnsupportedOperationException("Unimplemented method 'findAllWithRelations'");
     }
 
     @Override

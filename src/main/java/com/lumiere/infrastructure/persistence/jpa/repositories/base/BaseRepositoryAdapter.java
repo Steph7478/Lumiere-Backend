@@ -1,8 +1,6 @@
 package com.lumiere.infrastructure.persistence.jpa.repositories.base;
 
 import jakarta.persistence.EntityManager;
-import jakarta.persistence.EntityGraph;
-import jakarta.persistence.TypedQuery;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.transaction.annotation.Transactional;
@@ -11,14 +9,12 @@ import java.util.*;
 
 import com.lumiere.domain.entities.base.BaseEntity;
 import com.lumiere.infrastructure.mappers.base.BaseMapper;
-import com.lumiere.infrastructure.persistence.jpa.utils.EntityGraphBuilder;
 
 public abstract class BaseRepositoryAdapter<D, E> implements BaseReader<D>, BaseWriter<D> {
 
     protected final JpaRepository<E, UUID> jpaRepository;
     protected final BaseMapper<D, E> mapper;
     protected final EntityManager entityManager;
-    private final Class<E> entityClass;
 
     protected BaseRepositoryAdapter(
             JpaRepository<E, UUID> jpaRepository,
@@ -28,7 +24,6 @@ public abstract class BaseRepositoryAdapter<D, E> implements BaseReader<D>, Base
         this.jpaRepository = Objects.requireNonNull(jpaRepository, "jpaRepository cannot be null");
         this.mapper = Objects.requireNonNull(mapper, "mapper cannot be null");
         this.entityManager = Objects.requireNonNull(entityManager, "entityManager cannot be null");
-        this.entityClass = Objects.requireNonNull(entityClass, "entityClass cannot be null");
     }
 
     @Transactional(readOnly = true)
@@ -44,34 +39,6 @@ public abstract class BaseRepositoryAdapter<D, E> implements BaseReader<D>, Base
         return jpaRepository.findAll().stream()
                 .map(mapper::toDomain)
                 .toList();
-    }
-
-    @Transactional(readOnly = true)
-    public List<D> findAllWithEager(String... relations) {
-        final EntityGraph<E> graph = EntityGraphBuilder.build(entityManager, entityClass, Arrays.asList(relations));
-
-        final String jpql = "SELECT e FROM " + entityClass.getName() + " e";
-        final TypedQuery<E> query = entityManager.createQuery(jpql, entityClass);
-
-        query.setHint(EntityGraphBuilder.FETCHGRAPH_HINT, graph);
-
-        return query.getResultList().stream()
-                .map(mapper::toDomain)
-                .toList();
-    }
-
-    @Transactional(readOnly = true)
-    public Optional<D> findByIdWithEager(UUID id, String... relations) {
-        Objects.requireNonNull(id, "ID must not be null");
-
-        final EntityGraph<E> graph = EntityGraphBuilder.build(entityManager, entityClass, Arrays.asList(relations));
-
-        final E entity = entityManager.find(
-                entityClass,
-                id,
-                Map.of(EntityGraphBuilder.FETCHGRAPH_HINT, graph));
-        return Optional.ofNullable(entity)
-                .map(mapper::toDomain);
     }
 
     @Override
