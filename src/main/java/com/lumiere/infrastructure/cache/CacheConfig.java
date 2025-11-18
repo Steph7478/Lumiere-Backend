@@ -30,6 +30,10 @@ public class CacheConfig {
         private static final Duration DEFAULT_TTL = Duration.ofMinutes(15);
         private final ObjectMapper objectMapper;
 
+        private static final Map<Class<?>, Class<?>> IMMUTABLE_MIXINS = Map.of(
+                        Money.class, MoneyMixin.class,
+                        Stock.class, StockMixin.class);
+
         public CacheConfig(ObjectMapper objectMapper) {
                 this.objectMapper = objectMapper;
         }
@@ -42,6 +46,7 @@ public class CacheConfig {
 
                 cacheConfigurations.put("authJpa", createCacheConfig(defaultCacheConfig, Duration.ofMinutes(5)));
                 cacheConfigurations.put("userJpa", createCacheConfig(defaultCacheConfig, Duration.ofMinutes(10)));
+                cacheConfigurations.put("productJpa", createCacheConfig(defaultCacheConfig, Duration.ofMinutes(15)));
 
                 return RedisCacheManager.builder(connectionFactory)
                                 .cacheDefaults(defaultCacheConfig)
@@ -51,9 +56,8 @@ public class CacheConfig {
 
         private RedisCacheConfiguration configureDefaultCache(Duration ttl, ObjectMapper objectMapper) {
                 ObjectMapper cacheObjectMapper = objectMapper.copy();
-                cacheObjectMapper.addMixIn(Money.class, MoneyMixin.class);
-                cacheObjectMapper.addMixIn(Stock.class, StockMixin.class);
 
+                IMMUTABLE_MIXINS.forEach(cacheObjectMapper::addMixIn);
                 BasicPolymorphicTypeValidator ptv = BasicPolymorphicTypeValidator.builder()
                                 .allowIfBaseType(Object.class)
                                 .build();
