@@ -20,7 +20,7 @@ public final class SecurityMatcherConfigurator {
                     api + Routes.PUBLIC.AUTH.LOGIN,
 
                     // PRODUCTS
-                    api + Routes.PUBLIC.PRODUCTS.FILTER)
+                    api + Routes.PUBLIC.PRODUCTS.BASE)
                     .permitAll();
             auth.requestMatchers(
                     // AUTH
