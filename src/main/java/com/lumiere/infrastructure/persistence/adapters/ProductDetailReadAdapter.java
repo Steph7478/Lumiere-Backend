@@ -9,7 +9,6 @@ import com.lumiere.infrastructure.mappers.ProductMapper;
 import com.lumiere.infrastructure.persistence.jpa.entities.ProductJpaEntity;
 import com.lumiere.infrastructure.persistence.jpa.repositories.product.ProductJpaRepository;
 import org.springframework.data.domain.*;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -24,64 +23,61 @@ public class ProductDetailReadAdapter implements ProductDetailReadPort {
     private final ProductMapper productDetailMapper;
 
     public ProductDetailReadAdapter(ProductJpaRepository sqlRepository,
-            NoSqlRepository<ProductCategory> nosqlRepository, ProductMapper productDetailMapper) {
+            NoSqlRepository<ProductCategory> nosqlRepository,
+            ProductMapper productDetailMapper) {
         this.sqlRepository = sqlRepository;
         this.nosqlRepository = nosqlRepository;
         this.productDetailMapper = productDetailMapper;
     }
 
+    @SuppressWarnings("null")
     @Override
     public Page<ProductDetailReadModel> findProductsByCriteria(ProductSearchCriteria criteria) {
-        List<ProductCategory> categories = getCategories(criteria);
-        List<UUID> productIds = categories.stream().map(ProductCategory::getId).filter(Objects::nonNull).toList();
 
-        Specification<ProductJpaEntity> spec = buildSpec(criteria, productIds);
+        List<ProductCategory> categories = getCategoriesFromNoSql(criteria);
+        List<UUID> productIds = categories.stream()
+                .map(ProductCategory::getId)
+                .filter(Objects::nonNull)
+                .toList();
+
+        boolean categoryFilterApplied = criteria.category() != null || criteria.subCategory() != null;
+        if (categoryFilterApplied && productIds.isEmpty()) {
+            return new PageImpl<>(Collections.emptyList(),
+                    PageRequest.of(criteria.page(), criteria.size(), Sort.by(criteria.sortBy())), 0);
+        }
 
         Pageable pageable = PageRequest.of(criteria.page(), criteria.size(), Sort.by(criteria.sortBy()));
-        Page<ProductJpaEntity> productPage = sqlRepository.findAll(spec, pageable);
+        Page<ProductJpaEntity> productPage = sqlRepository.findFilteredProducts(
+                productIds,
+                criteria.name(),
+                criteria.priceMin(),
+                criteria.priceMax(),
+                pageable);
 
         Map<UUID, ProductCategory> categoryMap = categories.stream()
-                .collect(Collectors.toMap(ProductCategory::getId, Function.identity()));
+                .collect(Collectors.toMap(ProductCategory::getId, Function.identity(), (a, b) -> a));
 
         List<ProductDetailReadModel> readModels = productPage.getContent().stream()
                 .map(jpaEntity -> productDetailMapper.toReadModel(jpaEntity, categoryMap.get(jpaEntity.getId())))
                 .toList();
 
-        Objects.requireNonNull(readModels);
         return new PageImpl<>(readModels, pageable, productPage.getTotalElements());
     }
 
-    private List<ProductCategory> getCategories(ProductSearchCriteria c) {
+    private List<ProductCategory> getCategoriesFromNoSql(ProductSearchCriteria c) {
         if (c.category() == null && c.subCategory() == null)
-            return List.of();
+            return Collections.emptyList();
 
-        String cat = (c.category() != null) ? c.category().name() : null;
-        String sub = (c.subCategory() != null) ? c.subCategory().name() : null;
+        final String cat = c.category() != null ? c.category().name() : null;
+        final String sub = c.subCategory() != null ? c.subCategory().name() : null;
 
-        if (cat != null && sub != null)
+        if (cat != null && sub != null) {
             return nosqlRepository.findByCategoryAndSubcategory(cat, sub);
-        if (sub != null)
+        } else if (sub != null) {
             return nosqlRepository.findBySubcategory(sub);
-        if (cat != null)
+        } else if (cat != null) {
             return nosqlRepository.findByCategory(cat);
-        return List.of();
-    }
-
-    private Specification<ProductJpaEntity> buildSpec(ProductSearchCriteria c, List<UUID> ids) {
-        List<Specification<ProductJpaEntity>> specs = new ArrayList<>();
-
-        Optional.ofNullable(c.name()).filter(n -> !n.isBlank()).ifPresent(n -> specs.add(
-                (root, query, cb) -> cb.like(cb.lower(root.get("name")), "%" + n.toLowerCase() + "%")));
-
-        Optional.ofNullable(c.priceMin()).ifPresent(min -> specs.add(
-                (root, query, cb) -> cb.greaterThanOrEqualTo(root.get("priceAmount"), min)));
-
-        Optional.ofNullable(c.priceMax()).ifPresent(max -> specs.add(
-                (root, query, cb) -> cb.lessThanOrEqualTo(root.get("priceAmount"), max)));
-
-        if (!ids.isEmpty())
-            specs.add((root, query, cb) -> root.get("id").in(ids));
-
-        return Specification.allOf(specs);
+        }
+        return Collections.emptyList();
     }
 }
