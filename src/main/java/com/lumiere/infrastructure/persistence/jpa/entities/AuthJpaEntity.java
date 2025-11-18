@@ -2,6 +2,7 @@ package com.lumiere.infrastructure.persistence.jpa.entities;
 
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 import java.util.UUID;
@@ -11,6 +12,7 @@ import com.lumiere.infrastructure.persistence.jpa.entities.base.BaseJpaEntity;
 
 @Getter
 @Entity
+@NoArgsConstructor(access = lombok.AccessLevel.PROTECTED)
 public class AuthJpaEntity extends BaseJpaEntity implements Serializable {
 
     @OneToOne(mappedBy = "auth", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
@@ -35,9 +37,5 @@ public class AuthJpaEntity extends BaseJpaEntity implements Serializable {
         this.email = email;
         this.password = password;
         this.isAdmin = isAdmin;
-    }
-
-    protected AuthJpaEntity() {
-        super(null);
     }
 }

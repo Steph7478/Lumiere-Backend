@@ -13,9 +13,11 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
 @Entity
+@NoArgsConstructor(access = lombok.AccessLevel.PROTECTED)
 public class UserJpaEntity extends BaseJpaEntity implements Serializable {
 
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
@@ -26,9 +28,5 @@ public class UserJpaEntity extends BaseJpaEntity implements Serializable {
     public UserJpaEntity(UUID id, AuthJpaEntity auth) {
         super(id);
         this.auth = auth;
-    }
-
-    protected UserJpaEntity() {
-        super(null);
     }
 }

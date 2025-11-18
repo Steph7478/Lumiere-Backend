@@ -2,13 +2,16 @@ package com.lumiere.infrastructure.persistence.jpa.entities;
 
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.UUID;
 import com.lumiere.infrastructure.persistence.jpa.entities.base.BaseJpaEntity;
 
 @Getter
 @Entity
+@NoArgsConstructor(access = lombok.AccessLevel.PROTECTED)
 public class ProductJpaEntity extends BaseJpaEntity implements Serializable {
 
     @Column(nullable = false)
@@ -26,12 +29,15 @@ public class ProductJpaEntity extends BaseJpaEntity implements Serializable {
     @Column(nullable = false)
     private Integer stockQuantity;
 
-    protected ProductJpaEntity() {
-        super(null);
-    }
+    @OneToMany(mappedBy = "productId", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<RatingJpaEntity> ratings;
 
-    public ProductJpaEntity(UUID id, String name, String description,
-            BigDecimal priceAmount, String priceCurrency,
+    public ProductJpaEntity(
+            UUID id,
+            String name,
+            String description,
+            BigDecimal priceAmount,
+            String priceCurrency,
             Integer stockQuantity) {
         super(id);
         this.name = name;
