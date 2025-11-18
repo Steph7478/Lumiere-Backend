@@ -13,13 +13,13 @@ import org.springframework.data.domain.*;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.UUID;
-import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.ArrayList;
 
 @Service
 public class ProductDetailReadAdapter implements ProductDetailReadPort {
@@ -28,85 +28,79 @@ public class ProductDetailReadAdapter implements ProductDetailReadPort {
     private final NoSqlRepository<ProductCategory> nosqlRepository;
     private final ProductMapper productDetailMapper;
 
-    private record CategoryFilterResult(List<UUID> filteredProductIds, List<ProductCategory> categories) {
-    }
-
     public ProductDetailReadAdapter(
             ProductJpaRepository sqlRepository,
             NoSqlRepository<ProductCategory> nosqlRepository,
             ProductMapper productDetailMapper) {
-        this.sqlRepository = Objects.requireNonNull(sqlRepository);
-        this.nosqlRepository = Objects.requireNonNull(nosqlRepository);
-        this.productDetailMapper = Objects.requireNonNull(productDetailMapper);
+        this.sqlRepository = sqlRepository;
+        this.nosqlRepository = nosqlRepository;
+        this.productDetailMapper = productDetailMapper;
     }
 
     @Override
     public Page<ProductDetailReadModel> findProductsByCriteria(ProductSearchCriteria criteria) {
-        CategoryFilterResult filterResult = getFilteredProductIdsAndCategories(criteria);
 
-        Specification<ProductJpaEntity> spec = buildSqlSpecification(criteria, filterResult.filteredProductIds());
+        List<ProductCategory> categories = getCategoriesByCriteria(criteria);
+        List<UUID> filteredIds = categories.stream().map(ProductCategory::getId).toList();
+
+        Map<UUID, ProductCategory> categoryDataMap = categories.stream()
+                .collect(Collectors.toMap(ProductCategory::getId, cat -> cat));
+
         Pageable pageable = PageRequest.of(criteria.page(), criteria.size(), Sort.by(criteria.sortBy()));
+
+        Specification<ProductJpaEntity> spec = buildConciseSpecification(criteria, filteredIds);
+
         Page<ProductJpaEntity> productPage = sqlRepository.findAll(spec, pageable);
 
-        List<UUID> productIdsOnPage = productPage.getContent().stream()
-                .map(ProductJpaEntity::getId).toList();
-
-        List<ProductCategory> categoriesToMap = nosqlRepository.findByIds(productIdsOnPage);
-        Map<UUID, ProductCategory> categoryDataMap = categoriesToMap.stream()
-                .collect(Collectors.toMap(ProductCategory::getId, Function.identity()));
-
         List<ProductDetailReadModel> readModels = productPage.getContent().stream()
-                .map(jpaEntity -> productDetailMapper.toReadModel(jpaEntity, categoryDataMap.get(jpaEntity.getId())))
+                .map(jpaEntity -> productDetailMapper.toReadModel(
+                        jpaEntity,
+                        categoryDataMap.get(jpaEntity.getId())))
                 .toList();
 
         Objects.requireNonNull(readModels);
-
         return new PageImpl<>(readModels, pageable, productPage.getTotalElements());
     }
 
-    private CategoryFilterResult getFilteredProductIdsAndCategories(ProductSearchCriteria criteria) {
+    private List<ProductCategory> getCategoriesByCriteria(ProductSearchCriteria criteria) {
         if (criteria.category() == null && criteria.subCategory() == null)
-            return new CategoryFilterResult(null, null);
+            return List.of();
 
-        List<ProductCategory> categories;
         boolean hasCategory = criteria.category() != null;
         boolean hasSubCategory = criteria.subCategory() != null;
 
         if (hasCategory && hasSubCategory) {
-            categories = nosqlRepository.findByCategoryAndSubcategory(
+            return nosqlRepository.findByCategoryAndSubcategory(
                     criteria.category().name(), criteria.subCategory().name());
         } else if (hasSubCategory) {
-            categories = nosqlRepository.findBySubcategory(criteria.subCategory().name());
+            return nosqlRepository.findBySubcategory(criteria.subCategory().name());
         } else {
-            categories = nosqlRepository.findByCategory(criteria.category().name());
+            return nosqlRepository.findByCategory(criteria.category().name());
         }
-
-        List<UUID> filteredProductIds = (categories != null)
-                ? categories.stream().map(ProductCategory::getId).toList()
-                : null;
-
-        return new CategoryFilterResult(filteredProductIds, categories);
     }
 
-    private Specification<ProductJpaEntity> buildSqlSpecification(
+    private Specification<ProductJpaEntity> buildConciseSpecification(
             ProductSearchCriteria criteria,
             List<UUID> includedIds) {
 
         List<Specification<ProductJpaEntity>> specifications = new ArrayList<>();
 
-        if (criteria.name() != null && !criteria.name().isBlank()) {
-            String searchName = "%" + criteria.name().toLowerCase() + "%";
-            specifications.add((root, query, cb) -> cb.like(cb.lower(root.get("name")), searchName));
-        }
+        Optional.ofNullable(criteria.name())
+                .filter(name -> !name.isBlank())
+                .ifPresent(name -> {
+                    String searchName = "%" + name.toLowerCase() + "%";
+                    specifications.add((root, query, cb) -> cb.like(cb.lower(root.get("name")), searchName));
+                });
 
-        if (criteria.priceMin() != null)
-            specifications
-                    .add((root, query, cb) -> cb.greaterThanOrEqualTo(root.get("priceAmount"), criteria.priceMin()));
+        Optional.ofNullable(criteria.priceMin())
+                .ifPresent(min -> specifications
+                        .add((root, query, cb) -> cb.greaterThanOrEqualTo(root.get("priceAmount"), min)));
 
-        if (criteria.priceMax() != null)
-            specifications.add((root, query, cb) -> cb.lessThanOrEqualTo(root.get("priceAmount"), criteria.priceMax()));
+        Optional.ofNullable(criteria.priceMax())
+                .ifPresent(max -> specifications
+                        .add((root, query, cb) -> cb.lessThanOrEqualTo(root.get("priceAmount"), max)));
 
-        if (includedIds != null && !includedIds.isEmpty())
+        if (!includedIds.isEmpty() && includedIds != null)
             specifications.add((root, query, cb) -> root.get("id").in(includedIds));
 
         return Specification.allOf(specifications);
