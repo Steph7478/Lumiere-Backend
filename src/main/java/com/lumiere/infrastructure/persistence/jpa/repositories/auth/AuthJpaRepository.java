@@ -17,5 +17,5 @@ public interface AuthJpaRepository extends JpaRepository<AuthJpaEntity, UUID> {
     Optional<AuthJpaEntity> findByEmail(String email);
 
     @EntityGraph(attributePaths = { "user" })
-    Optional<AuthJpaEntity> findByIdWithUserEager(UUID id);
+    Optional<AuthJpaEntity> findUserWithEagerById(UUID id);
 }

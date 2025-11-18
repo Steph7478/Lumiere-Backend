@@ -45,9 +45,9 @@ public class AuthJpaRepositoryAdapter extends BaseRepositoryAdapter<Auth, AuthJp
     @Override
     @Cacheable(value = "authJpa", key = "#userId + '-eager'")
     @Transactional(readOnly = true)
-    public Optional<Auth> findByIdWithUserEager(UUID id) {
+    public Optional<Auth> findUserWithEagerById(UUID id) {
         Objects.requireNonNull(id, "id cannot be null");
-        return authRepo.findByIdWithUserEager(id)
+        return authRepo.findUserWithEagerById(id)
                 .map(authMapper::toDomain);
     }
 

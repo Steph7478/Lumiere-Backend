@@ -9,5 +9,5 @@ import com.lumiere.domain.repositories.base.BaseRepository;
 public interface AuthRepository extends BaseRepository<Auth> {
     Optional<Auth> findByEmail(String email);
 
-    Optional<Auth> findByIdWithUserEager(UUID id);
+    Optional<Auth> findUserWithEagerById(UUID id);
 }
