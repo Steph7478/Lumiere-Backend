@@ -1,4 +1,4 @@
-package com.lumiere.infrastructure.security.config;
+package com.lumiere.infrastructure.config;
 
 import io.github.cdimascio.dotenv.Dotenv;
 

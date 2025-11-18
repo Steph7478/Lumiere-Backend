@@ -1,4 +1,4 @@
-package com.lumiere.infrastructure.security.config;
+package com.lumiere.infrastructure.config;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -12,8 +12,8 @@ import org.springframework.context.annotation.Configuration;
 
 import com.lumiere.domain.vo.Money;
 import com.lumiere.domain.vo.Stock;
-import com.lumiere.infrastructure.cache.DomainMixins.MoneyMixin;
-import com.lumiere.infrastructure.cache.DomainMixins.StockMixin;
+import com.lumiere.infrastructure.config.DomainMixins.MoneyMixin;
+import com.lumiere.infrastructure.config.DomainMixins.StockMixin;
 
 import java.util.Map;
 
@@ -29,7 +29,7 @@ public class JacksonConfig {
         ObjectMapper mapper = new ObjectMapper();
         mapper.registerModule(new Jdk8Module());
         mapper.registerModule(new JavaTimeModule());
-        
+
         mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
         mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
 

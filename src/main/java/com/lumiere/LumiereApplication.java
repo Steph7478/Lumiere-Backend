@@ -4,7 +4,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cache.annotation.EnableCaching;
 
-import com.lumiere.infrastructure.security.config.DotenvLoader;
+import com.lumiere.infrastructure.config.DotenvLoader;
 
 @SpringBootApplication
 @EnableCaching

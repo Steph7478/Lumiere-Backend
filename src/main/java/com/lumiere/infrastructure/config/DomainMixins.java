@@ -1,4 +1,4 @@
-package com.lumiere.infrastructure.cache;
+package com.lumiere.infrastructure.config;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;

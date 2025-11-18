@@ -2,6 +2,7 @@ package com.lumiere.infrastructure.security.config;
 
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 
+import com.lumiere.infrastructure.config.ApiConfig;
 import com.lumiere.presentation.routes.Routes;
 
 public final class SecurityMatcherConfigurator {
