@@ -43,6 +43,15 @@ public class AuthJpaRepositoryAdapter extends BaseRepositoryAdapter<Auth, AuthJp
     }
 
     @Override
+    @Cacheable(value = "authJpa", key = "#userId + '-eager'")
+    @Transactional(readOnly = true)
+    public Optional<Auth> findByIdWithUserEager(UUID id) {
+        Objects.requireNonNull(id, "id cannot be null");
+        return authRepo.findByIdWithUserEager(id)
+                .map(authMapper::toDomain);
+    }
+
+    @Override
     @Cacheable(value = "authJpa", key = "#email")
     @Transactional(readOnly = true)
     public Optional<Auth> findByEmail(String email) {
@@ -64,6 +73,7 @@ public class AuthJpaRepositoryAdapter extends BaseRepositoryAdapter<Auth, AuthJp
     @Override
     @Caching(evict = {
             @CacheEvict(value = "authJpa", key = "#domain.id"),
+            @CacheEvict(value = "authJpa", key = "#domain.userId"),
             @CacheEvict(value = "authJpa", key = "#domain.email")
     })
     @Transactional
