@@ -13,7 +13,7 @@ public final class Routes {
         }
 
         public static final class PRODUCTS {
-            public static final String BASE = "/products/";
+            public static final String BASE = "/products";
         }
     }
 
