@@ -65,10 +65,9 @@ public class ProductDetailReadAdapter implements ProductDetailReadPort {
                 .toList();
 
         boolean categoryFilterApplied = criteria.category() != null || criteria.subCategory() != null;
-        if (categoryFilterApplied && productIds.isEmpty()) {
+        if (categoryFilterApplied && productIds.isEmpty())
             return new PageImpl<>(Collections.emptyList(),
                     PageRequest.of(criteria.page(), criteria.size(), Sort.by(criteria.sortBy())), 0);
-        }
 
         Pageable pageable = PageRequest.of(criteria.page(), criteria.size(), Sort.by(criteria.sortBy()));
         Page<ProductJpaEntity> productPage = sqlRepository.findFilteredProducts(
