@@ -1,5 +1,6 @@
 package com.lumiere.infrastructure.persistence.jpa.entities;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
@@ -19,7 +20,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 @Table(name = "order")
-public class OrderJpaEntity extends BaseJpaEntity {
+public class OrderJpaEntity extends BaseJpaEntity implements Serializable {
 
     @OneToOne
     @Column(name = "user_id", nullable = false)
