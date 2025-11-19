@@ -17,7 +17,6 @@ import org.mapstruct.Mapping;
 import org.mapstruct.Mappings;
 import org.mapstruct.Named;
 import org.mapstruct.ReportingPolicy;
-import java.util.Collections;
 import java.util.List;
 
 @Mapper(componentModel = "spring", uses = { RatingMapper.class }, unmappedTargetPolicy = ReportingPolicy.IGNORE)
@@ -36,12 +35,15 @@ public interface ProductMapper extends BaseMapper<Product, ProductJpaEntity> {
 
         @Named("mapCurrencyTypeToString")
         default String mapCurrencyTypeToString(CurrencyType currencyType) {
+                if (currencyType == null)
+                        return null;
+
                 return currencyType.name();
         }
 
         @Mappings({
                         @Mapping(target = ".", source = "jpaEntity", qualifiedByName = "instantiateProductFromJpa"),
-                        @Mapping(target = "ratings", source = "jpaEntity.ratings")
+                        @Mapping(target = "ratings", ignore = true)
         })
         Product toDomain(ProductJpaEntity jpaEntity);
 
@@ -60,6 +62,9 @@ public interface ProductMapper extends BaseMapper<Product, ProductJpaEntity> {
         }
 
         default Money createMoney(ProductJpaEntity jpaEntity) {
+                if (jpaEntity.getPriceCurrency() == null)
+                        return null;
+
                 return new Money(
                                 jpaEntity.getPriceAmount(),
                                 CurrencyType.valueOf(jpaEntity.getPriceCurrency()));
@@ -83,6 +88,7 @@ public interface ProductMapper extends BaseMapper<Product, ProductJpaEntity> {
         @Named("createProductDetailReadModel")
         default ProductDetailReadModel createProductDetailReadModel(
                         ProductJpaEntity jpaEntity,
+                        List<Rating> ratings,
                         ProductCategory nosqlCategory) {
 
                 Money price = createMoney(jpaEntity);
@@ -95,7 +101,7 @@ public interface ProductMapper extends BaseMapper<Product, ProductJpaEntity> {
                                 jpaEntity.getName(),
                                 jpaEntity.getDescription(),
                                 price,
-                                Collections.emptyList(),
+                                ratings,
                                 jpaEntity.getStockQuantity(),
                                 jpaEntity.getCreatedAt(),
                                 jpaEntity.getUpdatedAt(),
