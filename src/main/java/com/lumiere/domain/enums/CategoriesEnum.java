@@ -1,6 +1,6 @@
 package com.lumiere.domain.enums;
 
-public class CategoriesEnum {
+public abstract class CategoriesEnum {
     public enum Category {
         ELECTRONICS,
         CLOTHING,

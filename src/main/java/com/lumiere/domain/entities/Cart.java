@@ -21,8 +21,6 @@ public class Cart extends BaseEntity {
         this.products = products != null ? new ArrayList<>(products) : new ArrayList<>();
     }
 
-    // Getters
-
     public UUID getUserId() {
         return userId;
     }
@@ -59,7 +57,6 @@ public class Cart extends BaseEntity {
         return new Cart(getId(), this.userId, this.coupon, newProducts);
     }
 
-    // factory
     public static Cart createCart(UUID userId) {
         return new Cart(null, userId, null, new ArrayList<>());
     }
