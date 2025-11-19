@@ -13,10 +13,10 @@ import com.lumiere.domain.vo.CartItem;
 public class Cart extends BaseEntity {
 
     private final UUID userId;
-    private final Coupon coupon;
+    private final String coupon;
     private final List<CartItem> items;
 
-    public Cart(UUID id, UUID userId, Coupon coupon, List<CartItem> items) {
+    public Cart(UUID id, UUID userId, String coupon, List<CartItem> items) {
         super(id);
         this.userId = Objects.requireNonNull(userId, "User ID cannot be null");
         this.coupon = coupon;
@@ -27,7 +27,7 @@ public class Cart extends BaseEntity {
         return userId;
     }
 
-    public Optional<Coupon> getCoupon() {
+    public Optional<String> getCoupon() {
         return Optional.ofNullable(coupon);
     }
 
@@ -35,7 +35,7 @@ public class Cart extends BaseEntity {
         return Collections.unmodifiableList(items);
     }
 
-    public Cart withCoupon(Coupon coupon) {
+    public Cart withCoupon(String coupon) {
         return new Cart(getId(), this.userId, coupon, this.items);
     }
 
