@@ -19,6 +19,7 @@ public interface UserJpaRepository extends JpaRepository<UserJpaEntity, UUID> {
     @EntityGraph(attributePaths = { "auth" })
     Optional<AuthInfoView> findAuthInfoByAuthId(UUID id);
 
+    @EntityGraph(attributePaths = { "auth" })
     Optional<UserInfoView> findUserInfoById(UUID id);
 
     @EntityGraph(attributePaths = { "auth" })
