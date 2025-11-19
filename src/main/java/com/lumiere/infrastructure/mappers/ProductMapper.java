@@ -1,39 +1,52 @@
 package com.lumiere.infrastructure.mappers;
 
-import org.springframework.stereotype.Component;
-
 import com.lumiere.domain.entities.Product;
 import com.lumiere.domain.entities.ProductCategory;
+import com.lumiere.domain.enums.CategoriesEnum.Category;
+import com.lumiere.domain.enums.CategoriesEnum.SubCategory;
 import com.lumiere.domain.enums.CurrencyEnum.CurrencyType;
 import com.lumiere.domain.readmodels.ProductDetailReadModel;
 import com.lumiere.domain.vo.Money;
 import com.lumiere.domain.vo.Stock;
 import com.lumiere.infrastructure.mappers.base.BaseMapper;
 import com.lumiere.infrastructure.persistence.jpa.entities.ProductJpaEntity;
-import com.lumiere.domain.enums.CategoriesEnum.*;
-
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.Mappings;
+import org.mapstruct.Named;
+import org.mapstruct.ReportingPolicy;
 import java.util.Collections;
 
-@Component
-public final class ProductMapper implements BaseMapper<Product, ProductJpaEntity> {
+@Mapper(componentModel = "spring", uses = { RatingMapper.class }, unmappedTargetPolicy = ReportingPolicy.IGNORE)
+public interface ProductMapper extends BaseMapper<Product, ProductJpaEntity> {
 
-        @Override
-        public ProductJpaEntity toJpa(Product domain) {
-                return new ProductJpaEntity(
-                                domain.getId(),
-                                domain.getName(),
-                                domain.getDescription(),
-                                domain.getPrice().getAmount(),
-                                domain.getPrice().getCurrency().name(),
-                                domain.getStock().getQuantity());
+        @Mappings({
+                        @Mapping(target = "id", source = "domain.id"),
+                        @Mapping(target = "createdAt", ignore = true),
+                        @Mapping(target = "updatedAt", ignore = true),
+                        @Mapping(target = "priceAmount", source = "domain.price.amount"),
+                        @Mapping(target = "priceCurrency", source = "domain.price.currency", qualifiedByName = "mapCurrencyTypeToString"),
+                        @Mapping(target = "stockQuantity", source = "domain.stock.quantity"),
+                        @Mapping(target = "ratings", ignore = true)
+        })
+        ProductJpaEntity toJpa(Product domain);
+
+        @Named("mapCurrencyTypeToString")
+        default String mapCurrencyTypeToString(CurrencyType currencyType) {
+                return currencyType.name();
         }
 
-        @Override
-        public Product toDomain(ProductJpaEntity jpaEntity) {
-                Money price = new Money(
-                                jpaEntity.getPriceAmount(),
-                                CurrencyType.valueOf(jpaEntity.getPriceCurrency()));
-                Stock stock = new Stock(jpaEntity.getStockQuantity());
+        @Mappings({
+                        @Mapping(target = ".", source = "jpaEntity", qualifiedByName = "instantiateProductFromJpa"),
+                        @Mapping(target = "ratings", ignore = true)
+
+        })
+        Product toDomain(ProductJpaEntity jpaEntity);
+
+        @Named("instantiateProductFromJpa")
+        default Product instantiateProductFromJpa(ProductJpaEntity jpaEntity) {
+                Money price = createMoney(jpaEntity);
+                Stock stock = createStock(jpaEntity.getStockQuantity());
 
                 return Product.from(
                                 jpaEntity.getId(),
@@ -43,16 +56,33 @@ public final class ProductMapper implements BaseMapper<Product, ProductJpaEntity
                                 stock);
         }
 
-        public ProductDetailReadModel toReadModel(
-                        ProductJpaEntity jpaEntity,
-                        ProductCategory nosqlCategory) {
-                Money price = new Money(
+        default Money createMoney(ProductJpaEntity jpaEntity) {
+                return new Money(
                                 jpaEntity.getPriceAmount(),
                                 CurrencyType.valueOf(jpaEntity.getPriceCurrency()));
+        }
+
+        default Stock createStock(Integer quantity) {
+                return new Stock(quantity);
+        }
+
+        @Mapping(target = ".", source = "jpaEntity", qualifiedByName = "createProductDetailReadModel")
+        @Mapping(target = "id", ignore = true)
+        @Mapping(target = "createdAt", ignore = true)
+        @Mapping(target = "updatedAt", ignore = true)
+        ProductDetailReadModel toReadModel(
+                        ProductJpaEntity jpaEntity,
+                        ProductCategory nosqlCategory);
+
+        @Named("createProductDetailReadModel")
+        default ProductDetailReadModel createProductDetailReadModel(
+                        ProductJpaEntity jpaEntity,
+                        ProductCategory nosqlCategory) {
+
+                Money price = createMoney(jpaEntity);
 
                 final Category category = nosqlCategory != null ? nosqlCategory.getCategory() : null;
-                final SubCategory subCategory = nosqlCategory != null ? nosqlCategory.getSubcategory()
-                                : null;
+                final SubCategory subCategory = nosqlCategory != null ? nosqlCategory.getSubcategory() : null;
 
                 return new ProductDetailReadModel(
                                 jpaEntity.getId() != null ? jpaEntity.getId().toString() : null,

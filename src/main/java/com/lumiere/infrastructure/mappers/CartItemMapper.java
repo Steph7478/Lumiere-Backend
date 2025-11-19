@@ -1,33 +1,41 @@
 package com.lumiere.infrastructure.mappers;
 
 import com.lumiere.domain.vo.CartItem;
+import com.lumiere.infrastructure.mappers.base.BaseMapper;
 import com.lumiere.infrastructure.persistence.jpa.entities.CartItemJpaEntity;
 import com.lumiere.infrastructure.persistence.jpa.entities.CartJpaEntity;
 import com.lumiere.infrastructure.persistence.jpa.entities.ProductJpaEntity;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.ReportingPolicy;
 
 import java.util.UUID;
 
-import org.springframework.stereotype.Component;
+@Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
+public interface CartItemMapper extends BaseMapper<CartItem, CartItemJpaEntity> {
 
-@Component
-public class CartItemMapper {
+        @Mapping(target = "productId", source = "jpaEntity.product.id")
+        @Mapping(target = "quantity", source = "jpaEntity.quantity")
+        CartItem toDomain(CartItemJpaEntity jpaEntity);
 
-    public CartItem toDomain(CartItemJpaEntity jpaEntity) {
-        return new CartItem(
-                jpaEntity.getProduct().getId(),
-                jpaEntity.getQuantity());
-    }
+        @Mapping(target = "id", ignore = true)
+        @Mapping(target = "cart", source = "cartJpaEntity")
+        @Mapping(target = "product", source = "productJpaEntity")
+        @Mapping(target = "quantity", source = "domain.quantity")
+        CartItemJpaEntity toJpa(
+                        CartItem domain,
+                        CartJpaEntity cartJpaEntity,
+                        ProductJpaEntity productJpaEntity);
 
-    public CartItemJpaEntity toJpa(
-            CartItem domain,
-            CartJpaEntity cartJpaEntity,
-            ProductJpaEntity productJpaEntity) {
+        default CartItemJpaEntity createJpaEntity(
+                        CartJpaEntity cart,
+                        ProductJpaEntity product,
+                        Integer quantity) {
 
-        return new CartItemJpaEntity(
-                UUID.randomUUID(),
-                cartJpaEntity,
-                productJpaEntity,
-                domain.getQuantity());
-    }
-
+                return new CartItemJpaEntity(
+                                UUID.randomUUID(),
+                                cart,
+                                product,
+                                quantity);
+        }
 }

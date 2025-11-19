@@ -18,8 +18,7 @@ public abstract class DomainMixins {
 
     public static abstract class StockMixin {
         @JsonCreator
-        public StockMixin(
-                @JsonProperty("quantity") int quantity) {
+        public StockMixin(int quantity) {
         }
     }
 }

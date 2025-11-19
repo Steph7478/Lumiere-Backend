@@ -8,6 +8,7 @@ import com.lumiere.infrastructure.persistence.jpa.entities.base.BaseJpaEntity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
@@ -21,7 +22,7 @@ import lombok.NoArgsConstructor;
 public class CartJpaEntity extends BaseJpaEntity implements Serializable {
 
     @OneToOne
-    @Column(name = "user_id", nullable = false)
+    @JoinColumn(name = "user_id", nullable = false)
     private UserJpaEntity userId;
 
     @Column

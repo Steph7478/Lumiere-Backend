@@ -1,33 +1,28 @@
 package com.lumiere.infrastructure.mappers;
 
-import org.springframework.stereotype.Component;
-
 import com.lumiere.domain.entities.Auth;
 import com.lumiere.infrastructure.mappers.base.BaseMapper;
 import com.lumiere.infrastructure.persistence.jpa.entities.AuthJpaEntity;
+import org.mapstruct.*;
 
-@Component
-public final class AuthMapper implements BaseMapper<Auth, AuthJpaEntity> {
+@Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
+public interface AuthMapper extends BaseMapper<Auth, AuthJpaEntity> {
 
-    @Override
-    public AuthJpaEntity toJpa(Auth domain) {
-        return new AuthJpaEntity(
-                domain.getId(),
-                domain.getName(),
-                domain.getEmail(),
-                domain.getPasswordHash(),
-                domain.isAdmin());
+    @Mapping(target = "user", ignore = true)
+    @Mapping(target = "withPasswordHash", ignore = true)
+    Auth toDomain(AuthJpaEntity jpa);
+
+    @Mapping(target = "password", source = "passwordHash")
+    @Mapping(target = "isAdmin", source = "admin")
+    AuthJpaEntity toJpa(Auth domain);
+
+    @ObjectFactory
+    default Auth createAuth(AuthJpaEntity jpa) {
+        return Auth.from(
+                jpa.getName(),
+                jpa.getEmail(),
+                jpa.getPassword(),
+                jpa.getIsAdmin() != null && jpa.getIsAdmin(),
+                jpa.getId());
     }
-
-    @Override
-    public Auth toDomain(AuthJpaEntity jpaEntity) {
-        Auth auth = Auth.from(
-                jpaEntity.getName(),
-                jpaEntity.getEmail(),
-                jpaEntity.getPassword(),
-                jpaEntity.getIsAdmin() != null && jpaEntity.getIsAdmin(),
-                jpaEntity.getId());
-        return auth;
-    }
-
 }

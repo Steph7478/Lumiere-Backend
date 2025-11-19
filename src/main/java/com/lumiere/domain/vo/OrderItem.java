@@ -5,7 +5,9 @@ import java.util.Objects;
 import java.util.UUID;
 import java.util.stream.Stream;
 
-public class OrderItem extends com.lumiere.domain.vo.base.ValueObject {
+import com.lumiere.domain.vo.base.ValueObject;
+
+public class OrderItem extends ValueObject {
 
     private final UUID productId;
     private final String name;

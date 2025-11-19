@@ -53,4 +53,8 @@ public class Rating extends BaseEntity {
     public static Rating createRating(UUID productId, int rating, String comment, UUID orderId) {
         return new Rating(null, productId, rating, comment, orderId);
     }
+
+    public static Rating rebuild(UUID id, UUID productId, int rating, String comment, UUID orderId) {
+        return new Rating(id, productId, rating, comment, orderId);
+    }
 }

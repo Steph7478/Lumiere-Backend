@@ -8,8 +8,10 @@ import java.util.UUID;
 import com.lumiere.domain.enums.StatusEnum.Status;
 import com.lumiere.infrastructure.persistence.jpa.entities.base.BaseJpaEntity;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
@@ -19,18 +21,17 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor
-@Table(name = "order")
+@Table(name = "client_order")
 public class OrderJpaEntity extends BaseJpaEntity implements Serializable {
 
     @ManyToOne
-    @Column(name = "user_id", nullable = false)
+    @JoinColumn(name = "user_id", nullable = false)
     private UserJpaEntity userId;
 
     @Column(name = "payment_id")
     private UUID paymentId;
 
-    @OneToMany
-    @Column(nullable = false)
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
     private List<OrderItemJpaEntity> items;
 
     @Column(nullable = false)

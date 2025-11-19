@@ -8,6 +8,7 @@ import com.lumiere.infrastructure.persistence.jpa.entities.base.BaseJpaEntity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.Getter;
@@ -20,8 +21,12 @@ import lombok.NoArgsConstructor;
 public class OrderItemJpaEntity extends BaseJpaEntity implements Serializable {
 
     @ManyToOne
-    @Column(name = "product_id", nullable = false)
+    @JoinColumn(name = "product_id", nullable = false)
     private ProductJpaEntity productId;
+
+    @ManyToOne
+    @JoinColumn(name = "order_id", nullable = false)
+    private OrderJpaEntity order;
 
     @Column(nullable = false)
     private String name;
@@ -32,8 +37,10 @@ public class OrderItemJpaEntity extends BaseJpaEntity implements Serializable {
     @Column(nullable = false)
     private BigDecimal unitPrice;
 
-    public OrderItemJpaEntity(UUID id, ProductJpaEntity productId, String name, int quantity, BigDecimal unitPrice) {
+    public OrderItemJpaEntity(UUID id, OrderJpaEntity order, ProductJpaEntity productId, String name, int quantity,
+            BigDecimal unitPrice) {
         super(id);
+        this.order = order;
         this.productId = productId;
         this.name = name;
         this.quantity = quantity;
