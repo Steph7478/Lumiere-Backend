@@ -42,9 +42,8 @@ public class ProductDetailReadAdapter implements ProductDetailReadPort {
     public Optional<ProductDetailReadModel> findProductDetailById(UUID id) {
         Optional<Product> productDomainOptional = sqlRepositoryAdapter.findById(id);
 
-        if (productDomainOptional.isEmpty()) {
+        if (productDomainOptional.isEmpty())
             return Optional.empty();
-        }
 
         ProductJpaEntity productJpa = productDetailMapper.toJpa(productDomainOptional.get());
 
