@@ -11,7 +11,7 @@ public class Product extends BaseEntity {
     private String name;
     private String description;
     private Money price;
-    private List<Rating> ratings;
+    private List<Rating> ratings = new ArrayList<>();
     private Stock stock;
 
     public Product() {
@@ -24,11 +24,10 @@ public class Product extends BaseEntity {
         this.name = Objects.requireNonNull(name, "name cannot be null");
         this.description = Objects.requireNonNull(description, "description cannot be null");
         this.price = Objects.requireNonNull(price, "price cannot be null");
-        this.ratings = ratings != null ? new ArrayList<>(ratings) : new ArrayList<>();
+        if (ratings != null)
+            this.ratings = new ArrayList<>(ratings);
         this.stock = Objects.requireNonNull(stock, "stock cannot be null");
     }
-
-    // Getters
 
     public String getName() {
         return name;
@@ -75,12 +74,12 @@ public class Product extends BaseEntity {
         newDescription.ifPresent(desc -> this.description = desc);
     }
 
-    // Factory
     public static Product createProduct(String name, String description, Money price, Stock stock) {
-        return new Product(null, name, description, price, Collections.emptyList(), stock);
+        return new Product(null, name, description, price, null, stock);
     }
 
-    public static Product from(UUID id, String name, String description, Money price, Stock stock) {
-        return new Product(id, name, description, price, Collections.emptyList(), stock);
+    public static Product from(UUID id, String name, String description, Money price, List<Rating> ratings,
+            Stock stock) {
+        return new Product(id, name, description, price, ratings, stock);
     }
 }
