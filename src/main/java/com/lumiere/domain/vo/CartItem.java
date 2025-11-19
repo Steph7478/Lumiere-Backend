@@ -2,8 +2,11 @@ package com.lumiere.domain.vo;
 
 import java.util.Objects;
 import java.util.UUID;
+import java.util.stream.Stream;
 
-public class CartItem extends com.lumiere.domain.vo.base.ValueObject {
+import com.lumiere.domain.vo.base.ValueObject;
+
+public class CartItem extends ValueObject {
 
     private final UUID productId;
     private final int quantity;
@@ -15,8 +18,8 @@ public class CartItem extends com.lumiere.domain.vo.base.ValueObject {
     }
 
     @Override
-    protected java.util.stream.Stream<Object> getAtomicValues() {
-        return java.util.stream.Stream.of(productId, quantity);
+    protected Stream<Object> getAtomicValues() {
+        return Stream.of(productId, quantity);
     }
 
     @Override
