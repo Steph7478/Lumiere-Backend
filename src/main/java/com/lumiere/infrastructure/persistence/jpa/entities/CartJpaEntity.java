@@ -9,6 +9,7 @@ import com.lumiere.infrastructure.persistence.jpa.entities.base.BaseJpaEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -19,16 +20,17 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = lombok.AccessLevel.PROTECTED)
 public class CartJpaEntity extends BaseJpaEntity implements Serializable {
 
-    @Column(name = "user_id", nullable = false, unique = true)
-    private UUID userId;
+    @OneToOne
+    @Column(name = "user_id", nullable = false)
+    private UserJpaEntity userId;
 
-    @Column(name = "coupon_code")
+    @Column
     private String coupon;
 
     @OneToMany(mappedBy = "cart")
     private List<CartJpaEntity> items;
 
-    public CartJpaEntity(UUID id, UUID userId, String coupon) {
+    public CartJpaEntity(UUID id, UserJpaEntity userId, String coupon) {
         super(id);
         this.userId = userId;
         this.coupon = coupon;
