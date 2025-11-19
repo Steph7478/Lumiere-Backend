@@ -1,4 +1,4 @@
-package com.lumiere.shared.annotations.validators.requireAdmin;
+package com.lumiere.shared.annotations.validators;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

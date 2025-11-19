@@ -10,7 +10,7 @@ import com.lumiere.application.interfaces.admin.IIncreaseStockUseCase;
 import com.lumiere.domain.entities.Product;
 import com.lumiere.domain.repositories.ProductRepository;
 import com.lumiere.domain.services.ProductService;
-import com.lumiere.shared.annotations.validators.requireAdmin.RequireAdmin;
+import com.lumiere.shared.annotations.validators.RequireAdmin;
 
 @Service
 public class IncreaseStockUseCase implements IIncreaseStockUseCase {

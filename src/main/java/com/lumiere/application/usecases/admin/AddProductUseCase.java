@@ -10,7 +10,7 @@ import com.lumiere.domain.entities.Product;
 import com.lumiere.domain.entities.ProductCategory;
 import com.lumiere.domain.repositories.NoSqlRepository;
 import com.lumiere.domain.repositories.ProductRepository;
-import com.lumiere.shared.annotations.validators.requireAdmin.RequireAdmin;
+import com.lumiere.shared.annotations.validators.RequireAdmin;
 
 import jakarta.transaction.Transactional;
 

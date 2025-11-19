@@ -1,4 +1,4 @@
-package com.lumiere.shared.annotations.validators.requireAdmin;
+package com.lumiere.shared.annotations.validators;
 
 import java.util.UUID;
 
