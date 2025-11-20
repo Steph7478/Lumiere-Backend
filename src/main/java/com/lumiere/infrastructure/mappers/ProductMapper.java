@@ -2,7 +2,6 @@ package com.lumiere.infrastructure.mappers;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import org.mapstruct.Named;
 import org.mapstruct.ObjectFactory;
 import org.mapstruct.ReportingPolicy;
 import org.mapstruct.TargetType;

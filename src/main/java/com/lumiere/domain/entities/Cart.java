@@ -12,18 +12,18 @@ import com.lumiere.domain.vo.CartItem;
 
 public class Cart extends BaseEntity {
 
-    private final UUID userId;
+    private final User userId;
     private final String coupon;
     private final List<CartItem> items;
 
-    public Cart(UUID id, UUID userId, String coupon, List<CartItem> items) {
+    public Cart(UUID id, User userId, String coupon, List<CartItem> items) {
         super(id);
         this.userId = Objects.requireNonNull(userId, "User ID cannot be null");
         this.coupon = coupon;
         this.items = items != null ? new ArrayList<>(items) : new ArrayList<>();
     }
 
-    public UUID getUserId() {
+    public User getUserId() {
         return userId;
     }
 
@@ -73,7 +73,7 @@ public class Cart extends BaseEntity {
         return new Cart(getId(), this.userId, this.coupon, newItems);
     }
 
-    public static Cart createCart(UUID userId) {
+    public static Cart createCart(User userId) {
         return new Cart(UUID.randomUUID(), userId, null, new ArrayList<>());
     }
 }

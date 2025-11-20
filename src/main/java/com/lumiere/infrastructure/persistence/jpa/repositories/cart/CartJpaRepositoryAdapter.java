@@ -5,6 +5,7 @@ import org.springframework.stereotype.Repository;
 import com.lumiere.domain.entities.Cart;
 import com.lumiere.domain.repositories.CartRepository;
 import com.lumiere.infrastructure.mappers.CartMapper;
+import com.lumiere.infrastructure.mappers.base.BaseMapper;
 import com.lumiere.infrastructure.persistence.jpa.entities.CartJpaEntity;
 import com.lumiere.infrastructure.persistence.jpa.repositories.base.BaseRepositoryAdapter;
 

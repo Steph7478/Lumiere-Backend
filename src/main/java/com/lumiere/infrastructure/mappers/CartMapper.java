@@ -2,6 +2,7 @@ package com.lumiere.infrastructure.mappers;
 
 import com.lumiere.domain.entities.Cart;
 import com.lumiere.infrastructure.persistence.jpa.entities.CartJpaEntity;
+import com.lumiere.infrastructure.mappers.base.BaseMapper;
 import com.lumiere.infrastructure.persistence.jpa.entities.CartItemJpaEntity;
 import com.lumiere.infrastructure.persistence.jpa.entities.ProductJpaEntity;
 import com.lumiere.infrastructure.persistence.jpa.entities.UserJpaEntity;
@@ -18,11 +19,12 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-@Mapper(componentModel = "spring", uses = { CartItemMapper.class }, unmappedTargetPolicy = ReportingPolicy.IGNORE)
-public interface CartMapper {
+@Mapper(componentModel = "spring", uses = { CartItemMapper.class, UserMapper.class
+}, unmappedTargetPolicy = ReportingPolicy.IGNORE)
+public interface CartMapper extends BaseMapper<Cart, CartJpaEntity> {
 
         @Mapping(target = "id", source = "id")
-        @Mapping(target = "userId", expression = "java(Objects.requireNonNull(jpaEntity.getUserId().getId()))")
+        @Mapping(target = "userId", source = "userId")
         @Mapping(target = "items", source = "items")
         Cart toDomain(CartJpaEntity jpaEntity);
 
@@ -42,7 +44,7 @@ public interface CartMapper {
                         CartItemMapper cartItemMapper) {
 
                 UserJpaEntity userJpa = userJpaRepository.getReferenceById(
-                                Objects.requireNonNull(domain.getUserId()));
+                                Objects.requireNonNull(domain.getUserId().getId()));
 
                 UUID cartId = Objects.requireNonNull(domain.getId());
 
