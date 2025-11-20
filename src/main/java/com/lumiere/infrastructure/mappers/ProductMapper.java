@@ -50,13 +50,15 @@ public interface ProductMapper extends BaseMapper<Product, ProductJpaEntity> {
         @Mapping(target = "updatedAt", ignore = true)
         ProductJpaEntity toJpa(Product domain);
 
+        @Named("currencyTypeToString")
+        default String currencyTypeToString(CurrencyType currencyType) {
+                return currencyType != null ? currencyType.name() : null;
+        }
+
         @Mapping(target = "ratings", ignore = true)
         Product toDomain(ProductJpaEntity jpaEntity);
 
-        @Mapping(target = "stock", source = "jpaEntity.stockQuantity")
-        @Mapping(target = "ratings", source = "jpaEntity.ratings")
-        @Mapping(target = "id", expression = "java(jpaEntity.getId() != null ? jpaEntity.getId().toString() : null)")
-        @Mapping(target = "price", expression = "java(new Money(jpaEntity.getPriceAmount(), CurrencyType.valueOf(jpaEntity.getPriceCurrency())))")
+        @Mapping(target = "id", ignore = true)
         @Mapping(target = "category", expression = "java(nosqlCategory != null ? nosqlCategory.getCategory() : null)")
         @Mapping(target = "subCategory", expression = "java(nosqlCategory != null ? nosqlCategory.getSubcategory() : null)")
         @Mapping(target = "createdAt", source = "jpaEntity.createdAt")
@@ -84,8 +86,4 @@ public interface ProductMapper extends BaseMapper<Product, ProductJpaEntity> {
                                 stock);
         }
 
-        @Named("currencyTypeToString")
-        default String currencyTypeToString(CurrencyType currencyType) {
-                return currencyType != null ? currencyType.name() : null;
-        }
 }

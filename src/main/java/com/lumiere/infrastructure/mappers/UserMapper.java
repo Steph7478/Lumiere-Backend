@@ -8,15 +8,15 @@ import com.lumiere.infrastructure.persistence.jpa.entities.UserJpaEntity;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.ObjectFactory;
+import org.mapstruct.ReportingPolicy;
 import org.mapstruct.TargetType;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface UserMapper extends BaseMapper<User, UserJpaEntity> {
 
     @Mapping(target = "auth", source = "auth")
     UserJpaEntity toJpa(User domain);
 
-    @Mapping(target = "auth", source = "auth")
     User toDomain(UserJpaEntity jpaEntity);
 
     @ObjectFactory
@@ -26,15 +26,6 @@ public interface UserMapper extends BaseMapper<User, UserJpaEntity> {
 
         Auth auth = mapAuthJpaEntityToAuth(jpaEntity.getAuth());
         return User.from(jpaEntity.getId(), auth);
-    }
-
-    default AuthJpaEntity mapAuthToAuthJpaEntity(Auth auth) {
-        return new AuthJpaEntity(
-                auth.getId(),
-                auth.getName(),
-                auth.getEmail(),
-                auth.getPasswordHash(),
-                auth.isAdmin());
     }
 
     default Auth mapAuthJpaEntityToAuth(AuthJpaEntity jpaEntity) {
