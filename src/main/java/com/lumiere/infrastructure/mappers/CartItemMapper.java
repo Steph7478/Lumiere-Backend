@@ -14,8 +14,8 @@ import java.util.UUID;
 @Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface CartItemMapper extends BaseMapper<CartItem, CartItemJpaEntity> {
 
-        @Mapping(target = "productId", source = "jpaEntity.product.id")
-        @Mapping(target = "quantity", source = "jpaEntity.quantity")
+        @Mapping(target = "productId", source = "product.id")
+        @Mapping(target = "quantity", source = "quantity")
         CartItem toDomain(CartItemJpaEntity jpaEntity);
 
         @Mapping(target = "id", ignore = true)
