@@ -9,10 +9,10 @@ import org.mapstruct.*;
 public interface RatingMapper extends BaseMapper<Rating, RatingJpaEntity> {
 
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "productId", source = "domain.productId")
-    @Mapping(target = "orderId", source = "domain.orderId")
-    @Mapping(target = "rating", source = "domain.rating")
-    @Mapping(target = "comment", source = "domain.comment")
+    @Mapping(target = "productId", source = "productId")
+    @Mapping(target = "orderId", source = "orderId")
+    @Mapping(target = "rating", source = "rating")
+    @Mapping(target = "comment", source = "comment")
     RatingJpaEntity toJpa(Rating domain);
 
     Rating toDomain(RatingJpaEntity jpaEntity);

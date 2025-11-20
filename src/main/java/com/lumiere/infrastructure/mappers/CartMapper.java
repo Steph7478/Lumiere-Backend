@@ -21,23 +21,10 @@ import java.util.stream.Collectors;
 @Mapper(componentModel = "spring", uses = { CartItemMapper.class }, unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface CartMapper {
 
-        default String map(Optional<String> optional) {
-                return optional != null ? optional.orElse(null) : null;
-        }
-
-        default Optional<String> map(String value) {
-                return Optional.ofNullable(value);
-        }
-
-        @Mapping(target = "id", source = "jpaEntity.id")
-        @Mapping(target = "userId", source = "jpaEntity", qualifiedByName = "mapUserIdFromCart")
-        @Mapping(target = "items", source = "jpaEntity.items")
+        @Mapping(target = "id", source = "id")
+        @Mapping(target = "userId", expression = "java(Objects.requireNonNull(jpaEntity.getUserId().getId()))")
+        @Mapping(target = "items", source = "items")
         Cart toDomain(CartJpaEntity jpaEntity);
-
-        @Named("mapUserIdFromCart")
-        default UUID mapUserIdFromCart(CartJpaEntity jpaEntity) {
-                return Objects.requireNonNull(jpaEntity.getUserId().getId());
-        }
 
         @Mapping(target = "userId", ignore = true)
         @Mapping(target = "id", ignore = true)
@@ -79,5 +66,9 @@ public interface CartMapper {
                                 userJpa,
                                 domain.getCoupon().orElse(null),
                                 jpaItems);
+        }
+
+        default String map(Optional<String> optional) {
+                return optional != null ? optional.orElse(null) : null;
         }
 }
