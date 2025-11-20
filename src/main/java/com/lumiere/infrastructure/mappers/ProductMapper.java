@@ -42,7 +42,7 @@ public interface ProductMapper extends BaseMapper<Product, ProductJpaEntity> {
         ProductMapper INSTANCE = Mappers.getMapper(ProductMapper.class);
 
         @Mapping(target = "priceAmount", source = "price.amount")
-        @Mapping(target = "priceCurrency", expression = "java(currencyType != null ? currencyType.name() : null)")
+        @Mapping(target = "priceCurrency", expression = "java(domain.getPrice().getCurrency().name())")
         @Mapping(target = "stockQuantity", source = "stock.quantity")
         @Mapping(target = "ratings", source = "ratings")
         @Mapping(target = "createdAt", ignore = true)
