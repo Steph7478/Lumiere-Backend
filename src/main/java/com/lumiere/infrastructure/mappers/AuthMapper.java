@@ -9,8 +9,6 @@ import org.mapstruct.*;
 @Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE, uses = { UserMapper.class })
 public interface AuthMapper extends BaseMapper<Auth, AuthJpaEntity> {
 
-    @Mapping(target = "password", source = "passwordHash")
-    @Mapping(target = "isAdmin", source = "admin")
     AuthJpaEntity toJpa(Auth domain);
 
     @ObjectFactory
