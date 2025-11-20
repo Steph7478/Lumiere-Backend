@@ -18,7 +18,6 @@ public interface UserMapper extends BaseMapper<User, UserJpaEntity> {
     @Mapping(target = "auth.email", source = "auth.email")
     @Mapping(target = "auth.password", source = "auth.passwordHash")
     @Mapping(target = "auth.isAdmin", source = "auth.admin")
-    @Mapping(target = "id", source = "id")
     UserJpaEntity toJpa(User domain);
 
     @Mapping(target = "auth", source = "auth")

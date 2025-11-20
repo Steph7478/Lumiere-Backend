@@ -8,7 +8,6 @@ import org.mapstruct.*;
 @Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface RatingMapper extends BaseMapper<Rating, RatingJpaEntity> {
 
-    @Mapping(target = "id", ignore = true)
     @Mapping(target = "productId", source = "productId")
     @Mapping(target = "orderId", source = "orderId")
     @Mapping(target = "rating", source = "rating")
