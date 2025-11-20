@@ -54,9 +54,10 @@ public interface ProductMapper extends BaseMapper<Product, ProductJpaEntity> {
 
         @Mapping(target = "category", expression = "java(nosqlCategory != null ? nosqlCategory.getCategory() : null)")
         @Mapping(target = "subCategory", expression = "java(nosqlCategory != null ? nosqlCategory.getSubcategory() : null)")
-        @Mapping(target = "id", ignore = true)
-        @Mapping(target = "createdAt", ignore = true)
-        @Mapping(target = "updatedAt", ignore = true)
+        @Mapping(target = "stock", source = "jpaEntity.stockQuantity")
+        @Mapping(target = "id", source = "jpaEntity.id")
+        @Mapping(target = "createdAt", source = "jpaEntity.createdAt")
+        @Mapping(target = "updatedAt", source = "jpaEntity.updatedAt")
         ProductDetailReadModel toReadModel(ProductJpaEntity jpaEntity, ProductCategory nosqlCategory);
 
         @ObjectFactory
