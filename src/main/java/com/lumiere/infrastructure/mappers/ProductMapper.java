@@ -14,6 +14,7 @@ import com.lumiere.domain.enums.CurrencyEnum.CurrencyType;
 import com.lumiere.domain.readmodels.ProductDetailReadModel;
 import com.lumiere.domain.vo.Money;
 import com.lumiere.domain.vo.Stock;
+import com.lumiere.infrastructure.mappers.base.BaseMapper;
 import com.lumiere.infrastructure.persistence.jpa.entities.ProductJpaEntity;
 import com.lumiere.domain.enums.CategoriesEnum.Category;
 import com.lumiere.domain.enums.CategoriesEnum.SubCategory;
@@ -37,7 +38,7 @@ import java.util.stream.Collectors;
                 List.class,
                 Collectors.class
 }, unmappedTargetPolicy = ReportingPolicy.IGNORE)
-public interface ProductMapper {
+public interface ProductMapper extends BaseMapper<Product, ProductJpaEntity> {
 
         ProductMapper INSTANCE = Mappers.getMapper(ProductMapper.class);
 
@@ -49,6 +50,7 @@ public interface ProductMapper {
         @Mapping(target = "updatedAt", ignore = true)
         ProductJpaEntity toJpa(Product domain);
 
+        @Mapping(target = "ratings", ignore = true)
         Product toDomain(ProductJpaEntity jpaEntity);
 
         @Mapping(target = "stock", source = "jpaEntity.stockQuantity")
