@@ -17,7 +17,6 @@ import com.lumiere.infrastructure.mappers.base.BaseMapper;
 import com.lumiere.infrastructure.persistence.jpa.entities.ProductJpaEntity;
 import com.lumiere.domain.enums.CategoriesEnum.Category;
 import com.lumiere.domain.enums.CategoriesEnum.SubCategory;
-import com.lumiere.domain.entities.Rating;
 
 import java.util.Collections;
 import java.util.List;
@@ -35,7 +34,8 @@ import java.util.stream.Collectors;
                 SubCategory.class,
                 BigDecimal.class,
                 List.class,
-                Collectors.class
+                Collectors.class,
+                RatingMapper.class
 }, unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface ProductMapper extends BaseMapper<Product, ProductJpaEntity> {
 
@@ -49,35 +49,29 @@ public interface ProductMapper extends BaseMapper<Product, ProductJpaEntity> {
         @Mapping(target = "updatedAt", ignore = true)
         ProductJpaEntity toJpa(Product domain);
 
-        @Mapping(target = "ratings", ignore = true)
-        Product toDomain(ProductJpaEntity jpaEntity);
-
         @Mapping(target = "category", expression = "java(nosqlCategory != null ? nosqlCategory.getCategory() : null)")
         @Mapping(target = "subCategory", expression = "java(nosqlCategory != null ? nosqlCategory.getSubcategory() : null)")
         @Mapping(target = "stock", source = "jpaEntity.stockQuantity")
         @Mapping(target = "id", source = "jpaEntity.id")
+        @Mapping(target = "ratings", source = "jpaEntity.ratings")
         @Mapping(target = "createdAt", source = "jpaEntity.createdAt")
         @Mapping(target = "updatedAt", source = "jpaEntity.updatedAt")
         ProductDetailReadModel toReadModel(ProductJpaEntity jpaEntity, ProductCategory nosqlCategory);
 
+        @Mapping(target = "ratings", source = "ratings")
+        Product toDomain(ProductJpaEntity jpaEntity);
+
         @ObjectFactory
         default Product createProduct(ProductJpaEntity jpaEntity, @TargetType Class<Product> targetType) {
-
-                final RatingMapper ratingMapper = Mappers.getMapper(RatingMapper.class);
-
                 Money price = new Money(jpaEntity.getPriceAmount(), CurrencyType.valueOf(jpaEntity.getPriceCurrency()));
                 Stock stock = new Stock(jpaEntity.getStockQuantity());
-
-                List<Rating> ratings = jpaEntity.getRatings() != null ? jpaEntity.getRatings().stream()
-                                .map(ratingMapper::toDomain)
-                                .collect(Collectors.toList()) : Collections.emptyList();
 
                 return Product.from(
                                 jpaEntity.getId(),
                                 jpaEntity.getName(),
                                 jpaEntity.getDescription(),
                                 price,
-                                ratings,
+                                null,
                                 stock);
         }
 
