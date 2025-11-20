@@ -1,7 +1,9 @@
 package com.lumiere.application.mappers.admin;
 
 import java.util.UUID;
-import org.springframework.stereotype.Component;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.MappingConstants;
 
 import com.lumiere.application.dtos.admin.command.add.AddProductInput;
 import com.lumiere.application.dtos.admin.command.add.AddProductOutput;
@@ -15,33 +17,35 @@ import com.lumiere.domain.services.ProductService;
 import com.lumiere.domain.vo.Money;
 import com.lumiere.domain.vo.Stock;
 
-@Component
-public class AddProductMapper implements BaseMapper<Product, AddProductInput> {
+@Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
+public interface AddProductMapper extends BaseMapper<Product, AddProductInput> {
 
-    @Override
-    public AddProductInput toDTO(Product entity) {
-        return new AddProductInput(
-                entity.getName(),
-                entity.getDescription(),
-                entity.getPrice().getAmount(),
-                entity.getPrice().getCurrency(),
-                entity.getStock().getQuantity(),
-                null,
-                null);
+    @Mapping(target = "priceAmount", source = "price.amount")
+    @Mapping(target = "currency", source = "price.currency")
+    @Mapping(target = "stockQuantity", source = "stock.quantity")
+    @Mapping(target = "category", ignore = true)
+    @Mapping(target = "subcategory", ignore = true)
+    AddProductInput toDTO(Product entity);
+
+    default Money mapToMoney(AddProductInput dto) {
+        return new Money(dto.priceAmount(), dto.currency());
     }
 
-    @Override
-    public Product toEntity(AddProductInput dto) {
-        Money price = new Money(dto.priceAmount(), dto.currency());
-        Stock stock = new Stock(dto.stockQuantity());
+    default Stock mapToStock(AddProductInput dto) {
+        return new Stock(dto.stockQuantity());
+    }
+
+    default Product toEntity(AddProductInput dto) {
+        Money price = mapToMoney(dto);
+        Stock stock = mapToStock(dto);
         return ProductService.createProduct(dto.name(), dto.description(), price, stock);
     }
 
-    public ProductCategory toProductCategoryEntity(UUID productId, AddProductInput dto) {
+    default ProductCategory toProductCategoryEntity(UUID productId, AddProductInput dto) {
         return ProductCategoryService.createProductCategory(productId, dto.category(), dto.subcategory());
     }
 
-    public AddProductOutput toOutputDTO(Product product, CategoriesEnum.Category category,
+    default AddProductOutput toOutputDTO(Product product, CategoriesEnum.Category category,
             CategoriesEnum.SubCategory subCategory) {
 
         ProductDetailReadModel readModel = new ProductDetailReadModel(

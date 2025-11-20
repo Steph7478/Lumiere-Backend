@@ -23,7 +23,8 @@ public class AddProductUseCase implements IAddProductUseCase {
 
     public AddProductUseCase(
             ProductRepository productRepository,
-            NoSqlRepository<ProductCategory> categoryRepository, AddProductMapper addProductMapper) {
+            NoSqlRepository<ProductCategory> categoryRepository,
+            AddProductMapper addProductMapper) {
         this.productRepository = productRepository;
         this.categoryRepository = categoryRepository;
         this.addProductMapper = addProductMapper;
@@ -42,5 +43,4 @@ public class AddProductUseCase implements IAddProductUseCase {
 
         return addProductMapper.toOutputDTO(product, category.getCategory(), category.getSubcategory());
     }
-
 }
