@@ -40,7 +40,7 @@ public interface UserMapper extends BaseMapper<User, UserJpaEntity> {
         return Auth.from(
                 jpaEntity.getName(),
                 jpaEntity.getEmail(),
-                jpaEntity.getPassword(),
+                "**hidden**",
                 jpaEntity.getIsAdmin() != null && jpaEntity.getIsAdmin(),
                 jpaEntity.getId());
     }
