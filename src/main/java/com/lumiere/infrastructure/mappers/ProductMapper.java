@@ -50,7 +50,6 @@ public interface ProductMapper extends BaseMapper<Product, ProductJpaEntity> {
         @Mapping(target = "updatedAt", ignore = true)
         ProductJpaEntity toJpa(Product domain);
 
-        @Mapping(target = "ratings", ignore = true)
         Product toDomain(ProductJpaEntity jpaEntity);
 
         @Mapping(target = "category", expression = "java(nosqlCategory != null ? nosqlCategory.getCategory() : null)")
