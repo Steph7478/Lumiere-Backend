@@ -25,7 +25,7 @@ public class AddProductMapper implements BaseMapper<Product, AddProductInput> {
                 entity.getDescription(),
                 entity.getPrice().getAmount(),
                 entity.getPrice().getCurrency(),
-                entity.getStock(),
+                entity.getStock().getQuantity(),
                 null,
                 null);
     }
@@ -33,7 +33,7 @@ public class AddProductMapper implements BaseMapper<Product, AddProductInput> {
     @Override
     public Product toEntity(AddProductInput dto) {
         Money price = new Money(dto.priceAmount(), dto.currency());
-        Stock stock = new Stock(dto.stockQuantity().getQuantity());
+        Stock stock = new Stock(dto.stockQuantity());
         return ProductService.createProduct(dto.name(), dto.description(), price, stock);
     }
 
