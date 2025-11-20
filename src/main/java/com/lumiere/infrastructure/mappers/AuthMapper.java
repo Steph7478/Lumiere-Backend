@@ -6,10 +6,12 @@ import com.lumiere.infrastructure.persistence.jpa.entities.AuthJpaEntity;
 
 import org.mapstruct.*;
 
-@Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE, uses = { UserMapper.class })
+@Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface AuthMapper extends BaseMapper<Auth, AuthJpaEntity> {
-
     AuthJpaEntity toJpa(Auth domain);
+
+    @Mapping(target = "user", ignore = true)
+    Auth toDomain(AuthJpaEntity jpa);
 
     @ObjectFactory
     default Auth createAuth(AuthJpaEntity jpa) {
@@ -21,10 +23,4 @@ public interface AuthMapper extends BaseMapper<Auth, AuthJpaEntity> {
                 jpa.getId());
     }
 
-    @Mapping(target = "admin", ignore = true)
-    @Mapping(target = "name", ignore = true)
-    @Mapping(target = "email", ignore = true)
-    @Mapping(target = "passwordHash", ignore = true)
-    @Mapping(target = "id", ignore = true)
-    Auth toDomain(AuthJpaEntity jpa);
 }

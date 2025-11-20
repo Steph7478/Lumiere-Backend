@@ -13,10 +13,15 @@ import org.mapstruct.TargetType;
 
 @Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface UserMapper extends BaseMapper<User, UserJpaEntity> {
-
-    @Mapping(target = "auth", source = "auth")
+    @Mapping(target = "auth.id", source = "auth.id")
+    @Mapping(target = "auth.name", source = "auth.name")
+    @Mapping(target = "auth.email", source = "auth.email")
+    @Mapping(target = "auth.password", source = "auth.passwordHash")
+    @Mapping(target = "auth.isAdmin", source = "auth.admin")
+    @Mapping(target = "id", source = "id")
     UserJpaEntity toJpa(User domain);
 
+    @Mapping(target = "auth", source = "auth")
     User toDomain(UserJpaEntity jpaEntity);
 
     @ObjectFactory
@@ -29,10 +34,13 @@ public interface UserMapper extends BaseMapper<User, UserJpaEntity> {
     }
 
     default Auth mapAuthJpaEntityToAuth(AuthJpaEntity jpaEntity) {
+        if (jpaEntity == null)
+            return null;
+
         return Auth.from(
                 jpaEntity.getName(),
                 jpaEntity.getEmail(),
-                "***hidden***",
+                jpaEntity.getPassword(),
                 jpaEntity.getIsAdmin() != null && jpaEntity.getIsAdmin(),
                 jpaEntity.getId());
     }
