@@ -43,24 +43,21 @@ public interface ProductMapper extends BaseMapper<Product, ProductJpaEntity> {
         ProductMapper INSTANCE = Mappers.getMapper(ProductMapper.class);
 
         @Mapping(target = "priceAmount", source = "price.amount")
-        @Mapping(target = "priceCurrency", source = "price.currency", qualifiedByName = "currencyTypeToString")
+        @Mapping(target = "priceCurrency", expression = "java(currencyType != null ? currencyType.name() : null)")
         @Mapping(target = "stockQuantity", source = "stock.quantity")
         @Mapping(target = "ratings", source = "ratings")
+        @Mapping(target = "createdAt", ignore = true)
+        @Mapping(target = "updatedAt", ignore = true)
         ProductJpaEntity toJpa(Product domain);
-
-        @Named("currencyTypeToString")
-        default String currencyTypeToString(CurrencyType currencyType) {
-                return currencyType != null ? currencyType.name() : null;
-        }
 
         @Mapping(target = "ratings", ignore = true)
         Product toDomain(ProductJpaEntity jpaEntity);
 
-        @Mapping(target = "id", ignore = true)
         @Mapping(target = "category", expression = "java(nosqlCategory != null ? nosqlCategory.getCategory() : null)")
         @Mapping(target = "subCategory", expression = "java(nosqlCategory != null ? nosqlCategory.getSubcategory() : null)")
-        @Mapping(target = "createdAt", source = "jpaEntity.createdAt")
-        @Mapping(target = "updatedAt", source = "jpaEntity.updatedAt")
+        @Mapping(target = "id", ignore = true)
+        @Mapping(target = "createdAt", ignore = true)
+        @Mapping(target = "updatedAt", ignore = true)
         ProductDetailReadModel toReadModel(ProductJpaEntity jpaEntity, ProductCategory nosqlCategory);
 
         @ObjectFactory
