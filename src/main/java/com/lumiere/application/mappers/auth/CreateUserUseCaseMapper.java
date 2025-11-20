@@ -1,22 +1,28 @@
 package com.lumiere.application.mappers.auth;
 
-import org.springframework.stereotype.Component;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.MappingConstants;
+import org.mapstruct.ObjectFactory;
+import org.mapstruct.ReportingPolicy;
 
 import com.lumiere.domain.entities.Auth;
 import com.lumiere.domain.services.AuthService;
 import com.lumiere.application.dtos.auth.command.create.CreateUserInput;
 import com.lumiere.application.mappers.base.BaseMapper;
 
-@Component
-public class CreateUserUseCaseMapper implements BaseMapper<Auth, CreateUserInput> {
+@Mapper(componentModel = MappingConstants.ComponentModel.SPRING, unmappedTargetPolicy = ReportingPolicy.IGNORE)
+public interface CreateUserUseCaseMapper extends BaseMapper<Auth, CreateUserInput> {
 
-    @Override
-    public CreateUserInput toDTO(Auth entity) {
-        return new CreateUserInput(entity.getEmail(), entity.getName(), "**hidden**");
-    }
+    @Mapping(target = "email", source = "email")
+    @Mapping(target = "name", source = "name")
+    @Mapping(target = "password", expression = "java(\"**hidden**\")")
+    CreateUserInput toDTO(Auth entity);
 
-    @Override
-    public Auth toEntity(CreateUserInput dto) {
+    Auth toEntity(CreateUserInput dto);
+
+    @ObjectFactory
+    default Auth createUser(CreateUserInput dto) {
         return AuthService.createAuth(dto.name(), dto.email(), dto.password(), false);
     }
 }
