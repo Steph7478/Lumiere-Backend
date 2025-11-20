@@ -8,9 +8,11 @@ import org.mapstruct.*;
 @Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface RatingMapper extends BaseMapper<Rating, RatingJpaEntity> {
 
-    @Mapping(target = "id", source = "domain.id")
-    @Mapping(target = "createdAt", ignore = true)
-    @Mapping(target = "updatedAt", ignore = true)
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "productId", source = "domain.productId")
+    @Mapping(target = "orderId", source = "domain.orderId")
+    @Mapping(target = "rating", source = "domain.rating")
+    @Mapping(target = "comment", source = "domain.comment")
     RatingJpaEntity toJpa(Rating domain);
 
     Rating toDomain(RatingJpaEntity jpaEntity);
