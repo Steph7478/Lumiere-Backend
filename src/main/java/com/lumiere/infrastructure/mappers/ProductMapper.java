@@ -46,8 +46,6 @@ public interface ProductMapper extends BaseMapper<Product, ProductJpaEntity> {
         @Mapping(target = "priceCurrency", source = "price.currency", qualifiedByName = "currencyTypeToString")
         @Mapping(target = "stockQuantity", source = "stock.quantity")
         @Mapping(target = "ratings", source = "ratings")
-        @Mapping(target = "createdAt", ignore = true)
-        @Mapping(target = "updatedAt", ignore = true)
         ProductJpaEntity toJpa(Product domain);
 
         @Named("currencyTypeToString")
