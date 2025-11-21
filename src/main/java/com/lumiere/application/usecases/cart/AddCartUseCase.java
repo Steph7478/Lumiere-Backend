@@ -60,6 +60,8 @@ public class AddCartUseCase implements IAddCartUseCase {
         return new AddCartOuput(
                 finalCart.getId(),
                 readModels,
+                finalCart.getCreatedAt(),
+                finalCart.getUpdatedAt(),
                 finalCart.getCoupon().orElse(null));
     }
 }
