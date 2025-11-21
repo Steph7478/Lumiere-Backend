@@ -2,11 +2,11 @@ package com.lumiere.infrastructure.config.serialization;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
+import org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilderCustomizer; // Importante!
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -28,17 +28,16 @@ public class JacksonConfig {
             CartItem.class, CartItemMixin.class);
 
     @Bean
-    public ObjectMapper objectMapper() {
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.registerModule(new Jdk8Module());
-        mapper.registerModule(new JavaTimeModule());
+    public Jackson2ObjectMapperBuilderCustomizer customizer() {
+        return builder -> {
+            IMMUTABLE_MIXINS.forEach(builder::mixIn);
 
-        mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
-        mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
+            builder.modulesToInstall(new Jdk8Module(), new JavaTimeModule());
 
-        mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
-        IMMUTABLE_MIXINS.forEach(mapper::addMixIn);
-
-        return mapper;
+            builder.serializationInclusion(JsonInclude.Include.NON_NULL)
+                    .featuresToDisable(
+                            SerializationFeature.WRITE_DATES_AS_TIMESTAMPS,
+                            DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
+        };
     }
 }
