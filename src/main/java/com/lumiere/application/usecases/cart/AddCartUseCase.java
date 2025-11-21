@@ -46,6 +46,9 @@ public class AddCartUseCase implements IAddCartUseCase {
             cartRepo.save(finalCart);
         }
 
-        return new AddCartOuput(finalCart);
+        return new AddCartOuput(
+                finalCart.getId(),
+                finalCart.getItems(),
+                finalCart.getCoupon().orElse(null));
     }
 }

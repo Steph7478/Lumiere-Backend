@@ -1,7 +1,10 @@
 package com.lumiere.application.dtos.cart.command.add;
 
-import com.lumiere.domain.entities.Cart;
+import java.util.List;
+import java.util.UUID;
 
-public record AddCartOuput(Cart cart) {
+import com.lumiere.domain.vo.CartItem;
+
+public record AddCartOuput(UUID id, List<CartItem> items, String coupon) {
 
 }
