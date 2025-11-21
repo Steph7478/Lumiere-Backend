@@ -7,7 +7,7 @@ import java.util.UUID;
 
 import com.lumiere.infrastructure.persistence.jpa.entities.base.BaseJpaEntity;
 
-import jakarta.persistence.CascadeType; // Necessário
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
@@ -31,12 +31,18 @@ public class CartJpaEntity extends BaseJpaEntity implements Serializable {
     private String coupon;
 
     @OneToMany(mappedBy = "cart", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<CartItemJpaEntity> items = new ArrayList<>();
+    private final List<CartItemJpaEntity> items = new ArrayList<>();
 
     public CartJpaEntity(UUID id, UserJpaEntity user, String coupon, List<CartItemJpaEntity> items) {
         super(id);
         this.user = user;
         this.coupon = coupon;
-        this.items = items;
+
+        if (items != null) {
+            this.items.addAll(items);
+            for (CartItemJpaEntity item : this.items) {
+                item.setCartReference(this);
+            }
+        }
     }
 }
