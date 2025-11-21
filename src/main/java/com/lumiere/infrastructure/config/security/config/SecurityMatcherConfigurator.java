@@ -38,7 +38,10 @@ public final class SecurityMatcherConfigurator {
                     api + Routes.PRIVATE.ADMIN.UPDATE_PRODUCT + "/**",
                     api + Routes.PRIVATE.ADMIN.INCREASE_STOCK + "/**",
                     api + Routes.PRIVATE.ADMIN.DECREASE_STOCK + "/**",
-                    api + Routes.PRIVATE.ADMIN.UPDATE_PRICE + "/**");
+                    api + Routes.PRIVATE.ADMIN.UPDATE_PRICE + "/**",
+
+                    // CART
+                    api + Routes.PRIVATE.CART.ADD_CART);
             auth.anyRequest().authenticated();
         });
     }

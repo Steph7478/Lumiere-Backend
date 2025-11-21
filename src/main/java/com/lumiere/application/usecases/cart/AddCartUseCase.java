@@ -12,6 +12,9 @@ import com.lumiere.domain.repositories.UserRepository;
 import com.lumiere.domain.services.CartService;
 import java.util.Optional;
 
+import org.springframework.stereotype.Service;
+
+@Service
 public class AddCartUseCase implements IAddCartUseCase {
 
     private final UserRepository userRepo;

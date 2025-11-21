@@ -37,5 +37,9 @@ public final class Routes {
             public static final String DECREASE_STOCK = "/admin/decrease-stock";
             public static final String UPDATE_PRICE = "/admin/update-price";
         }
+
+        public static final class CART {
+            public static final String ADD_CART = "/cart/add-item";
+        }
     }
 }
