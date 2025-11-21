@@ -5,6 +5,9 @@ import com.lumiere.domain.entities.User;
 import com.lumiere.infrastructure.mappers.base.BaseMapper;
 import com.lumiere.infrastructure.persistence.jpa.entities.AuthJpaEntity;
 import com.lumiere.infrastructure.persistence.jpa.entities.UserJpaEntity;
+
+import java.util.UUID;
+
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.ObjectFactory;
@@ -20,7 +23,7 @@ public interface UserMapper extends BaseMapper<User, UserJpaEntity> {
     @Mapping(target = "auth.isAdmin", source = "auth.admin")
     UserJpaEntity toJpa(User domain);
 
-    @Mapping(target = "auth", source = "auth")
+    @Mapping(target = "auth", ignore = true)
     User toDomain(UserJpaEntity jpaEntity);
 
     @ObjectFactory
@@ -41,6 +44,6 @@ public interface UserMapper extends BaseMapper<User, UserJpaEntity> {
                 jpaEntity.getEmail(),
                 "**hidden**",
                 jpaEntity.getIsAdmin() != null && jpaEntity.getIsAdmin(),
-                jpaEntity.getId());
+                UUID.fromString("00000000-0000-0000-0000-000000000000"));
     }
 }
