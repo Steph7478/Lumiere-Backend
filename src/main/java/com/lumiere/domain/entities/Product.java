@@ -42,7 +42,7 @@ public class Product extends BaseEntity {
     }
 
     public List<Rating> getRatings() {
-        return Collections.unmodifiableList(ratings);
+        return ratings;
     }
 
     public Stock getStock() {
