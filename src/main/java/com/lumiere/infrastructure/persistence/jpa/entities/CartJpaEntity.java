@@ -31,9 +31,9 @@ public class CartJpaEntity extends BaseJpaEntity implements Serializable {
     @OneToMany(mappedBy = "cart")
     private List<CartItemJpaEntity> items;
 
-    public CartJpaEntity(UUID id, UserJpaEntity userId, String coupon, List<CartItemJpaEntity> items) {
+    public CartJpaEntity(UUID id, UserJpaEntity user, String coupon, List<CartItemJpaEntity> items) {
         super(id);
-        this.user = userId;
+        this.user = user;
         this.coupon = coupon;
         this.items = items;
     }
