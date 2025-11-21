@@ -12,19 +12,19 @@ import com.lumiere.domain.vo.CartItem;
 
 public class Cart extends BaseEntity {
 
-    private final User userId;
+    private final User user;
     private final String coupon;
     private final List<CartItem> items;
 
-    public Cart(UUID id, User userId, String coupon, List<CartItem> items) {
+    public Cart(UUID id, User user, String coupon, List<CartItem> items) {
         super(id);
-        this.userId = Objects.requireNonNull(userId, "User ID cannot be null");
+        this.user = Objects.requireNonNull(user, "User ID cannot be null");
         this.coupon = coupon;
         this.items = items != null ? new ArrayList<>(items) : new ArrayList<>();
     }
 
-    public User getUserId() {
-        return userId;
+    public User getUser() {
+        return user;
     }
 
     public Optional<String> getCoupon() {
@@ -36,7 +36,7 @@ public class Cart extends BaseEntity {
     }
 
     public Cart withCoupon(String coupon) {
-        return new Cart(getId(), this.userId, coupon, this.items);
+        return new Cart(getId(), this.user, coupon, this.items);
     }
 
     public Cart addProduct(UUID productId, int quantityToAdd) {
@@ -60,7 +60,7 @@ public class Cart extends BaseEntity {
             newItems.add(new CartItem(productId, quantityToAdd));
         }
 
-        return new Cart(getId(), this.userId, this.coupon, newItems);
+        return new Cart(getId(), this.user, this.coupon, newItems);
     }
 
     public Cart removeProduct(UUID productId) {
@@ -70,10 +70,10 @@ public class Cart extends BaseEntity {
         List<CartItem> newItems = new ArrayList<>(this.items);
         newItems.removeIf(item -> item.getProductId().equals(productId));
 
-        return new Cart(getId(), this.userId, this.coupon, newItems);
+        return new Cart(getId(), this.user, this.coupon, newItems);
     }
 
-    public static Cart createCart(User userId) {
-        return new Cart(UUID.randomUUID(), userId, null, new ArrayList<>());
+    public static Cart createCart(User user) {
+        return new Cart(UUID.randomUUID(), user, null, new ArrayList<>());
     }
 }

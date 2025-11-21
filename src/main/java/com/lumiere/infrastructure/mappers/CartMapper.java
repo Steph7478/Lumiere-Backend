@@ -39,7 +39,7 @@ public interface CartMapper extends BaseMapper<Cart, CartJpaEntity> {
                         CartItemMapper cartItemMapper) {
 
                 UserJpaEntity userJpa = userJpaRepository.getReferenceById(
-                                Objects.requireNonNull(domain.getUserId().getId()));
+                                Objects.requireNonNull(domain.getUser().getId()));
 
                 UUID cartId = Objects.requireNonNull(domain.getId());
 
