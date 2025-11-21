@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.lumiere.domain.enums.CurrencyEnum;
 
 import java.math.BigDecimal;
+import java.util.UUID;
 
 public abstract class DomainMixins {
 
@@ -19,6 +20,14 @@ public abstract class DomainMixins {
     public static abstract class StockMixin {
         @JsonCreator
         public StockMixin(
+                @JsonProperty("quantity") int quantity) {
+        }
+    }
+
+    public static abstract class CartItemMixin {
+        @JsonCreator
+        public CartItemMixin(
+                @JsonProperty("productId") UUID productId,
                 @JsonProperty("quantity") int quantity) {
         }
     }

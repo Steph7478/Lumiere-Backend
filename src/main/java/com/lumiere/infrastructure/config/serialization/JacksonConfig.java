@@ -10,8 +10,10 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import com.lumiere.domain.vo.CartItem;
 import com.lumiere.domain.vo.Money;
 import com.lumiere.domain.vo.Stock;
+import com.lumiere.infrastructure.config.serialization.DomainMixins.CartItemMixin;
 import com.lumiere.infrastructure.config.serialization.DomainMixins.MoneyMixin;
 import com.lumiere.infrastructure.config.serialization.DomainMixins.StockMixin;
 
@@ -22,7 +24,8 @@ public class JacksonConfig {
 
     private static final Map<Class<?>, Class<?>> IMMUTABLE_MIXINS = Map.of(
             Money.class, MoneyMixin.class,
-            Stock.class, StockMixin.class);
+            Stock.class, StockMixin.class,
+            CartItem.class, CartItemMixin.class);
 
     @Bean
     public ObjectMapper objectMapper() {
