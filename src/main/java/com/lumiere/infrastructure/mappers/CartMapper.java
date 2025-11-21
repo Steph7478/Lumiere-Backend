@@ -44,7 +44,7 @@ public interface CartMapper extends BaseMapper<Cart, CartJpaEntity> {
 
                 List<CartItemJpaEntity> jpaItems = domain.getItems().stream()
                                 .map(domainItem -> {
-                                        return cartItemMapper.toJpa(domainItem, productJpaRepository);
+                                        return cartItemMapper.toJpa(domainItem);
                                 })
                                 .collect(Collectors.toList());
 
