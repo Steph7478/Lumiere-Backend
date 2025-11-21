@@ -22,8 +22,6 @@ import jakarta.persistence.EntityManager;
 @Repository
 public class CartJpaRepositoryAdapter extends BaseRepositoryAdapter<Cart, CartJpaEntity> implements CartRepository {
 
-    private final ProductJpaRepository productJpaRepository;
-    private final UserJpaRepository userJpaRepository;
     private final CartItemMapper cartItemMapper;
     private final CartJpaRepository cartJpaRepository;
     private final CartMapper cartMapper;
@@ -37,11 +35,9 @@ public class CartJpaRepositoryAdapter extends BaseRepositoryAdapter<Cart, CartJp
             CartItemMapper cartItemMapper) {
         super(jpaRepository, mapper, entityManager, CartJpaEntity.class);
 
-        this.cartJpaRepository = Objects.requireNonNull(jpaRepository, "jpaRepository cannot be null");
-        this.cartMapper = Objects.requireNonNull(mapper, "mapper cannot be null");
-        this.productJpaRepository = Objects.requireNonNull(productJpaRepository, "productJpaRepository cannot be null");
-        this.userJpaRepository = Objects.requireNonNull(userJpaRepository, "userJpaRepository cannot be null");
-        this.cartItemMapper = Objects.requireNonNull(cartItemMapper, "cartItemMapper cannot be null");
+        this.cartJpaRepository = jpaRepository;
+        this.cartMapper = mapper;
+        this.cartItemMapper = cartItemMapper;
     }
 
     @Override
@@ -53,17 +49,12 @@ public class CartJpaRepositoryAdapter extends BaseRepositoryAdapter<Cart, CartJp
     @Override
     @Transactional
     public Cart save(Cart domain) {
-        Objects.requireNonNull(domain, "domain cannot be null");
-
         CartJpaEntity jpaEntity = cartMapper.toJpa(
                 domain,
-                userJpaRepository,
-                productJpaRepository,
                 cartItemMapper);
 
-        for (CartItemJpaEntity item : jpaEntity.getItems()) {
+        for (CartItemJpaEntity item : jpaEntity.getItems())
             item.setCartReference(jpaEntity);
-        }
 
         CartJpaEntity saved = cartJpaRepository.save(jpaEntity);
 
