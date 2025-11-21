@@ -13,5 +13,5 @@ import com.lumiere.infrastructure.persistence.jpa.entities.CartJpaEntity;
 public interface CartJpaRepository extends JpaRepository<CartJpaEntity, UUID> {
 
     @EntityGraph(attributePaths = { "userId" })
-    Optional<CartJpaEntity> findCartByUserId(UUID id);
+    Optional<CartJpaEntity> findByUserId(UUID id);
 }

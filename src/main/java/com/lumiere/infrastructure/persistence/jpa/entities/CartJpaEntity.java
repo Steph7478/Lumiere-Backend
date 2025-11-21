@@ -23,7 +23,7 @@ public class CartJpaEntity extends BaseJpaEntity implements Serializable {
 
     @OneToOne
     @JoinColumn(name = "user_id", nullable = false)
-    private UserJpaEntity userId;
+    private UserJpaEntity user;
 
     @Column
     private String coupon;
@@ -33,7 +33,7 @@ public class CartJpaEntity extends BaseJpaEntity implements Serializable {
 
     public CartJpaEntity(UUID id, UserJpaEntity userId, String coupon, List<CartItemJpaEntity> items) {
         super(id);
-        this.userId = userId;
+        this.user = userId;
         this.coupon = coupon;
         this.items = items;
     }

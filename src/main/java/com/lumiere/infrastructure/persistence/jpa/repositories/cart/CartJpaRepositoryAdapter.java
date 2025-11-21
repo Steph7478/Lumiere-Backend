@@ -25,6 +25,6 @@ public class CartJpaRepositoryAdapter extends BaseRepositoryAdapter<Cart, CartJp
     @Override
     @Transactional(readOnly = true)
     public Optional<Cart> findCartByUserId(UUID id) {
-        return ((CartJpaRepository) jpaRepository).findCartByUserId(id).map(((CartMapper) mapper)::toDomain);
+        return ((CartJpaRepository) jpaRepository).findByUserId(id).map(((CartMapper) mapper)::toDomain);
     }
 }
