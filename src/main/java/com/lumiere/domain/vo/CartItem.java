@@ -40,4 +40,8 @@ public class CartItem extends ValueObject {
     public CartItem withQuantity(int newQuantity) {
         return new CartItem(this.productId, newQuantity);
     }
+
+    public UUID getId() {
+        return UUID.randomUUID();
+    }
 }

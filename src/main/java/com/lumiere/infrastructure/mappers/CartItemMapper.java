@@ -1,6 +1,5 @@
 package com.lumiere.infrastructure.mappers;
 
-import com.lumiere.application.exceptions.product.ProductNotFoundException;
 import com.lumiere.domain.vo.CartItem;
 import com.lumiere.infrastructure.mappers.base.BaseMapper;
 import com.lumiere.infrastructure.persistence.jpa.entities.CartItemJpaEntity;
@@ -11,6 +10,7 @@ import org.mapstruct.Mapping;
 import org.mapstruct.Named;
 import org.mapstruct.ReportingPolicy;
 
+import java.util.Objects;
 import java.util.UUID;
 
 @Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
@@ -28,12 +28,12 @@ public interface CartItemMapper extends BaseMapper<CartItem, CartItemJpaEntity> 
         @Named("createdItem")
         default CartItemJpaEntity createItem(CartItem domainItem,
                         ProductJpaRepository productJpaRepository) {
-
                 ProductJpaEntity productJpa = productJpaRepository
-                                .findById(domainItem.getProductId())
-                                .orElseThrow(() -> new ProductNotFoundException(domainItem.getProductId()));
+                                .getReferenceById(Objects.requireNonNull(domainItem.getProductId()));
 
-                return new CartItemJpaEntity(domainItem.getId(), null, productJpa, domainItem.getQuantity());
+                CartItemJpaEntity item = new CartItemJpaEntity(domainItem.getId(), null, productJpa,
+                                domainItem.getQuantity());
+                return item;
         }
 
         default UUID map(ProductJpaEntity productJpa) {

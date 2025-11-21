@@ -36,4 +36,8 @@ public class CartItemJpaEntity extends BaseJpaEntity implements Serializable {
         this.product = product;
         this.quantity = quantity;
     }
+
+    public void setCartReference(CartJpaEntity cart) {
+        this.cart = cart;
+    }
 }

@@ -15,13 +15,15 @@ import org.mapstruct.ReportingPolicy;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Mapper(componentModel = "spring", uses = { CartItemMapper.class, UserMapper.class
 }, unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface CartMapper extends BaseMapper<Cart, CartJpaEntity> {
 
+        @Mapping(target = "user", source = "user")
+        @Mapping(target = "coupon", source = "coupon", qualifiedByName = "stringToOptional")
+        @Mapping(target = "items", source = "items")
         Cart toDomain(CartJpaEntity jpaEntity);
 
         @Mapping(target = ".", source = "domain", qualifiedByName = "fullCartToJpa")
@@ -37,10 +39,8 @@ public interface CartMapper extends BaseMapper<Cart, CartJpaEntity> {
                         ProductJpaRepository productJpaRepository,
                         CartItemMapper cartItemMapper) {
 
-                UUID userId = Objects.requireNonNull(domain.getUser().getId());
-                UserJpaEntity userJpa = userJpaRepository.getReferenceById(userId);
-
-                UUID cartId = Objects.requireNonNull(domain.getId());
+                UserJpaEntity userJpa = userJpaRepository
+                                .getReferenceById(Objects.requireNonNull(domain.getUser().getId()));
 
                 List<CartItemJpaEntity> jpaItems = domain.getItems().stream()
                                 .map(domainItem -> {
@@ -49,10 +49,15 @@ public interface CartMapper extends BaseMapper<Cart, CartJpaEntity> {
                                 .collect(Collectors.toList());
 
                 return new CartJpaEntity(
-                                cartId,
+                                domain.getId(),
                                 userJpa,
                                 domain.getCoupon().orElse(null),
                                 jpaItems);
+        }
+
+        @Named("stringToOptional")
+        default Optional<String> map(String value) {
+                return Optional.ofNullable(value);
         }
 
         default String map(Optional<String> optional) {
