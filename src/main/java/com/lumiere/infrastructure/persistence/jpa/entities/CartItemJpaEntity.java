@@ -3,10 +3,9 @@ package com.lumiere.infrastructure.persistence.jpa.entities;
 import java.io.Serializable;
 import java.util.UUID;
 
-import com.lumiere.infrastructure.persistence.jpa.entities.base.BaseJpaEntity;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
@@ -17,7 +16,10 @@ import lombok.NoArgsConstructor;
 @Entity
 @Table(name = "cart_item")
 @NoArgsConstructor(access = lombok.AccessLevel.PROTECTED)
-public class CartItemJpaEntity extends BaseJpaEntity implements Serializable {
+public class CartItemJpaEntity implements Serializable {
+
+    @Id
+    private UUID id;
 
     @ManyToOne
     @JoinColumn(name = "cart_id", nullable = false)
@@ -31,7 +33,7 @@ public class CartItemJpaEntity extends BaseJpaEntity implements Serializable {
     private Integer quantity;
 
     public CartItemJpaEntity(UUID id, CartJpaEntity cart, ProductJpaEntity product, Integer quantity) {
-        super(id);
+        this.id = id;
         this.cart = cart;
         this.product = product;
         this.quantity = quantity;
