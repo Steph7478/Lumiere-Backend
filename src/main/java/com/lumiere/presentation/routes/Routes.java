@@ -39,7 +39,8 @@ public final class Routes {
         }
 
         public static final class CART {
-            public static final String ADD_CART = "/cart/add-item";
+            public static final String ADD_MULTIPLE = "/cart/add-multiple";
+            public static final String ADD_SINGLE = "/cart/add-single";
         }
     }
 }

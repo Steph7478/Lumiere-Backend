@@ -40,13 +40,17 @@ public class OrderJpaEntity extends BaseJpaEntity implements Serializable {
     @Column(nullable = false)
     private BigDecimal total;
 
+    @Column(name = "coupon")
+    private String coupon;
+
     public OrderJpaEntity(UUID id, UserJpaEntity userId, Status status, UUID paymentId, BigDecimal total,
-            List<OrderItemJpaEntity> items) {
+            List<OrderItemJpaEntity> items, String coupon) {
         super(id);
         this.userId = userId;
         this.status = status;
         this.paymentId = paymentId;
         this.total = total;
+        this.coupon = coupon;
     }
 
 }

@@ -10,6 +10,8 @@ import com.lumiere.domain.vo.CartItem;
 public class CartService {
 
     public static Cart addProducts(Cart cart, List<CartItem> items) {
+        if (items == null || items.isEmpty())
+            return cart;
 
         Cart updatedCart = cart;
 
@@ -23,7 +25,7 @@ public class CartService {
         return cart.removeProduct(productId);
     }
 
-    public static Cart createCart(User userId) {
-        return Cart.createCart(userId);
+    public static Cart createCart(User user) {
+        return Cart.createCart(user);
     }
 }

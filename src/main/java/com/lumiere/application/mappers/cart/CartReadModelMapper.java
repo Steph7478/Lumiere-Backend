@@ -1,7 +1,7 @@
 package com.lumiere.application.mappers.cart;
 
 import com.lumiere.application.dtos.cart.command.add.AddCartInput;
-import com.lumiere.application.dtos.cart.command.add.AddCartRequestData;
+import com.lumiere.application.dtos.cart.command.add.AddMultipleItemsRequestData;
 import com.lumiere.application.mappers.base.BaseMapper;
 import com.lumiere.domain.entities.Cart;
 import com.lumiere.domain.readmodels.CartReadModel;
@@ -25,7 +25,7 @@ public interface CartReadModelMapper extends BaseMapper<Cart, CartReadModel> {
     Cart toEntity(AddCartInput toEntity);
 
     @ObjectFactory
-    default Cart addProducts(Cart currentCart, AddCartRequestData reqData) {
+    default Cart addProducts(Cart currentCart, AddMultipleItemsRequestData reqData) {
         return CartService.addProducts(
                 currentCart,
                 reqData.items());

@@ -2,7 +2,7 @@ package com.lumiere.application.usecases.cart;
 
 import com.lumiere.application.dtos.cart.command.add.AddCartInput;
 import com.lumiere.application.dtos.cart.command.add.AddCartOuput;
-import com.lumiere.application.dtos.cart.command.add.AddCartRequestData;
+import com.lumiere.application.dtos.cart.command.add.AddMultipleItemsRequestData;
 import com.lumiere.application.exceptions.auth.UserNotFoundException;
 import com.lumiere.application.interfaces.cart.IAddCartUseCase;
 import com.lumiere.application.mappers.cart.CartReadModelMapper;
@@ -36,7 +36,7 @@ public class AddCartUseCase implements IAddCartUseCase {
         @Override
         @Transactional
         public AddCartOuput execute(AddCartInput input) {
-                AddCartRequestData reqData = input.requestData();
+                AddMultipleItemsRequestData reqData = input.requestData();
 
                 User user = userRepo.findUserByAuthId(input.authId())
                                 .orElseThrow(UserNotFoundException::new);
