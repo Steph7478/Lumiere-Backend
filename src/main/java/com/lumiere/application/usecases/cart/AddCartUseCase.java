@@ -13,6 +13,8 @@ import com.lumiere.domain.repositories.CartRepository;
 import com.lumiere.domain.repositories.UserRepository;
 import com.lumiere.domain.services.CartService;
 
+import jakarta.transaction.Transactional;
+
 import java.util.Optional;
 
 import org.springframework.stereotype.Service;
@@ -32,6 +34,7 @@ public class AddCartUseCase implements IAddCartUseCase {
         }
 
         @Override
+        @Transactional
         public AddCartOuput execute(AddCartInput input) {
                 AddCartRequestData reqData = input.requestData();
 
