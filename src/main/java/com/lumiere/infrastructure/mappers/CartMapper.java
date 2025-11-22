@@ -14,7 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Mapper(componentModel = "spring", uses = { CartItemMapper.class, UserMapper.class
@@ -50,9 +49,5 @@ public abstract class CartMapper implements BaseMapper<Cart, CartJpaEntity> {
                                 domain.getId(),
                                 userJpa,
                                 jpaItems);
-        }
-
-        protected String map(Optional<String> optional) {
-                return optional != null ? optional.orElse(null) : null;
         }
 }
