@@ -21,8 +21,16 @@ public class CartService {
         return updatedCart;
     }
 
-    public static Cart removeProduct(Cart cart, UUID productId) {
-        return cart.removeProduct(productId);
+    public static Cart removeProduct(Cart cart, List<UUID> productsId) {
+        if (productsId == null || productsId.isEmpty())
+            return cart;
+
+        Cart updatedCart = cart;
+
+        for (UUID productId : productsId)
+            updatedCart = updatedCart.removeProduct(productId);
+
+        return updatedCart;
     }
 
     public static Cart createCart(User user) {
