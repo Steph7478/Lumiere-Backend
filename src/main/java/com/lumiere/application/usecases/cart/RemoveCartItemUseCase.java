@@ -1,5 +1,7 @@
 package com.lumiere.application.usecases.cart;
 
+import org.springframework.stereotype.Service;
+
 import com.lumiere.application.dtos.cart.command.remove.RemoveCartInput;
 import com.lumiere.application.dtos.cart.command.remove.RemoveCartOutput;
 import com.lumiere.application.dtos.cart.command.remove.RemoveMultipleItemsRequestData;
@@ -16,6 +18,7 @@ import com.lumiere.domain.services.CartService;
 
 import jakarta.transaction.Transactional;
 
+@Service
 public class RemoveCartItemUseCase implements IRemoveCartUseCase {
     private final CartRepository cartRepository;
     private final UserRepository userRepository;
