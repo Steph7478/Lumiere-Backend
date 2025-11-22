@@ -22,46 +22,44 @@ import org.springframework.stereotype.Service;
 @Service
 public class AddCartUseCase implements IAddCartUseCase {
 
-    private final UserRepository userRepo;
-    private final CartRepository cartRepo;
-    private final CartItemMapper cartItemMapper;
+        private final UserRepository userRepo;
+        private final CartRepository cartRepo;
+        private final CartItemMapper cartItemMapper;
 
-    public AddCartUseCase(UserRepository userRepo, CartRepository cartRepo, CartItemMapper cartItemMapper) {
-        this.userRepo = userRepo;
-        this.cartRepo = cartRepo;
-        this.cartItemMapper = cartItemMapper;
-    }
-
-    @Override
-    public AddCartOuput execute(AddCartInput input) {
-        AddCartRequestData reqData = input.requestData();
-
-        User user = userRepo.findUserByAuthId(input.authId())
-                .orElseThrow(UserNotFoundException::new);
-
-        Optional<Cart> existingCartOptional = cartRepo.findCartByUserId(user.getId());
-        Cart currentCart = existingCartOptional.orElseGet(() -> CartService.createCart(user));
-
-        Cart finalCart = CartService.addProducts(
-                currentCart,
-                reqData.items(),
-                reqData.coupon());
-
-        if (existingCartOptional.isPresent()) {
-            cartRepo.update(finalCart);
-        } else {
-            cartRepo.save(finalCart);
+        public AddCartUseCase(UserRepository userRepo, CartRepository cartRepo, CartItemMapper cartItemMapper) {
+                this.userRepo = userRepo;
+                this.cartRepo = cartRepo;
+                this.cartItemMapper = cartItemMapper;
         }
 
-        List<CartItemReadModel> readModels = finalCart.getItems().stream()
-                .map(cartItemMapper::toReadModel)
-                .collect(Collectors.toList());
+        @Override
+        public AddCartOuput execute(AddCartInput input) {
+                AddCartRequestData reqData = input.requestData();
 
-        return new AddCartOuput(
-                finalCart.getId(),
-                readModels,
-                finalCart.getCreatedAt(),
-                finalCart.getUpdatedAt(),
-                finalCart.getCoupon().orElse(null));
-    }
+                User user = userRepo.findUserByAuthId(input.authId())
+                                .orElseThrow(UserNotFoundException::new);
+
+                Optional<Cart> existingCartOptional = cartRepo.findCartByUserId(user.getId());
+                Cart currentCart = existingCartOptional.orElseGet(() -> CartService.createCart(user));
+
+                Cart finalCart = CartService.addProducts(
+                                currentCart,
+                                reqData.items(),
+                                reqData.coupon());
+
+                finalCart = existingCartOptional.isPresent()
+                                ? cartRepo.update(finalCart)
+                                : cartRepo.save(finalCart);
+
+                List<CartItemReadModel> readModels = finalCart.getItems().stream()
+                                .map(cartItemMapper::toReadModel)
+                                .collect(Collectors.toList());
+
+                return new AddCartOuput(
+                                finalCart.getId(),
+                                readModels,
+                                finalCart.getCreatedAt(),
+                                finalCart.getUpdatedAt(),
+                                finalCart.getCoupon().orElse(null));
+        }
 }

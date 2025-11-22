@@ -25,7 +25,7 @@ public abstract class CartMapper implements BaseMapper<Cart, CartJpaEntity> {
         protected UserJpaRepository userJpaRepository;
 
         @Mapping(target = "user", source = "user")
-        @Mapping(target = "coupon", source = "coupon", qualifiedByName = "stringToOptional")
+        @Mapping(target = "coupon", source = "coupon")
         @Mapping(target = "items", source = "items")
         public abstract Cart toDomain(CartJpaEntity jpaEntity);
 
@@ -52,11 +52,6 @@ public abstract class CartMapper implements BaseMapper<Cart, CartJpaEntity> {
                                 userJpa,
                                 domain.getCoupon().orElse(null),
                                 jpaItems);
-        }
-
-        @Named("stringToOptional")
-        protected Optional<String> map(String value) {
-                return Optional.ofNullable(value);
         }
 
         protected String map(Optional<String> optional) {
