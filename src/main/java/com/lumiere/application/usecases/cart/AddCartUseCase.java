@@ -5,17 +5,15 @@ import com.lumiere.application.dtos.cart.command.add.AddCartOuput;
 import com.lumiere.application.dtos.cart.command.add.AddCartRequestData;
 import com.lumiere.application.exceptions.auth.UserNotFoundException;
 import com.lumiere.application.interfaces.cart.IAddCartUseCase;
+import com.lumiere.application.mappers.cart.CartReadModelMapper;
 import com.lumiere.domain.entities.Cart;
 import com.lumiere.domain.entities.User;
-import com.lumiere.domain.readmodels.CartItemReadModel;
+import com.lumiere.domain.readmodels.CartReadModel;
 import com.lumiere.domain.repositories.CartRepository;
 import com.lumiere.domain.repositories.UserRepository;
 import com.lumiere.domain.services.CartService;
-import com.lumiere.infrastructure.mappers.CartItemMapper;
 
-import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
@@ -24,12 +22,13 @@ public class AddCartUseCase implements IAddCartUseCase {
 
         private final UserRepository userRepo;
         private final CartRepository cartRepo;
-        private final CartItemMapper cartItemMapper;
+        private final CartReadModelMapper cartMapper;
 
-        public AddCartUseCase(UserRepository userRepo, CartRepository cartRepo, CartItemMapper cartItemMapper) {
+        public AddCartUseCase(UserRepository userRepo, CartRepository cartRepo,
+                        CartReadModelMapper cartReadModelMapper) {
                 this.userRepo = userRepo;
                 this.cartRepo = cartRepo;
-                this.cartItemMapper = cartItemMapper;
+                this.cartMapper = cartReadModelMapper;
         }
 
         @Override
@@ -42,24 +41,14 @@ public class AddCartUseCase implements IAddCartUseCase {
                 Optional<Cart> existingCartOptional = cartRepo.findCartByUserId(user.getId());
                 Cart currentCart = existingCartOptional.orElseGet(() -> CartService.createCart(user));
 
-                Cart finalCart = CartService.addProducts(
-                                currentCart,
-                                reqData.items(),
-                                reqData.coupon());
+                Cart finalCart = cartMapper.addProducts(currentCart, reqData);
 
                 finalCart = existingCartOptional.isPresent()
                                 ? cartRepo.update(finalCart)
                                 : cartRepo.save(finalCart);
 
-                List<CartItemReadModel> readModels = finalCart.getItems().stream()
-                                .map(cartItemMapper::toReadModel)
-                                .collect(Collectors.toList());
+                CartReadModel cartReadModel = cartMapper.toDTO(finalCart);
 
-                return new AddCartOuput(
-                                finalCart.getId(),
-                                readModels,
-                                finalCart.getCreatedAt(),
-                                finalCart.getUpdatedAt(),
-                                finalCart.getCoupon().orElse(null));
+                return new AddCartOuput(cartReadModel);
         }
 }
