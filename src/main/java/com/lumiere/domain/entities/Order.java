@@ -15,16 +15,19 @@ public class Order extends BaseEntity {
     private final User user;
     private final Status status;
     private final UUID paymentId;
+    private final String coupon;
     private final BigDecimal total;
     private final List<OrderItem> items;
 
-    private Order(UUID id, User user, Status status, UUID paymentId, BigDecimal total, List<OrderItem> items) {
+    private Order(UUID id, User user, Status status, UUID paymentId, BigDecimal total, List<OrderItem> items,
+            String coupon) {
         super(id);
         this.user = Objects.requireNonNull(user, "User cannot be null");
         this.status = status != null ? status : Status.IN_PROGRESS;
         this.paymentId = paymentId;
         this.total = Objects.requireNonNull(total, "total cannot be null");
         this.items = Objects.requireNonNull(items, "Order items cannot be null");
+        this.coupon = coupon;
     }
 
     // Getters
@@ -45,18 +48,22 @@ public class Order extends BaseEntity {
         return total;
     }
 
+    public String getCoupon() {
+        return coupon;
+    }
+
     public List<OrderItem> getItems() {
         return Collections.unmodifiableList(items);
     }
 
     public Order markAsPaid(UUID paymentId) {
         return new Order(getId(), this.user, Status.PAID, Objects.requireNonNull(paymentId, "paymentId cannot be null"),
-                this.total, this.items);
+                this.total, this.items, this.coupon);
     }
 
     public Order recalculateTotal(BigDecimal newTotal) {
         return new Order(getId(), this.user, this.status, this.paymentId,
-                Objects.requireNonNull(newTotal, "total cannot be null"), this.items);
+                Objects.requireNonNull(newTotal, "total cannot be null"), this.items, this.coupon);
     }
 
     public static Order createOrder(Cart cart, BigDecimal total) {

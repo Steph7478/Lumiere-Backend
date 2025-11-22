@@ -25,7 +25,6 @@ public abstract class CartMapper implements BaseMapper<Cart, CartJpaEntity> {
         protected UserJpaRepository userJpaRepository;
 
         @Mapping(target = "user", source = "user")
-        @Mapping(target = "coupon", source = "coupon")
         @Mapping(target = "items", source = "items")
         public abstract Cart toDomain(CartJpaEntity jpaEntity);
 
@@ -50,7 +49,6 @@ public abstract class CartMapper implements BaseMapper<Cart, CartJpaEntity> {
                 return new CartJpaEntity(
                                 domain.getId(),
                                 userJpa,
-                                domain.getCoupon().orElse(null),
                                 jpaItems);
         }
 

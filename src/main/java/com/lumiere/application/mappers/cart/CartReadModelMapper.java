@@ -20,7 +20,6 @@ public interface CartReadModelMapper extends BaseMapper<Cart, CartReadModel> {
     @Mapping(target = "items", source = "items")
     @Mapping(target = "createdAt", source = "createdAt")
     @Mapping(target = "updatedAt", source = "updatedAt")
-    @Mapping(target = "coupon", expression = "java(domain.getCoupon().orElse(null))")
     CartReadModel toDTO(Cart domain);
 
     Cart toEntity(AddCartInput toEntity);
@@ -29,7 +28,6 @@ public interface CartReadModelMapper extends BaseMapper<Cart, CartReadModel> {
     default Cart addProducts(Cart currentCart, AddCartRequestData reqData) {
         return CartService.addProducts(
                 currentCart,
-                reqData.items(),
-                reqData.coupon());
+                reqData.items());
     }
 }
