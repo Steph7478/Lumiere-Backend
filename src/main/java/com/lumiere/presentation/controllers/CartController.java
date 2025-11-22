@@ -81,9 +81,13 @@ public class CartController extends BaseController {
     public ResponseEntity<RemoveCartOutput> removeToCartSingle(@AuthenticationPrincipal UUID id,
             @Valid @RequestBody RemoveSingleItemRequestData requestData, HttpServletResponse res) {
 
+        CartItem singleCartItem = new CartItem(
+                requestData.productId(),
+                requestData.quantity());
+
         RemoveCartInput request = new RemoveCartInput(
                 id,
-                new RemoveMultipleItemsRequestData(List.of(requestData.productId())));
+                new RemoveMultipleItemsRequestData(List.of(singleCartItem)));
 
         RemoveCartOutput response = removeCartUseCase.execute(request);
 

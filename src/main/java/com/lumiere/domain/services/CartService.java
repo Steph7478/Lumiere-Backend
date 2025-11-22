@@ -1,7 +1,6 @@
 package com.lumiere.domain.services;
 
 import java.util.List;
-import java.util.UUID;
 
 import com.lumiere.domain.entities.Cart;
 import com.lumiere.domain.entities.User;
@@ -21,14 +20,14 @@ public class CartService {
         return updatedCart;
     }
 
-    public static Cart removeProduct(Cart cart, List<UUID> productsId) {
-        if (productsId == null || productsId.isEmpty())
+    public static Cart removeProduct(Cart cart, List<CartItem> items) {
+        if (items == null || items.isEmpty())
             return cart;
 
         Cart updatedCart = cart;
 
-        for (UUID productId : productsId)
-            updatedCart = updatedCart.removeProduct(productId);
+        for (CartItem item : items)
+            updatedCart = updatedCart.removeProduct(item.getProductId(), item.getQuantity());
 
         return updatedCart;
     }

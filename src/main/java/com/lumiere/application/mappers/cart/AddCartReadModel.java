@@ -14,7 +14,7 @@ import org.mapstruct.ObjectFactory;
 import org.mapstruct.ReportingPolicy;
 
 @Mapper(componentModel = "spring", uses = { CartItemMapper.class }, unmappedTargetPolicy = ReportingPolicy.IGNORE)
-public interface CartReadModelMapper extends BaseMapper<Cart, CartReadModel> {
+public interface AddCartReadModel extends BaseMapper<Cart, CartReadModel> {
 
     @Mapping(target = "id", source = "id")
     @Mapping(target = "items", source = "items")

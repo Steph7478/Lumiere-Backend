@@ -15,6 +15,11 @@ public class Cart extends BaseEntity {
     private final User user;
     private final List<CartItem> items;
 
+    @FunctionalInterface
+    private interface ItemOperation {
+        int apply(int currentQuantity, int modificationQuantity);
+    }
+
     public Cart(UUID id, User user, List<CartItem> items) {
         super(id);
         this.user = Objects.requireNonNull(user, "User ID cannot be null");
@@ -34,6 +39,23 @@ public class Cart extends BaseEntity {
             return this;
         }
 
+        return this.updateItem(productId, quantityToAdd,
+                (current, modification) -> current + modification,
+                true);
+    }
+
+    public Cart removeProduct(UUID productId, int quantityToRemove) {
+        if (productId == null || quantityToRemove <= 0) {
+            return this;
+        }
+
+        return this.updateItem(productId, quantityToRemove,
+                (current, modification) -> current - modification,
+                false);
+    }
+
+    private Cart updateItem(UUID productId, int modificationQuantity, ItemOperation operation,
+            boolean shouldAddIfMissing) {
         List<CartItem> newItems = new ArrayList<>(this.items);
 
         Optional<CartItem> existingItem = newItems.stream()
@@ -43,24 +65,21 @@ public class Cart extends BaseEntity {
         if (existingItem.isPresent()) {
             CartItem oldItem = existingItem.get();
             newItems.remove(oldItem);
-            int newQuantity = oldItem.getQuantity() + quantityToAdd;
 
-            newItems.add(oldItem.withQuantity(newQuantity));
-        } else {
-            newItems.add(new CartItem(productId, quantityToAdd));
+            int newQuantity = operation.apply(oldItem.getQuantity(), modificationQuantity);
+
+            if (newQuantity > 0) {
+                newItems.add(oldItem.withQuantity(newQuantity));
+            }
+
+            return new Cart(getId(), this.user, newItems);
+
+        } else if (shouldAddIfMissing && modificationQuantity > 0) {
+            newItems.add(new CartItem(productId, modificationQuantity));
+            return new Cart(getId(), this.user, newItems);
         }
 
-        return new Cart(getId(), this.user, newItems);
-    }
-
-    public Cart removeProduct(UUID productId) {
-        if (productId == null)
-            return this;
-
-        List<CartItem> newItems = new ArrayList<>(this.items);
-        newItems.removeIf(item -> item.getProductId().equals(productId));
-
-        return new Cart(getId(), this.user, newItems);
+        return this;
     }
 
     public static Cart createCart(User user) {
