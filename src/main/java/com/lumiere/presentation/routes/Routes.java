@@ -41,6 +41,8 @@ public final class Routes {
         public static final class CART {
             public static final String ADD_MULTIPLE = "/cart/add-multiple";
             public static final String ADD_SINGLE = "/cart/add-single";
+            public static final String REMOVE_MULTIPLE = "/cart/remove-multiple";
+            public static final String REMOVE_SINGLE = "/cart/remove-single";
         }
     }
 }

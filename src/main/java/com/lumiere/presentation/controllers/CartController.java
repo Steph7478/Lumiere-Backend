@@ -14,7 +14,12 @@ import com.lumiere.application.dtos.cart.command.add.AddCartInput;
 import com.lumiere.application.dtos.cart.command.add.AddCartOuput;
 import com.lumiere.application.dtos.cart.command.add.AddMultipleItemsRequestData;
 import com.lumiere.application.dtos.cart.command.add.AddSingleItemRequestData;
+import com.lumiere.application.dtos.cart.command.remove.RemoveCartInput;
+import com.lumiere.application.dtos.cart.command.remove.RemoveCartOutput;
+import com.lumiere.application.dtos.cart.command.remove.RemoveMultipleItemsRequestData;
+import com.lumiere.application.dtos.cart.command.remove.RemoveSingleItemRequestData;
 import com.lumiere.application.interfaces.cart.IAddCartUseCase;
+import com.lumiere.application.interfaces.cart.IRemoveCartUseCase;
 import com.lumiere.domain.vo.CartItem;
 import com.lumiere.presentation.controllers.base.BaseController;
 import com.lumiere.presentation.routes.Routes;
@@ -26,9 +31,11 @@ import jakarta.validation.Valid;
 public class CartController extends BaseController {
 
     private final IAddCartUseCase addCartUseCase;
+    private final IRemoveCartUseCase removeCartUseCase;
 
-    protected CartController(IAddCartUseCase addCartUseCase) {
+    protected CartController(IAddCartUseCase addCartUseCase, IRemoveCartUseCase removeCartUseCase) {
         this.addCartUseCase = addCartUseCase;
+        this.removeCartUseCase = removeCartUseCase;
     }
 
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
@@ -55,6 +62,30 @@ public class CartController extends BaseController {
                 new AddMultipleItemsRequestData(List.of(singleCartItem)));
 
         AddCartOuput response = addCartUseCase.execute(request);
+
+        return ResponseEntity.ok(response);
+    }
+
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
+    @PostMapping(Routes.PRIVATE.CART.REMOVE_MULTIPLE)
+    public ResponseEntity<RemoveCartOutput> removeToCartMultiple(@AuthenticationPrincipal UUID id,
+            @Valid @RequestBody RemoveMultipleItemsRequestData requestData, HttpServletResponse res) {
+        RemoveCartInput request = new RemoveCartInput(id, requestData);
+        RemoveCartOutput response = removeCartUseCase.execute(request);
+
+        return ResponseEntity.ok(response);
+    }
+
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
+    @PostMapping(Routes.PRIVATE.CART.REMOVE_SINGLE)
+    public ResponseEntity<RemoveCartOutput> removeToCartSingle(@AuthenticationPrincipal UUID id,
+            @Valid @RequestBody RemoveSingleItemRequestData requestData, HttpServletResponse res) {
+
+        RemoveCartInput request = new RemoveCartInput(
+                id,
+                new RemoveMultipleItemsRequestData(List.of(requestData.productId())));
+
+        RemoveCartOutput response = removeCartUseCase.execute(request);
 
         return ResponseEntity.ok(response);
     }
