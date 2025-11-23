@@ -18,7 +18,7 @@ public abstract class OrderService {
         return order.removeItem(productId);
     }
 
-    public static Order Order(Order order, String coupon) {
+    public static Order useCoupon(Order order, String coupon) {
         return order.useCoupon(coupon);
     }
 }
