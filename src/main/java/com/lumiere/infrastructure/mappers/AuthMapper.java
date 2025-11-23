@@ -1,6 +1,7 @@
 package com.lumiere.infrastructure.mappers;
 
 import com.lumiere.domain.entities.Auth;
+import com.lumiere.domain.factories.AuthFactory;
 import com.lumiere.infrastructure.mappers.base.BaseMapper;
 import com.lumiere.infrastructure.persistence.jpa.entities.AuthJpaEntity;
 
@@ -15,7 +16,7 @@ public interface AuthMapper extends BaseMapper<Auth, AuthJpaEntity> {
 
     @ObjectFactory
     default Auth createAuth(AuthJpaEntity jpa) {
-        return Auth.from(
+        return AuthFactory.from(
                 jpa.getName(),
                 jpa.getEmail(),
                 jpa.getPassword(),
