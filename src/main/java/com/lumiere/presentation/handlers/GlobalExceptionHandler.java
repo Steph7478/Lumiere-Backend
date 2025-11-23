@@ -9,6 +9,7 @@ import com.lumiere.application.exceptions.auth.EmailAlreadyExistsException;
 import com.lumiere.application.exceptions.auth.InvalidCredentialsException;
 import com.lumiere.application.exceptions.auth.TokenGenerationException;
 import com.lumiere.application.exceptions.auth.UserNotFoundException;
+import com.lumiere.application.exceptions.cart.CartNotFoundException;
 import com.lumiere.application.exceptions.product.ProductNotFoundException;
 
 import java.util.Map;
@@ -45,6 +46,14 @@ public class GlobalExceptionHandler {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                                 .body(Map.of(
                                                 "error", "INVALID_PRODUCT", "message",
+                                                ex.getMessage()));
+        }
+
+        @ExceptionHandler({ CartNotFoundException.class })
+        public ResponseEntity<Map<String, String>> handleCartErrors(ProductNotFoundException ex) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                                .body(Map.of(
+                                                "error", "INVALID_Cart", "message",
                                                 ex.getMessage()));
         }
 
