@@ -17,6 +17,8 @@ import com.lumiere.domain.readmodels.CartReadModel;
 import com.lumiere.domain.repositories.CartRepository;
 import com.lumiere.domain.repositories.UserRepository;
 
+import jakarta.transaction.Transactional;
+
 @Service
 public class GetCartByIdUseCase implements IGetCartByIdUseCase {
 
@@ -31,6 +33,7 @@ public class GetCartByIdUseCase implements IGetCartByIdUseCase {
     }
 
     @Override
+    @Transactional
     public GetCartByIdOutput execute(GetCartByIdInput input) {
         User user = userRepo.findUserByAuthId(input.userId()).orElseThrow(UserNotFoundException::new);
         UUID cartId = input.cartId().orElse(null);
