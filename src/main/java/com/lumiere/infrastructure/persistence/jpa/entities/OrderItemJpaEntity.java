@@ -46,4 +46,8 @@ public class OrderItemJpaEntity extends BaseJpaEntity implements Serializable {
         this.quantity = quantity;
         this.unitPrice = unitPrice;
     }
+
+    protected void setOrderReference(OrderJpaEntity order) {
+        this.order = order;
+    }
 }

@@ -13,7 +13,7 @@ public class Payment extends BaseEntity {
     private final PaymentMethod paymentMethod;
     private final LocalDateTime paymentDate;
 
-    private Payment(UUID id, Money amount, PaymentMethod paymentMethod, LocalDateTime paymentDate) {
+    public Payment(UUID id, Money amount, PaymentMethod paymentMethod, LocalDateTime paymentDate) {
         super(id);
         this.amount = Objects.requireNonNull(amount, "amount cannot be null");
         this.paymentMethod = Objects.requireNonNull(paymentMethod, "paymentMethod cannot be null");
@@ -22,7 +22,7 @@ public class Payment extends BaseEntity {
 
     // getters
     public UUID getId() {
-        return getId();
+        return super.getId(); // Usando super.getId() para evitar recursão
     }
 
     public Money getAmount() {
@@ -41,10 +41,5 @@ public class Payment extends BaseEntity {
 
     public enum PaymentMethod {
         PIX, CREDIT_CARD, DEBIT_CARD, BOLETO
-    }
-
-    // factory
-    public static Payment createPayment(Money amount, PaymentMethod method) {
-        return new Payment(null, amount, method, LocalDateTime.now());
     }
 }

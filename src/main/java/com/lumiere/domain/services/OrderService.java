@@ -5,12 +5,13 @@ import java.util.UUID;
 
 import com.lumiere.domain.entities.Order;
 import com.lumiere.domain.entities.User;
+import com.lumiere.domain.factories.OrderFactory;
 import com.lumiere.domain.vo.OrderItem;
 
 public class OrderService {
 
     public static Order createOrder(User user, List<OrderItem> items) {
-        return Order.createOrder(null, user, null, null, items, null);
+        return OrderFactory.create(null, user, items, null);
     }
 
     public static Order removeProduct(Order order, UUID productId) {

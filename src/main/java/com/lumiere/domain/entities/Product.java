@@ -14,11 +14,7 @@ public class Product extends BaseEntity {
     private List<Rating> ratings = new ArrayList<>();
     private Stock stock;
 
-    public Product() {
-        super(null);
-    }
-
-    private Product(UUID id, String name, String description, Money price, List<Rating> ratings, Stock stock) {
+    public Product(UUID id, String name, String description, Money price, List<Rating> ratings, Stock stock) {
 
         super(id);
         this.name = Objects.requireNonNull(name, "name cannot be null");
@@ -72,14 +68,5 @@ public class Product extends BaseEntity {
     public void updateProduct(Optional<String> newName, Optional<String> newDescription) {
         newName.ifPresent(name -> this.name = name);
         newDescription.ifPresent(desc -> this.description = desc);
-    }
-
-    public static Product createProduct(String name, String description, Money price, Stock stock) {
-        return new Product(null, name, description, price, null, stock);
-    }
-
-    public static Product from(UUID id, String name, String description, Money price, List<Rating> ratings,
-            Stock stock) {
-        return new Product(id, name, description, price, ratings, stock);
     }
 }

@@ -12,7 +12,7 @@ public class Rating extends BaseEntity {
     private final int rating;
     private final String comment;
 
-    private Rating(UUID id, UUID productId, int rating, String comment, UUID orderId) {
+    public Rating(UUID id, UUID productId, int rating, String comment, UUID orderId) {
         super(id);
         this.productId = Objects.requireNonNull(productId, "productId cannot be null");
         this.orderId = Objects.requireNonNull(orderId, "orderId cannot be null");
@@ -47,14 +47,5 @@ public class Rating extends BaseEntity {
 
     public Rating updateRating(int newRating) {
         return new Rating(getId(), this.productId, newRating, this.comment, this.orderId);
-    }
-
-    // factory
-    public static Rating createRating(UUID productId, int rating, String comment, UUID orderId) {
-        return new Rating(null, productId, rating, comment, orderId);
-    }
-
-    public static Rating rebuild(UUID id, UUID productId, int rating, String comment, UUID orderId) {
-        return new Rating(id, productId, rating, comment, orderId);
     }
 }

@@ -10,6 +10,7 @@ import org.mapstruct.factory.Mappers;
 import com.lumiere.domain.entities.Product;
 import com.lumiere.domain.entities.ProductCategory;
 import com.lumiere.domain.enums.CurrencyEnum.CurrencyType;
+import com.lumiere.domain.factories.ProductFactory;
 import com.lumiere.domain.readmodels.ProductDetailReadModel;
 import com.lumiere.domain.vo.Money;
 import com.lumiere.domain.vo.Stock;
@@ -66,7 +67,7 @@ public interface ProductMapper extends BaseMapper<Product, ProductJpaEntity> {
                 Money price = new Money(jpaEntity.getPriceAmount(), CurrencyType.valueOf(jpaEntity.getPriceCurrency()));
                 Stock stock = new Stock(jpaEntity.getStockQuantity());
 
-                return Product.from(
+                return ProductFactory.from(
                                 jpaEntity.getId(),
                                 jpaEntity.getName(),
                                 jpaEntity.getDescription(),

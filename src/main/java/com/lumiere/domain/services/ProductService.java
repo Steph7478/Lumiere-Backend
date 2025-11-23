@@ -3,6 +3,7 @@ package com.lumiere.domain.services;
 import java.util.Optional;
 
 import com.lumiere.domain.entities.Product;
+import com.lumiere.domain.factories.ProductFactory;
 import com.lumiere.domain.vo.Money;
 import com.lumiere.domain.vo.Stock;
 
@@ -16,7 +17,7 @@ public class ProductService {
             Money price,
             Stock stock) {
 
-        return Product.createProduct(name, description, price, stock);
+        return ProductFactory.create(name, description, price, stock);
     }
 
     public static void update(Product product, Optional<String> name, Optional<String> description) {

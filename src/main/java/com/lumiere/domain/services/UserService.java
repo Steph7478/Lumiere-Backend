@@ -2,6 +2,7 @@ package com.lumiere.domain.services;
 
 import com.lumiere.domain.entities.Auth;
 import com.lumiere.domain.entities.User;
+import com.lumiere.domain.factories.UserFactory;
 
 public class UserService {
 
@@ -9,7 +10,7 @@ public class UserService {
     }
 
     public static User createUser(Auth auth) {
-        User user = User.from(null, auth);
+        User user = UserFactory.from(null, auth);
         auth.setUser(user);
         return user;
     }

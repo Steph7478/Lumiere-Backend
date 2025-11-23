@@ -2,6 +2,8 @@ package com.lumiere.infrastructure.mappers;
 
 import com.lumiere.domain.entities.Auth;
 import com.lumiere.domain.entities.User;
+import com.lumiere.domain.factories.AuthFactory;
+import com.lumiere.domain.factories.UserFactory;
 import com.lumiere.infrastructure.mappers.base.BaseMapper;
 import com.lumiere.infrastructure.persistence.jpa.entities.AuthJpaEntity;
 import com.lumiere.infrastructure.persistence.jpa.entities.UserJpaEntity;
@@ -32,14 +34,14 @@ public interface UserMapper extends BaseMapper<User, UserJpaEntity> {
             return null;
 
         Auth auth = mapAuthJpaEntityToAuth(jpaEntity.getAuth());
-        return User.from(jpaEntity.getId(), auth);
+        return UserFactory.from(jpaEntity.getId(), auth);
     }
 
     default Auth mapAuthJpaEntityToAuth(AuthJpaEntity jpaEntity) {
         if (jpaEntity == null)
             return null;
 
-        return Auth.from(
+        return AuthFactory.from(
                 jpaEntity.getName(),
                 jpaEntity.getEmail(),
                 "**hidden**",

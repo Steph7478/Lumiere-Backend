@@ -14,7 +14,7 @@ public class Auth extends BaseEntity {
     private final boolean isAdmin;
     private User user;
 
-    private Auth(String name, String email, String passwordHash, boolean isAdmin, UUID id) {
+    public Auth(String name, String email, String passwordHash, boolean isAdmin, UUID id) {
         super(id);
         this.name = Objects.requireNonNull(name, "name cannot be null");
         this.email = Objects.requireNonNull(email, "email cannot be null");
@@ -58,10 +58,5 @@ public class Auth extends BaseEntity {
 
     public Auth withPasswordHash(String newPasswordHash) {
         return new Auth(this.name, this.email, Objects.requireNonNull(newPasswordHash), this.isAdmin, getId());
-    }
-
-    // Factory
-    public static Auth from(String name, String email, String passwordHash, boolean isAdmin, UUID id) {
-        return new Auth(name, email, passwordHash, isAdmin, id);
     }
 }

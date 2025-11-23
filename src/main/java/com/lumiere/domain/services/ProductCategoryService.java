@@ -5,12 +5,13 @@ import java.util.UUID;
 import com.lumiere.domain.entities.ProductCategory;
 import com.lumiere.domain.enums.CategoriesEnum.Category;
 import com.lumiere.domain.enums.CategoriesEnum.SubCategory;
+import com.lumiere.domain.factories.ProductCategoryFactory;
 
 public class ProductCategoryService {
     private ProductCategoryService() {
     }
 
     public static ProductCategory createProductCategory(UUID productId, Category category, SubCategory subcategory) {
-        return ProductCategory.createProductCategory(productId, category, subcategory);
+        return ProductCategoryFactory.from(productId, category, subcategory);
     }
 }

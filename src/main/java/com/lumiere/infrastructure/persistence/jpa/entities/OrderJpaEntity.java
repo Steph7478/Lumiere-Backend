@@ -26,7 +26,7 @@ public class OrderJpaEntity extends BaseJpaEntity implements Serializable {
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
-    private UserJpaEntity userId;
+    private UserJpaEntity user;
 
     @Column(name = "payment_id")
     private UUID paymentId;
@@ -43,14 +43,20 @@ public class OrderJpaEntity extends BaseJpaEntity implements Serializable {
     @Column(name = "coupon")
     private String coupon;
 
-    public OrderJpaEntity(UUID id, UserJpaEntity userId, Status status, UUID paymentId, BigDecimal total,
+    public OrderJpaEntity(UUID id, UserJpaEntity user, Status status, UUID paymentId, BigDecimal total,
             List<OrderItemJpaEntity> items, String coupon) {
         super(id);
-        this.userId = userId;
+        this.user = user;
         this.status = status;
         this.paymentId = paymentId;
         this.total = total;
         this.coupon = coupon;
+
+        if (items != null) {
+            for (OrderItemJpaEntity item : this.items) {
+                item.setOrderReference(this);
+            }
+        }
     }
 
 }

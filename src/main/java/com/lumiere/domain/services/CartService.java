@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.lumiere.domain.entities.Cart;
 import com.lumiere.domain.entities.User;
+import com.lumiere.domain.factories.CartFactory;
 import com.lumiere.domain.vo.CartItem;
 
 public class CartService {
@@ -33,6 +34,6 @@ public class CartService {
     }
 
     public static Cart createCart(User user) {
-        return Cart.createCart(user);
+        return CartFactory.create(user);
     }
 }

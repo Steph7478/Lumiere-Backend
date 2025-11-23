@@ -81,8 +81,4 @@ public class Cart extends BaseEntity {
 
         return this;
     }
-
-    public static Cart createCart(User user) {
-        return new Cart(UUID.randomUUID(), user, new ArrayList<>());
-    }
 }

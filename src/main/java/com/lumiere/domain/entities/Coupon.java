@@ -5,7 +5,6 @@ import java.util.Objects;
 import java.util.UUID;
 
 import com.lumiere.domain.entities.base.BaseEntity;
-import com.lumiere.domain.utils.CouponCodeGenerator;
 
 public class Coupon extends BaseEntity {
 
@@ -15,7 +14,7 @@ public class Coupon extends BaseEntity {
     private final UUID userId;
     private final String code;
 
-    private Coupon(UUID id, LocalDateTime couponDate, LocalDateTime expiredAt, Category category, UUID userId,
+    public Coupon(UUID id, LocalDateTime couponDate, LocalDateTime expiredAt, Category category, UUID userId,
             String code) {
         super(id);
         this.couponDate = Objects.requireNonNull(couponDate, "couponDate cannot be null");
@@ -61,16 +60,5 @@ public class Coupon extends BaseEntity {
     public boolean isValid() {
         LocalDateTime now = LocalDateTime.now();
         return !now.isBefore(couponDate) && !now.isAfter(expiredAt);
-    }
-
-    public static Coupon createCoupon(UUID userId, Category category) {
-        String generatedCode = CouponCodeGenerator.generate();
-        return new Coupon(
-                null,
-                LocalDateTime.now(),
-                LocalDateTime.now().plusDays(7),
-                category,
-                userId,
-                generatedCode);
     }
 }

@@ -36,8 +36,4 @@ public class ProductCategory extends BaseEntity {
     public void setSubcategory(SubCategory subcategory) {
         this.subcategory = subcategory;
     }
-
-    public static ProductCategory createProductCategory(UUID productId, Category category, SubCategory subcategory) {
-        return new ProductCategory(productId, category, subcategory);
-    }
 }

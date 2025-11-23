@@ -20,7 +20,7 @@ public class Order extends BaseEntity {
     private final BigDecimal total;
     private final List<OrderItem> items;
 
-    private Order(UUID id, User user, Status status, UUID paymentId, BigDecimal total, List<OrderItem> items,
+    public Order(UUID id, User user, Status status, UUID paymentId, BigDecimal total, List<OrderItem> items,
             String coupon) {
         super(id);
         this.user = Objects.requireNonNull(user, "User cannot be null");
@@ -87,13 +87,5 @@ public class Order extends BaseEntity {
         return items.stream()
                 .map(OrderItem::calculateSubtotal)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
-    }
-
-    public static Order createOrder(UUID id, User user, Status status, UUID paymentId,
-            List<OrderItem> items,
-            String coupon) {
-
-        BigDecimal calculatedTotal = calculateTotal(items);
-        return new Order(id, user, status, paymentId, calculatedTotal, items, coupon);
     }
 }

@@ -1,6 +1,7 @@
 package com.lumiere.domain.services;
 
 import com.lumiere.domain.entities.Auth;
+import com.lumiere.domain.factories.AuthFactory;
 import com.lumiere.infrastructure.config.security.utils.PasswordHasher;
 
 import java.util.Optional;
@@ -13,7 +14,7 @@ public class AuthService {
 
     public static Auth createAuth(String name, String email, String rawPassword, boolean isAdmin) {
         String hashed = PasswordHasher.hash(rawPassword);
-        return Auth.from(name, email, hashed, isAdmin, UUID.randomUUID());
+        return AuthFactory.from(name, email, hashed, isAdmin, UUID.randomUUID());
     }
 
     public static void update(
