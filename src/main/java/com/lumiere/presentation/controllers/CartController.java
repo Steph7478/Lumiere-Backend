@@ -1,11 +1,16 @@
 package com.lumiere.presentation.controllers;
 
+import java.lang.StackWalker.Option;
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -18,11 +23,15 @@ import com.lumiere.application.dtos.cart.command.remove.RemoveCartInput;
 import com.lumiere.application.dtos.cart.command.remove.RemoveCartOutput;
 import com.lumiere.application.dtos.cart.command.remove.RemoveMultipleItemsRequestData;
 import com.lumiere.application.dtos.cart.command.remove.RemoveSingleItemRequestData;
+import com.lumiere.application.dtos.cart.query.GetCartByIdInput;
+import com.lumiere.application.dtos.cart.query.GetCartByIdOutput;
 import com.lumiere.application.interfaces.cart.IAddCartUseCase;
+import com.lumiere.application.interfaces.cart.IGetCartByIdUseCase;
 import com.lumiere.application.interfaces.cart.IRemoveCartUseCase;
 import com.lumiere.domain.vo.CartItem;
 import com.lumiere.presentation.controllers.base.BaseController;
 import com.lumiere.presentation.routes.Routes;
+import com.lumiere.shared.annotations.logs.Loggable;
 
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
@@ -32,10 +41,32 @@ public class CartController extends BaseController {
 
     private final IAddCartUseCase addCartUseCase;
     private final IRemoveCartUseCase removeCartUseCase;
+    private final IGetCartByIdUseCase getCartByIdUseCase;
 
-    protected CartController(IAddCartUseCase addCartUseCase, IRemoveCartUseCase removeCartUseCase) {
+    protected CartController(IAddCartUseCase addCartUseCase, IRemoveCartUseCase removeCartUseCase,
+            IGetCartByIdUseCase getCartByIdUseCase) {
         this.addCartUseCase = addCartUseCase;
         this.removeCartUseCase = removeCartUseCase;
+        this.getCartByIdUseCase = getCartByIdUseCase;
+    }
+
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
+    @GetMapping(Routes.PRIVATE.CART.GET_CART)
+    public ResponseEntity<GetCartByIdOutput> getCartForUser(@AuthenticationPrincipal UUID userId) {
+        GetCartByIdInput request = new GetCartByIdInput(userId, Optional.empty());
+        GetCartByIdOutput response = getCartByIdUseCase.execute(request);
+
+        return ResponseEntity.ok(response);
+    }
+
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
+    @GetMapping(Routes.PRIVATE.CART.GET_CART + "/{cartId}")
+    public ResponseEntity<GetCartByIdOutput> getCartById(@AuthenticationPrincipal UUID userId,
+            @PathVariable UUID cartId) {
+        GetCartByIdInput request = new GetCartByIdInput(userId, Optional.of(cartId));
+        GetCartByIdOutput response = getCartByIdUseCase.execute(request);
+
+        return ResponseEntity.ok(response);
     }
 
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
