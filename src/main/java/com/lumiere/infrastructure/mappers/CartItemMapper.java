@@ -47,7 +47,6 @@ public abstract class CartItemMapper implements BaseMapper<CartItem, CartItemJpa
         }
 
         @Mapping(target = "product", source = "productId")
-        @Mapping(target = "quantity", source = "quantity")
         public abstract CartItemReadModel toReadModel(CartItem domain);
 
         protected Product map(UUID productId) {
