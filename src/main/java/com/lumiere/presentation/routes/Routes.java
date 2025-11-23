@@ -44,6 +44,7 @@ public final class Routes {
             public static final String REMOVE_MULTIPLE = "/cart/remove-multiple";
             public static final String REMOVE_SINGLE = "/cart/remove-single";
             public static final String GET_CART = "/cart";
+            public static final String DELETE_CART = "/cart/delete-cart";
         }
     }
 }
