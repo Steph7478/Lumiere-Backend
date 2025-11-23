@@ -28,14 +28,6 @@ public abstract class CartItemMapper implements BaseMapper<CartItem, CartItemJpa
         @Mapping(target = "quantity", source = "quantity")
         public abstract CartItem toDomain(CartItemJpaEntity jpaEntity);
 
-        @Mapping(target = "product", source = "productId")
-        @Mapping(target = "quantity", source = "quantity")
-        public abstract CartItemReadModel toReadModel(CartItem domain);
-
-        protected CartItemReadModel fullProduct(Product product, Integer quantity) {
-                return new CartItemReadModel(product, quantity);
-        }
-
         public CartItemJpaEntity toJpa(CartItem domain) {
                 return createItem(domain);
         }
@@ -50,6 +42,17 @@ public abstract class CartItemMapper implements BaseMapper<CartItem, CartItemJpa
                 return new CartItemJpaEntity(domainItem.getId(), null, productJpa, domainItem.getQuantity());
         }
 
+        public UUID map(ProductJpaEntity productJpa) {
+                return productJpa != null ? productJpa.getId() : null;
+        }
+
+        @Mapping(target = "product", source = "productId")
+        public abstract CartItemReadModel toReadModel(CartItem domain);
+
+        protected CartItemReadModel fullProduct(Product product, Integer quantity) {
+                return new CartItemReadModel(product, quantity);
+        }
+
         protected Product map(UUID productId) {
                 ProductJpaEntity productJpa = productJpaRepository
                                 .findById(productId)
@@ -57,7 +60,4 @@ public abstract class CartItemMapper implements BaseMapper<CartItem, CartItemJpa
                 return productMapper.toDomain(productJpa);
         }
 
-        public UUID map(ProductJpaEntity productJpa) {
-                return productJpa != null ? productJpa.getId() : null;
-        }
 }

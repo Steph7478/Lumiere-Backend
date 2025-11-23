@@ -22,7 +22,7 @@ public class OrderItemJpaEntity extends BaseJpaEntity implements Serializable {
 
     @ManyToOne
     @JoinColumn(name = "product_id", nullable = false)
-    private ProductJpaEntity productId;
+    private ProductJpaEntity product;
 
     @ManyToOne
     @JoinColumn(name = "order_id", nullable = false)
@@ -37,11 +37,11 @@ public class OrderItemJpaEntity extends BaseJpaEntity implements Serializable {
     @Column(nullable = false)
     private BigDecimal unitPrice;
 
-    public OrderItemJpaEntity(UUID id, OrderJpaEntity order, ProductJpaEntity productId, String name, int quantity,
+    public OrderItemJpaEntity(UUID id, OrderJpaEntity order, ProductJpaEntity product, String name, int quantity,
             BigDecimal unitPrice) {
         super(id);
         this.order = order;
-        this.productId = productId;
+        this.product = product;
         this.name = name;
         this.quantity = quantity;
         this.unitPrice = unitPrice;

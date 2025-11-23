@@ -58,4 +58,8 @@ public class OrderItem extends ValueObject {
     public BigDecimal calculateSubtotal() {
         return unitPrice.multiply(BigDecimal.valueOf(quantity));
     }
+
+    public UUID getId() {
+        return UUID.randomUUID();
+    }
 }
