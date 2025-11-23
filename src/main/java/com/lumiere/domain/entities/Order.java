@@ -1,9 +1,10 @@
 package com.lumiere.domain.entities;
 
 import java.math.BigDecimal;
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.UUID;
 
 import com.lumiere.domain.entities.base.BaseEntity;
@@ -30,8 +31,6 @@ public class Order extends BaseEntity {
         this.coupon = coupon;
     }
 
-    // Getters
-
     public User getUser() {
         return user;
     }
@@ -53,7 +52,22 @@ public class Order extends BaseEntity {
     }
 
     public List<OrderItem> getItems() {
-        return Collections.unmodifiableList(items);
+        return items;
+    }
+
+    public Order removeItem(UUID productId) {
+        List<OrderItem> newItems = new ArrayList<>(this.items);
+
+        Optional<OrderItem> existingItem = newItems.stream()
+                .filter(item -> item.getProductId().equals(productId))
+                .findFirst();
+
+        existingItem.ifPresent(newItems::remove);
+
+        BigDecimal newTotal = calculateTotal(newItems);
+
+        return new Order(getId(), this.user, this.status, this.paymentId,
+                newTotal, newItems, this.coupon);
     }
 
     public Order markAsPaid(UUID paymentId) {
@@ -61,13 +75,18 @@ public class Order extends BaseEntity {
                 this.total, this.items, this.coupon);
     }
 
-    public Order recalculateTotal(BigDecimal newTotal) {
-        return new Order(getId(), this.user, this.status, this.paymentId,
-                Objects.requireNonNull(newTotal, "total cannot be null"), this.items, this.coupon);
+    private BigDecimal calculateTotal(List<OrderItem> items) {
+        if (items == null || items.isEmpty()) {
+            return BigDecimal.ZERO;
+        }
+        return items.stream()
+                .map(OrderItem::calculateSubtotal)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 
-    public static Order createOrder(Cart cart, BigDecimal total) {
-        throw new UnsupportedOperationException(
-                "Order factory method requires User object and OrderItems, not just Cart.");
+    public static Order createOrder(UUID id, User user, Status status, UUID paymentId, BigDecimal total,
+            List<OrderItem> items,
+            String coupon) {
+        return new Order(id, user, status, paymentId, total, items, coupon);
     }
 }
