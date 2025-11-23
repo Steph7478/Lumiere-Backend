@@ -5,6 +5,7 @@ import java.util.UUID;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
+import org.mapstruct.ReportingPolicy;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.lumiere.application.exceptions.product.ProductNotFoundException;
@@ -17,7 +18,7 @@ import com.lumiere.infrastructure.persistence.jpa.entities.OrderItemJpaEntity;
 import com.lumiere.infrastructure.persistence.jpa.entities.ProductJpaEntity;
 import com.lumiere.infrastructure.persistence.jpa.repositories.product.ProductJpaRepository;
 
-@Mapper(componentModel = "spring", uses = { ProductMapper.class })
+@Mapper(componentModel = "spring", uses = { ProductMapper.class }, unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public abstract class OrderItemMapper implements BaseMapper<OrderItem, OrderItemJpaEntity> {
 
     @Autowired
