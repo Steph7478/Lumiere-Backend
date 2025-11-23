@@ -1,6 +1,8 @@
 package com.lumiere.infrastructure.mappers;
 
 import com.lumiere.application.exceptions.product.ProductNotFoundException;
+import com.lumiere.domain.entities.Product;
+import com.lumiere.domain.readmodels.CartItemReadModel;
 import com.lumiere.domain.vo.CartItem;
 import com.lumiere.infrastructure.mappers.base.BaseMapper;
 import com.lumiere.infrastructure.persistence.jpa.entities.CartItemJpaEntity;
@@ -42,5 +44,16 @@ public abstract class CartItemMapper implements BaseMapper<CartItem, CartItemJpa
 
         public UUID map(ProductJpaEntity productJpa) {
                 return productJpa != null ? productJpa.getId() : null;
+        }
+
+        @Mapping(target = "product", source = "productId")
+        @Mapping(target = "quantity", source = "quantity")
+        public abstract CartItemReadModel toReadModel(CartItem domain);
+
+        protected Product map(UUID productId) {
+                ProductJpaEntity productJpa = productJpaRepository
+                                .findById(productId)
+                                .orElseThrow(() -> new ProductNotFoundException(productId));
+                return productMapper.toDomain(productJpa);
         }
 }
