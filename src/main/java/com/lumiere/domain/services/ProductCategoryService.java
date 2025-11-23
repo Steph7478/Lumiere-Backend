@@ -7,7 +7,7 @@ import com.lumiere.domain.enums.CategoriesEnum.Category;
 import com.lumiere.domain.enums.CategoriesEnum.SubCategory;
 import com.lumiere.domain.factories.ProductCategoryFactory;
 
-public class ProductCategoryService {
+public abstract class ProductCategoryService {
     private ProductCategoryService() {
     }
 

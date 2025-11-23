@@ -7,10 +7,7 @@ import com.lumiere.infrastructure.config.security.utils.PasswordHasher;
 import java.util.Optional;
 import java.util.UUID;
 
-public class AuthService {
-
-    private AuthService() {
-    }
+public abstract class AuthService {
 
     public static Auth createAuth(String name, String email, String rawPassword, boolean isAdmin) {
         String hashed = PasswordHasher.hash(rawPassword);

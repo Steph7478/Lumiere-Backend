@@ -7,9 +7,7 @@ import com.lumiere.domain.factories.ProductFactory;
 import com.lumiere.domain.vo.Money;
 import com.lumiere.domain.vo.Stock;
 
-public class ProductService {
-    private ProductService() {
-    }
+public abstract class ProductService {
 
     public static Product createProduct(
             String name,

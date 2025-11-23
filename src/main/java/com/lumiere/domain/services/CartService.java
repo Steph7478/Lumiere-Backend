@@ -7,7 +7,7 @@ import com.lumiere.domain.entities.User;
 import com.lumiere.domain.factories.CartFactory;
 import com.lumiere.domain.vo.CartItem;
 
-public class CartService {
+public abstract class CartService {
 
     public static Cart addProducts(Cart cart, List<CartItem> items) {
         if (items == null || items.isEmpty())

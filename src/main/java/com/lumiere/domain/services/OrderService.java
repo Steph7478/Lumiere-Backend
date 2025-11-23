@@ -8,7 +8,7 @@ import com.lumiere.domain.entities.User;
 import com.lumiere.domain.factories.OrderFactory;
 import com.lumiere.domain.vo.OrderItem;
 
-public class OrderService {
+public abstract class OrderService {
 
     public static Order createOrder(User user, List<OrderItem> items) {
         return OrderFactory.create(null, user, items, null);
