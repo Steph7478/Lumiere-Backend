@@ -3,6 +3,7 @@ package com.lumiere.infrastructure.mappers;
 import java.util.List;
 import java.util.Objects;
 
+import org.mapstruct.EnumMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
@@ -27,6 +28,7 @@ public abstract class OrderMapper implements BaseMapper<Order, OrderJpaEntity> {
     @Mapping(target = "id", source = "id")
     @Mapping(target = "user", source = "user")
     @Mapping(target = "status", source = "status")
+    @EnumMapping(nameTransformationStrategy = "case", configuration = "IDENTITY")
     @Mapping(target = "paymentId", source = "paymentId")
     @Mapping(target = "total", source = "total")
     @Mapping(target = "items", source = "items")

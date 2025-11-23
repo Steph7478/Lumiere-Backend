@@ -1,6 +1,5 @@
 package com.lumiere.infrastructure.mappers;
 
-import java.math.BigDecimal;
 import java.util.UUID;
 
 import org.mapstruct.Mapper;
@@ -11,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.lumiere.application.exceptions.product.ProductNotFoundException;
 import com.lumiere.domain.entities.Product;
 import com.lumiere.domain.readmodels.OrderItemReadModel;
+import com.lumiere.domain.vo.CartItem;
 import com.lumiere.domain.vo.OrderItem;
 import com.lumiere.infrastructure.mappers.base.BaseMapper;
 import com.lumiere.infrastructure.persistence.jpa.entities.OrderItemJpaEntity;
@@ -51,11 +51,7 @@ public abstract class OrderItemMapper implements BaseMapper<OrderItem, OrderItem
     }
 
     @Mapping(target = "product", source = "productId")
-    public abstract OrderItemReadModel toReadModel(OrderItem domain);
-
-    public OrderItemReadModel fullProduct(Product product, String name, int quantity, BigDecimal unitPrice) {
-        return new OrderItemReadModel(product, name, quantity, unitPrice);
-    }
+    public abstract OrderItemReadModel toReadModel(CartItem domain);
 
     protected Product map(UUID productId) {
         ProductJpaEntity productJpa = productJpaRepository
