@@ -10,7 +10,7 @@ import com.lumiere.application.dtos.cart.query.GetCartByIdOutput;
 import com.lumiere.application.exceptions.auth.UserNotFoundException;
 import com.lumiere.application.exceptions.cart.CartNotFoundException;
 import com.lumiere.application.interfaces.cart.IGetCartByIdUseCase;
-import com.lumiere.application.mappers.cart.GetCartMapper;
+import com.lumiere.application.mappers.cart.CartReadModelMapper;
 import com.lumiere.domain.entities.Cart;
 import com.lumiere.domain.entities.User;
 import com.lumiere.domain.readmodels.CartReadModel;
@@ -23,12 +23,13 @@ import jakarta.transaction.Transactional;
 public class GetCartByIdUseCase implements IGetCartByIdUseCase {
 
     private final CartRepository cartRepo;
-    private final GetCartMapper cartMapper;
+    private final CartReadModelMapper readModelMapper;
     private final UserRepository userRepo;
 
-    protected GetCartByIdUseCase(CartRepository cartRepo, GetCartMapper cartMapper, UserRepository userRepo) {
+    protected GetCartByIdUseCase(CartRepository cartRepo, CartReadModelMapper readModelMapper,
+            UserRepository userRepo) {
         this.cartRepo = cartRepo;
-        this.cartMapper = cartMapper;
+        this.readModelMapper = readModelMapper;
         this.userRepo = userRepo;
     }
 
@@ -41,7 +42,7 @@ public class GetCartByIdUseCase implements IGetCartByIdUseCase {
         Optional<Cart> cart = cartId != null ? cartRepo.findById(cartId)
                 : cartRepo.findCartByUserId(user.getId());
 
-        CartReadModel finalCart = cartMapper.toDTO(cart.orElseThrow(CartNotFoundException::new));
+        CartReadModel finalCart = readModelMapper.toReadModel(cart.orElseThrow(CartNotFoundException::new));
 
         return new GetCartByIdOutput(finalCart);
     }

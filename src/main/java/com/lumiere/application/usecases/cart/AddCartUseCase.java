@@ -5,6 +5,7 @@ import com.lumiere.application.dtos.cart.command.add.AddCartOuput;
 import com.lumiere.application.exceptions.auth.UserNotFoundException;
 import com.lumiere.application.interfaces.cart.IAddCartUseCase;
 import com.lumiere.application.mappers.cart.AddCartReadModel;
+import com.lumiere.application.mappers.cart.CartReadModelMapper;
 import com.lumiere.domain.entities.Cart;
 import com.lumiere.domain.entities.User;
 import com.lumiere.domain.readmodels.CartReadModel;
@@ -24,12 +25,14 @@ public class AddCartUseCase implements IAddCartUseCase {
         private final UserRepository userRepo;
         private final CartRepository cartRepo;
         private final AddCartReadModel cartMapper;
+        private final CartReadModelMapper readModelMapper;
 
         public AddCartUseCase(UserRepository userRepo, CartRepository cartRepo,
-                        AddCartReadModel cartReadModelMapper) {
+                        AddCartReadModel cartReadModelMapper, CartReadModelMapper readModelMapper) {
                 this.userRepo = userRepo;
                 this.cartRepo = cartRepo;
                 this.cartMapper = cartReadModelMapper;
+                this.readModelMapper = readModelMapper;
         }
 
         @Override
@@ -47,7 +50,7 @@ public class AddCartUseCase implements IAddCartUseCase {
                                 ? cartRepo.update(finalCart)
                                 : cartRepo.save(finalCart);
 
-                CartReadModel cartReadModel = cartMapper.toDTO(finalCart);
+                CartReadModel cartReadModel = readModelMapper.toReadModel(finalCart);
 
                 return new AddCartOuput(cartReadModel);
         }
