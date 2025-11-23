@@ -55,6 +55,11 @@ public class Order extends BaseEntity {
         return items;
     }
 
+    public Order useCoupon(String coupon) {
+        return new Order(getId(), this.user, this.status, this.paymentId,
+                this.total, this.items, coupon);
+    }
+
     public Order removeItem(UUID productId) {
         List<OrderItem> newItems = new ArrayList<>(this.items);
 
@@ -75,7 +80,7 @@ public class Order extends BaseEntity {
                 this.total, this.items, this.coupon);
     }
 
-    private BigDecimal calculateTotal(List<OrderItem> items) {
+    private static BigDecimal calculateTotal(List<OrderItem> items) {
         if (items == null || items.isEmpty()) {
             return BigDecimal.ZERO;
         }
@@ -84,9 +89,11 @@ public class Order extends BaseEntity {
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 
-    public static Order createOrder(UUID id, User user, Status status, UUID paymentId, BigDecimal total,
+    public static Order createOrder(UUID id, User user, Status status, UUID paymentId,
             List<OrderItem> items,
             String coupon) {
-        return new Order(id, user, status, paymentId, total, items, coupon);
+
+        BigDecimal calculatedTotal = calculateTotal(items);
+        return new Order(id, user, status, paymentId, calculatedTotal, items, coupon);
     }
 }
