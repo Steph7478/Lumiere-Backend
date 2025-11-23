@@ -1,12 +1,10 @@
 package com.lumiere.application.mappers.cart;
 
-import com.lumiere.application.dtos.cart.command.add.AddCartInput;
 import com.lumiere.application.mappers.base.BaseMapper;
 import com.lumiere.domain.entities.Cart;
 import com.lumiere.domain.readmodels.CartReadModel;
 import com.lumiere.infrastructure.mappers.CartItemMapper;
 
-import org.mapstruct.InheritInverseConfiguration;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.ReportingPolicy;
