@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.UUID;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -14,6 +15,7 @@ import com.lumiere.application.dtos.order.command.create.CreateOrderOutput;
 import com.lumiere.application.dtos.order.command.create.CreateOrderRequestData;
 import com.lumiere.application.interfaces.order.ICreateOrderUseCase;
 import com.lumiere.presentation.controllers.base.BaseController;
+import com.lumiere.presentation.routes.Routes;
 
 import jakarta.validation.Valid;
 
@@ -26,7 +28,8 @@ public class OrderController extends BaseController {
         this.createOrderUseCase = createOrderUseCase;
     }
 
-    @PostMapping()
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
+    @PostMapping(Routes.PRIVATE.ORDER.ORDER_CREATE)
     public ResponseEntity<CreateOrderOutput> createOrder(@AuthenticationPrincipal UUID userId,
             @RequestBody @Valid List<CreateOrderRequestData> requestData) {
         CreateOrderInput request = new CreateOrderInput(userId, requestData);
