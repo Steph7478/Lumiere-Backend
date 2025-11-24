@@ -46,5 +46,10 @@ public final class Routes {
             public static final String GET_CART = "/cart";
             public static final String DELETE_CART = "/cart/delete-cart";
         }
+
+        public static final class ORDER {
+            public static final String ORDER_CREATE = "/order/create";
+
+        }
     }
 }

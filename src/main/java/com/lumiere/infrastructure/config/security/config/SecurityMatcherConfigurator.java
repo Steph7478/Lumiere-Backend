@@ -40,6 +40,9 @@ public final class SecurityMatcherConfigurator {
                     api + Routes.PRIVATE.ADMIN.DECREASE_STOCK + "/**",
                     api + Routes.PRIVATE.ADMIN.UPDATE_PRICE + "/**",
 
+                    // ORDER
+                    api + Routes.PRIVATE.ORDER.ORDER_CREATE,
+
                     // CART
                     api + Routes.PRIVATE.CART.DELETE_CART,
                     api + Routes.PRIVATE.CART.GET_CART + "/**",
