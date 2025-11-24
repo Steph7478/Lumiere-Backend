@@ -21,10 +21,9 @@ public class OrderItem extends ValueObject {
         this.name = Objects.requireNonNull(name, "Name cannot be null");
         this.unitPrice = Objects.requireNonNull(unitPrice, "Unit Price cannot be null");
         this.currency = Objects.requireNonNull(currency, "Currency cannot be null");
+        this.quantity = quantity;
 
         validate();
-
-        this.quantity = quantity;
     }
 
     @Override
