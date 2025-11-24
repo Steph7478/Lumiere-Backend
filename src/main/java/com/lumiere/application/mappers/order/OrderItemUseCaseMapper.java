@@ -8,7 +8,7 @@ import com.lumiere.domain.entities.Product;
 import com.lumiere.domain.vo.OrderItem;
 
 @Mapper(componentModel = "spring")
-public interface OrderItemMapper {
+public interface OrderItemUseCaseMapper {
 
     @Mapping(source = "product.id", target = "productId")
     @Mapping(source = "product.name", target = "name")
