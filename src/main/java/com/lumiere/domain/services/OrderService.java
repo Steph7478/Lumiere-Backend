@@ -11,7 +11,7 @@ import com.lumiere.domain.vo.OrderItem;
 public abstract class OrderService {
 
     public static Order createOrder(User user, List<OrderItem> items) {
-        return OrderFactory.create(null, user, items, null);
+        return OrderFactory.create(user, items, null);
     }
 
     public static Order removeProduct(Order order, UUID productId) {

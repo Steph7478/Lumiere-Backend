@@ -24,14 +24,13 @@ public class OrderFactory {
     }
 
     public static Order create(
-            UUID id,
             User user,
             List<OrderItem> items,
             String coupon) {
 
         BigDecimal calculatedTotal = calculateTotal(items);
 
-        return new Order(id, user, Status.IN_PROGRESS, null, calculatedTotal, items, coupon);
+        return new Order(null, user, Status.IN_PROGRESS, null, calculatedTotal, items, coupon);
     }
 
     private static BigDecimal calculateTotal(List<OrderItem> items) {
