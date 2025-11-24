@@ -1,5 +1,6 @@
 package com.lumiere.infrastructure.mappers;
 
+import org.mapstruct.Context;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.ObjectFactory;
@@ -7,6 +8,7 @@ import org.mapstruct.ReportingPolicy;
 import org.mapstruct.TargetType;
 import org.mapstruct.factory.Mappers;
 
+import com.lumiere.application.exceptions.product.ProductNotFoundException;
 import com.lumiere.domain.entities.Product;
 import com.lumiere.domain.entities.ProductCategory;
 import com.lumiere.domain.enums.CurrencyEnum.CurrencyType;
@@ -16,6 +18,7 @@ import com.lumiere.domain.vo.Money;
 import com.lumiere.domain.vo.Stock;
 import com.lumiere.infrastructure.mappers.base.BaseMapper;
 import com.lumiere.infrastructure.persistence.jpa.entities.ProductJpaEntity;
+import com.lumiere.infrastructure.persistence.jpa.repositories.product.ProductJpaRepository;
 import com.lumiere.domain.enums.CategoriesEnum.Category;
 import com.lumiere.domain.enums.CategoriesEnum.SubCategory;
 
@@ -36,11 +39,12 @@ import java.util.stream.Collectors;
                 BigDecimal.class,
                 List.class,
                 Collectors.class,
-                RatingMapper.class
+                ProductJpaEntity.class,
+                ProductNotFoundException.class
 }, unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface ProductMapper extends BaseMapper<Product, ProductJpaEntity> {
 
-        ProductMapper INSTANCE = Mappers.getMapper(ProductMapper.class);
+        public static final ProductMapper INSTANCE = Mappers.getMapper(ProductMapper.class);
 
         @Mapping(target = "priceAmount", source = "price.amount")
         @Mapping(target = "priceCurrency", expression = "java(domain.getPrice().getCurrency().name())")
@@ -62,6 +66,13 @@ public interface ProductMapper extends BaseMapper<Product, ProductJpaEntity> {
         @Mapping(target = "ratings", source = "ratings")
         Product toDomain(ProductJpaEntity jpaEntity);
 
+        default Product map(UUID productId, @Context ProductJpaRepository productJpaRepository) {
+                ProductJpaEntity jpaEntity = productJpaRepository
+                                .findById(productId)
+                                .orElseThrow(() -> new ProductNotFoundException(productId));
+                return toDomain(jpaEntity);
+        }
+
         @ObjectFactory
         default Product createProduct(ProductJpaEntity jpaEntity, @TargetType Class<Product> targetType) {
                 Money price = new Money(jpaEntity.getPriceAmount(), CurrencyType.valueOf(jpaEntity.getPriceCurrency()));
@@ -75,5 +86,4 @@ public interface ProductMapper extends BaseMapper<Product, ProductJpaEntity> {
                                 null,
                                 stock);
         }
-
 }

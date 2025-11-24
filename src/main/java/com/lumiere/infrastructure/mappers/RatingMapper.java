@@ -15,6 +15,11 @@ public interface RatingMapper extends BaseMapper<Rating, RatingJpaEntity> {
     @Mapping(target = "comment", source = "comment")
     RatingJpaEntity toJpa(Rating domain);
 
+    @Override
+    default RatingJpaEntity toJpa(Rating domain, Object... context) {
+        return toJpa(domain);
+    }
+
     Rating toDomain(RatingJpaEntity jpaEntity);
 
     @ObjectFactory

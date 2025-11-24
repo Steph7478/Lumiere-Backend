@@ -15,16 +15,20 @@ import org.mapstruct.Mapping;
 import org.mapstruct.ObjectFactory;
 import org.mapstruct.ReportingPolicy;
 import org.mapstruct.TargetType;
+import org.mapstruct.Context;
 
 @Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface UserMapper extends BaseMapper<User, UserJpaEntity> {
+
+    @Override
     @Mapping(target = "auth.id", source = "auth.id")
     @Mapping(target = "auth.name", source = "auth.name")
     @Mapping(target = "auth.email", source = "auth.email")
     @Mapping(target = "auth.password", source = "auth.passwordHash")
     @Mapping(target = "auth.isAdmin", source = "auth.admin")
-    UserJpaEntity toJpa(User domain);
+    UserJpaEntity toJpa(User domain, @Context Object... ctx);
 
+    @Override
     @Mapping(target = "auth", ignore = true)
     User toDomain(UserJpaEntity jpaEntity);
 
@@ -45,7 +49,7 @@ public interface UserMapper extends BaseMapper<User, UserJpaEntity> {
                 jpaEntity.getName(),
                 jpaEntity.getEmail(),
                 "**hidden**",
-                jpaEntity.getIsAdmin() != null && jpaEntity.getIsAdmin(),
+                Boolean.TRUE.equals(jpaEntity.getIsAdmin()),
                 UUID.fromString("00000000-0000-0000-0000-000000000000"));
     }
 }
