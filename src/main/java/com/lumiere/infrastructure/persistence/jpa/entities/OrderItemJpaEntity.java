@@ -4,10 +4,9 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.UUID;
 
-import com.lumiere.infrastructure.persistence.jpa.entities.base.BaseJpaEntity;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
@@ -18,7 +17,10 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 @Table(name = "order_item")
-public class OrderItemJpaEntity extends BaseJpaEntity implements Serializable {
+public class OrderItemJpaEntity implements Serializable {
+
+    @Id
+    private UUID id;
 
     @ManyToOne
     @JoinColumn(name = "product_id", nullable = false)
@@ -39,7 +41,7 @@ public class OrderItemJpaEntity extends BaseJpaEntity implements Serializable {
 
     public OrderItemJpaEntity(UUID id, OrderJpaEntity order, ProductJpaEntity product, String name, int quantity,
             BigDecimal unitPrice) {
-        super(id);
+        this.id = id;
         this.order = order;
         this.product = product;
         this.name = name;
