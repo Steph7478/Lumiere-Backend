@@ -7,13 +7,14 @@ import jakarta.persistence.PrePersist;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
 @EqualsAndHashCode(of = "id")
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @MappedSuperclass
 public abstract class BaseJpaEntity {
 
