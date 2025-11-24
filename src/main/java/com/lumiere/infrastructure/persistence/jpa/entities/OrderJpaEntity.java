@@ -53,6 +53,7 @@ public class OrderJpaEntity extends BaseJpaEntity implements Serializable {
         this.coupon = coupon;
 
         if (items != null) {
+            this.items.addAll(items);
             for (OrderItemJpaEntity item : this.items) {
                 item.setOrderReference(this);
             }
