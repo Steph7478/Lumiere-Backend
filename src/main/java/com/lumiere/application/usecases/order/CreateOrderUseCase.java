@@ -43,7 +43,7 @@ public class CreateOrderUseCase implements ICreateOrderUseCase {
     public CreateOrderOutput execute(CreateOrderInput input) {
         User user = userRepo.findUserByAuthId(input.authId()).orElseThrow(UserNotFoundException::new);
 
-        List<OrderItem> orderItems = input.requestData().stream()
+        List<OrderItem> orderItems = input.requestData().items().stream()
                 .map(itemRequestData -> {
                     Product product = productRepo.findById(itemRequestData.productId())
                             .orElseThrow(() -> new ProductNotFoundException(itemRequestData.productId()));
