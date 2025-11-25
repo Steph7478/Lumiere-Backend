@@ -41,6 +41,7 @@ public abstract class OrderMapper implements BaseMapper<Order, OrderJpaEntity> {
         @Mapping(target = "total", source = "total")
         @Mapping(target = "items", source = "items")
         @Mapping(target = "coupon", source = "coupon")
+        @Mapping(target = "currency", source = "currency")
         public abstract Order toDomain(OrderJpaEntity jpaEntity);
 
         @Mapping(target = "items", ignore = true)
@@ -49,6 +50,7 @@ public abstract class OrderMapper implements BaseMapper<Order, OrderJpaEntity> {
         @Mapping(target = "paymentId", source = "domain.paymentId")
         @Mapping(target = "coupon", source = "domain.coupon")
         @Mapping(target = "id", source = "domain.id")
+        @Mapping(target = "currency", expression = "java(domain.getCurrency().name())")
         public abstract OrderJpaEntity mapToJpa(Order domain);
 
         @AfterMapping
@@ -81,5 +83,6 @@ public abstract class OrderMapper implements BaseMapper<Order, OrderJpaEntity> {
         @Mapping(target = "total", source = "total")
         @Mapping(target = "items", source = "items")
         @Mapping(target = "coupon", source = "coupon")
+        @Mapping(target = "currency", source = "currency")
         public abstract OrderReadModel toReadModel(Order order);
 }

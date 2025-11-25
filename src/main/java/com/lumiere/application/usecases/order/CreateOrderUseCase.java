@@ -12,6 +12,7 @@ import com.lumiere.application.interfaces.order.ICreateOrderUseCase;
 import com.lumiere.domain.entities.Order;
 import com.lumiere.domain.entities.Product;
 import com.lumiere.domain.entities.User;
+import com.lumiere.domain.enums.CurrencyEnum.CurrencyType;
 import com.lumiere.domain.repositories.OrderRepository;
 import com.lumiere.domain.repositories.ProductRepository;
 import com.lumiere.domain.repositories.UserRepository;
@@ -42,17 +43,18 @@ public class CreateOrderUseCase implements ICreateOrderUseCase {
     @Override
     public CreateOrderOutput execute(CreateOrderInput input) {
         User user = userRepo.findUserByAuthId(input.authId()).orElseThrow(UserNotFoundException::new);
+        CurrencyType currency = input.requestData().currency();
 
         List<OrderItem> orderItems = input.requestData().items().stream()
                 .map(itemRequestData -> {
                     Product product = productRepo.findById(itemRequestData.productId())
                             .orElseThrow(() -> new ProductNotFoundException(itemRequestData.productId()));
 
-                    return orderItemMapper.toOrderItem(product, itemRequestData);
+                    return orderItemMapper.toOrderItem(product, itemRequestData, currency);
                 })
                 .toList();
 
-        Order order = OrderService.createOrder(user, orderItems);
+        Order order = OrderService.createOrder(user, orderItems, currency);
         orderRepo.save(order);
 
         return new CreateOrderOutput(orderReadModel.toReadModel(order));

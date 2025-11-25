@@ -1,8 +1,7 @@
 package com.lumiere.domain.readmodels;
 
 import java.math.BigDecimal;
+import java.util.UUID;
 
-import com.lumiere.domain.entities.Product;
-
-public record OrderItemReadModel(Product product, String name, int quantity, BigDecimal unitPrice) {
+public record OrderItemReadModel(UUID productId, String name, int quantity, BigDecimal unitPrice, String currency) {
 }

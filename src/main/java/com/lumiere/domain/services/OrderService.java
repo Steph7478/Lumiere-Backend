@@ -5,13 +5,14 @@ import java.util.UUID;
 
 import com.lumiere.domain.entities.Order;
 import com.lumiere.domain.entities.User;
+import com.lumiere.domain.enums.CurrencyEnum.CurrencyType;
 import com.lumiere.domain.factories.OrderFactory;
 import com.lumiere.domain.vo.OrderItem;
 
 public abstract class OrderService {
 
-    public static Order createOrder(User user, List<OrderItem> items) {
-        return OrderFactory.create(UUID.randomUUID(), user, items, null);
+    public static Order createOrder(User user, List<OrderItem> items, CurrencyType currency) {
+        return OrderFactory.create(UUID.randomUUID(), user, items, null, currency);
     }
 
     public static Order removeProduct(Order order, UUID productId) {

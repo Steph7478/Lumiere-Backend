@@ -8,6 +8,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import com.lumiere.domain.entities.base.BaseEntity;
+import com.lumiere.domain.enums.CurrencyEnum.CurrencyType;
 import com.lumiere.domain.enums.StatusEnum.Status;
 import com.lumiere.domain.vo.OrderItem;
 
@@ -18,10 +19,11 @@ public class Order extends BaseEntity {
     private final UUID paymentId;
     private final String coupon;
     private final BigDecimal total;
+    private final CurrencyType currency;
     private final List<OrderItem> items;
 
     public Order(UUID id, User user, Status status, UUID paymentId, BigDecimal total, List<OrderItem> items,
-            String coupon) {
+            String coupon, CurrencyType currency) {
         super(id);
         this.user = Objects.requireNonNull(user, "User cannot be null");
         this.status = status != null ? status : Status.IN_PROGRESS;
@@ -29,6 +31,7 @@ public class Order extends BaseEntity {
         this.total = Objects.requireNonNull(total, "total cannot be null");
         this.items = Objects.requireNonNull(items, "Order items cannot be null");
         this.coupon = coupon;
+        this.currency = Objects.requireNonNull(currency, "Currency cannot be null");
     }
 
     public User getUser() {
@@ -51,13 +54,17 @@ public class Order extends BaseEntity {
         return coupon;
     }
 
+    public CurrencyType getCurrency() {
+        return currency;
+    }
+
     public List<OrderItem> getItems() {
         return items;
     }
 
     public Order useCoupon(String coupon) {
         return new Order(getId(), this.user, this.status, this.paymentId,
-                this.total, this.items, coupon);
+                this.total, this.items, coupon, this.currency);
     }
 
     public Order removeItem(UUID productId) {
@@ -72,12 +79,12 @@ public class Order extends BaseEntity {
         BigDecimal newTotal = calculateTotal(newItems);
 
         return new Order(getId(), this.user, this.status, this.paymentId,
-                newTotal, newItems, this.coupon);
+                newTotal, newItems, this.coupon, this.currency);
     }
 
     public Order markAsPaid(UUID paymentId) {
         return new Order(getId(), this.user, Status.PAID, Objects.requireNonNull(paymentId, "paymentId cannot be null"),
-                this.total, this.items, this.coupon);
+                this.total, this.items, this.coupon, this.currency);
     }
 
     private static BigDecimal calculateTotal(List<OrderItem> items) {
