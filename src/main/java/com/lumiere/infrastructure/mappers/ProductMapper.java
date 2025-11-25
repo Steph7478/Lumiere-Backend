@@ -2,9 +2,7 @@ package com.lumiere.infrastructure.mappers;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import org.mapstruct.ObjectFactory;
 import org.mapstruct.ReportingPolicy;
-import org.mapstruct.TargetType;
 
 import com.lumiere.domain.entities.Product;
 import com.lumiere.domain.entities.ProductCategory;
@@ -15,44 +13,24 @@ import com.lumiere.domain.vo.Money;
 import com.lumiere.domain.vo.Stock;
 import com.lumiere.infrastructure.mappers.base.BaseMapper;
 import com.lumiere.infrastructure.persistence.jpa.entities.ProductJpaEntity;
-import com.lumiere.domain.enums.CategoriesEnum.Category;
-import com.lumiere.domain.enums.CategoriesEnum.SubCategory;
-
-import java.math.BigDecimal;
-import java.util.Collections;
-import java.util.List;
-import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Mapper(componentModel = "spring", uses = { RatingMapper.class }, imports = {
                 Money.class,
                 Stock.class,
                 CurrencyType.class,
-                Collections.class,
-                UUID.class,
-                Category.class,
-                SubCategory.class,
-                BigDecimal.class,
-                List.class,
-                Collectors.class,
-                RatingMapper.class
+                ProductFactory.class
 }, unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface ProductMapper extends BaseMapper<Product, ProductJpaEntity> {
 
-        @ObjectFactory
-        default ProductJpaEntity toJpa(Product domain, @TargetType Class<ProductJpaEntity> targetType) {
-                return new ProductJpaEntity(
-                                domain.getId(),
-                                domain.getName(),
-                                domain.getDescription(),
-                                domain.getPrice().getAmount(),
-                                domain.getPrice().getCurrency().name(),
-                                domain.getStock().getQuantity());
-        };
+        @Mapping(target = "priceAmount", expression = "java(domain.getPrice().getAmount())")
+        @Mapping(target = "priceCurrency", expression = "java(domain.getPrice().getCurrency().name())")
+        @Mapping(target = "stockQuantity", expression = "java(domain.getStock().getQuantity())")
+        ProductJpaEntity toJpa(Product domain, Object... context);
 
         @Mapping(target = "category", expression = "java(nosqlCategory != null ? nosqlCategory.getCategory() : null)")
         @Mapping(target = "subCategory", expression = "java(nosqlCategory != null ? nosqlCategory.getSubcategory() : null)")
         @Mapping(target = "stock", source = "jpaEntity.stockQuantity")
+        @Mapping(target = "price", expression = "java(new Money(jpaEntity.getPriceAmount(), CurrencyType.valueOf(jpaEntity.getPriceCurrency())))")
         @Mapping(target = "id", source = "jpaEntity.id")
         @Mapping(target = "name", source = "jpaEntity.name")
         @Mapping(target = "ratings", source = "jpaEntity.ratings")
@@ -60,20 +38,25 @@ public interface ProductMapper extends BaseMapper<Product, ProductJpaEntity> {
         @Mapping(target = "updatedAt", source = "jpaEntity.updatedAt")
         ProductDetailReadModel toReadModel(ProductJpaEntity jpaEntity, ProductCategory nosqlCategory);
 
+        @Mapping(target = "price", expression = "java(new Money(jpaEntity.getPriceAmount(), CurrencyType.valueOf(jpaEntity.getPriceCurrency())))")
+        @Mapping(target = "stock", expression = "java(new Stock(jpaEntity.getStockQuantity()))")
         @Mapping(target = "ratings", source = "ratings")
-        Product toDomain(ProductJpaEntity jpaEntity);
-
-        @ObjectFactory
-        default Product createProduct(ProductJpaEntity jpaEntity, @TargetType Class<Product> targetType) {
-                Money price = new Money(jpaEntity.getPriceAmount(), CurrencyType.valueOf(jpaEntity.getPriceCurrency()));
-                Stock stock = new Stock(jpaEntity.getStockQuantity());
+        @Mapping(target = "id", source = "id")
+        @Mapping(target = "name", source = "name")
+        @Mapping(target = "description", source = "description")
+        @Mapping(target = "createdAt", expression = "java(jpaEntity.getCreatedAt())")
+        @Mapping(target = "updatedAt", expression = "java(jpaEntity.getUpdatedAt())")
+        default Product toDomain(ProductJpaEntity jpaEntity) {
 
                 return ProductFactory.from(
                                 jpaEntity.getId(),
                                 jpaEntity.getName(),
                                 jpaEntity.getDescription(),
-                                price,
+                                new Money(
+                                                jpaEntity.getPriceAmount(),
+                                                CurrencyType.valueOf(jpaEntity.getPriceCurrency())),
                                 null,
-                                stock);
+                                new Stock(jpaEntity.getStockQuantity()));
         }
+
 }
