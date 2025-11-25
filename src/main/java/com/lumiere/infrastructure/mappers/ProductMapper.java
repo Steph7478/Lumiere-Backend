@@ -43,15 +43,13 @@ import java.util.stream.Collectors;
                 ProductNotFoundException.class
 }, unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface ProductMapper extends BaseMapper<Product, ProductJpaEntity> {
-
-        public static final ProductMapper INSTANCE = Mappers.getMapper(ProductMapper.class);
-
         @Mapping(target = "priceAmount", source = "price.amount")
         @Mapping(target = "priceCurrency", expression = "java(domain.getPrice().getCurrency().name())")
         @Mapping(target = "stockQuantity", source = "stock.quantity")
         @Mapping(target = "ratings", source = "ratings")
         @Mapping(target = "createdAt", ignore = true)
         @Mapping(target = "updatedAt", ignore = true)
+        @Mapping(target = "id", ignore = true)
         ProductJpaEntity toJpa(Product domain);
 
         @Mapping(target = "category", expression = "java(nosqlCategory != null ? nosqlCategory.getCategory() : null)")

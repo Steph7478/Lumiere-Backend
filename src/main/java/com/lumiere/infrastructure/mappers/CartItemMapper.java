@@ -1,6 +1,5 @@
 package com.lumiere.infrastructure.mappers;
 
-import com.lumiere.application.exceptions.product.ProductNotFoundException;
 import com.lumiere.domain.entities.Product;
 import com.lumiere.domain.readmodels.CartItemReadModel;
 import com.lumiere.domain.vo.CartItem;
@@ -23,26 +22,21 @@ public interface CartItemMapper extends BaseMapper<CartItem, CartItemJpaEntity> 
         @Named("toDomainWithRepo")
         CartItem toDomain(CartItemJpaEntity jpaEntity, @Context ProductJpaRepository productRepo);
 
-        default CartItemJpaEntity toJpa(CartItem domain, @Context ProductJpaRepository productRepo,
+        @Mapping(target = "product", source = "productId", qualifiedByName = "productIdToProduct")
+        CartItemReadModel toReadModel(CartItem domain, @Context ProductJpaRepository productRepo,
+                        @Context ProductMapper productMapper);
+
+        @Mapping(target = "product", source = "productId", qualifiedByName = "productIdToProduct")
+        default CartItemJpaEntity toJpa(CartItem domain,
                         @Context ProductMapper productMapper) {
-                ProductJpaEntity productJpa = productRepo
-                                .findById(domain.getProductId())
-                                .orElseThrow(() -> new ProductNotFoundException(domain.getProductId()));
-                return new CartItemJpaEntity(domain.getId(), null, productJpa, domain.getQuantity());
+                return new CartItemJpaEntity(domain.getId(), null, null, domain.getQuantity());
         }
 
         @Named("productIdToProduct")
         default Product map(UUID productId, @Context ProductJpaRepository productRepo,
                         @Context ProductMapper productMapper) {
-                ProductJpaEntity productJpa = productRepo
-                                .findById(productId)
-                                .orElseThrow(() -> new ProductNotFoundException(productId));
-                return productMapper.toDomain(productJpa);
+                return productMapper.map(productId, productRepo);
         }
-
-        @Mapping(target = "product", source = "productId", qualifiedByName = "productIdToProduct")
-        CartItemReadModel toReadModel(CartItem domain, @Context ProductJpaRepository productRepo,
-                        @Context ProductMapper productMapper);
 
         default UUID map(ProductJpaEntity productJpa) {
                 return productJpa != null ? productJpa.getId() : null;
