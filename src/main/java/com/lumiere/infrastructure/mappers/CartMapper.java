@@ -1,6 +1,7 @@
 package com.lumiere.infrastructure.mappers;
 
 import com.lumiere.domain.entities.Cart;
+import com.lumiere.domain.vo.CartItem;
 import com.lumiere.infrastructure.mappers.base.BaseMapper;
 import com.lumiere.infrastructure.persistence.jpa.entities.CartItemJpaEntity;
 import com.lumiere.infrastructure.persistence.jpa.entities.CartJpaEntity;
@@ -14,43 +15,43 @@ import org.mapstruct.Named;
 import org.mapstruct.ReportingPolicy;
 import org.mapstruct.Context;
 
+import java.util.UUID;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Mapper(componentModel = "spring", uses = { CartItemMapper.class,
                 UserMapper.class }, unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface CartMapper extends BaseMapper<Cart, CartJpaEntity> {
 
-        @Override
-        @Mapping(target = "user", source = "user")
-        @Mapping(target = "items", source = "items")
-        Cart toDomain(CartJpaEntity jpaEntity);
+        @Mapping(target = "items", source = "items", qualifiedByName = "toDomainWithRepo")
+        Cart toDomain(CartJpaEntity jpaEntity,
+                        @Context CartItemMapper cartItemMapper,
+                        @Context ProductJpaRepository productJpaRepository);
 
-        @Mapping(target = ".", source = "domain", qualifiedByName = "fullCartToJpa")
+        @Mapping(target = "user", source = "domain.user.id", qualifiedByName = "loadUserRef")
+        @Mapping(target = "items", source = "domain.items")
         CartJpaEntity toJpa(
                         Cart domain,
                         @Context CartItemMapper cartItemMapper,
                         @Context UserJpaRepository userJpaRepository,
                         @Context ProductJpaRepository productJpaRepository);
 
-        @Named("fullCartToJpa")
-        default CartJpaEntity mapCartToJpaWithLookups(
-                        Cart domain,
+        @Named("loadUserRef")
+        default UserJpaEntity loadUserReference(UUID userId, @Context UserJpaRepository userJpaRepository) {
+                if (userId == null)
+                        return null;
+                return userJpaRepository.getReferenceById(userId);
+        }
+
+        default List<CartItemJpaEntity> mapCartItems(
+                        List<CartItem> items,
                         @Context CartItemMapper cartItemMapper,
-                        @Context UserJpaRepository userJpaRepository,
                         @Context ProductJpaRepository productJpaRepository) {
+                if (items == null)
+                        return null;
 
-                UserJpaEntity userJpa = userJpaRepository.getReferenceById(
-                                Objects.requireNonNull(domain.getUser().getId()));
-
-                List<CartItemJpaEntity> jpaItems = domain.getItems().stream()
+                return items.stream()
                                 .map(item -> cartItemMapper.toJpa(item, productJpaRepository))
                                 .collect(Collectors.toList());
-
-                return new CartJpaEntity(
-                                domain.getId(),
-                                userJpa,
-                                jpaItems);
         }
 }

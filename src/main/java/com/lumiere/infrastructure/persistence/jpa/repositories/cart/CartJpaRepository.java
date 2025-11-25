@@ -5,6 +5,7 @@ import java.util.UUID;
 
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Repository;
 
 import com.lumiere.infrastructure.persistence.jpa.entities.CartJpaEntity;
@@ -12,6 +13,11 @@ import com.lumiere.infrastructure.persistence.jpa.entities.CartJpaEntity;
 @Repository
 public interface CartJpaRepository extends JpaRepository<CartJpaEntity, UUID> {
 
-    @EntityGraph(attributePaths = { "user" })
+    @EntityGraph(attributePaths = { "user", "items", "items.product" })
     Optional<CartJpaEntity> findByUserId(UUID id);
+
+    @Override
+    @EntityGraph(attributePaths = { "user", "items", "items.product" })
+    @NonNull
+    Optional<CartJpaEntity> findById(@NonNull UUID id);
 }

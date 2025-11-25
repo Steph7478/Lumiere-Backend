@@ -1,6 +1,7 @@
 package com.lumiere.infrastructure.mappers;
 
 import com.lumiere.application.exceptions.product.ProductNotFoundException;
+import com.lumiere.domain.entities.Product;
 import com.lumiere.domain.readmodels.CartItemReadModel;
 import com.lumiere.domain.vo.CartItem;
 import com.lumiere.infrastructure.mappers.base.BaseMapper;
@@ -16,33 +17,34 @@ import org.mapstruct.ReportingPolicy;
 
 import java.util.UUID;
 
-@Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE, uses = { ProductMapper.class })
+@Mapper(componentModel = "spring", uses = { ProductMapper.class }, unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface CartItemMapper extends BaseMapper<CartItem, CartItemJpaEntity> {
 
-        @Mapping(target = "productId", source = "product")
-        @Mapping(target = "quantity", source = "quantity")
-        CartItem toDomain(CartItemJpaEntity jpaEntity);
+        @Named("toDomainWithRepo")
+        CartItem toDomain(CartItemJpaEntity jpaEntity, @Context ProductJpaRepository productRepo);
 
-        @Mapping(target = ".", source = "domain", qualifiedByName = "createdItem")
-        CartItemJpaEntity toJpa(CartItem domain, @Context ProductJpaRepository productJpaRepository);
-
-        @Named("createdItem")
-        default CartItemJpaEntity createItem(
-                        CartItem domainItem,
-                        @Context ProductJpaRepository productJpaRepository) {
-                ProductJpaEntity productJpa = productJpaRepository
-                                .findById(domainItem.getProductId())
-                                .orElseThrow(() -> new ProductNotFoundException(domainItem.getProductId()));
-
-                return new CartItemJpaEntity(
-                                domainItem.getId(),
-                                null,
-                                productJpa,
-                                domainItem.getQuantity());
+        default CartItemJpaEntity toJpa(CartItem domain, @Context ProductJpaRepository productRepo,
+                        @Context ProductMapper productMapper) {
+                ProductJpaEntity productJpa = productRepo
+                                .findById(domain.getProductId())
+                                .orElseThrow(() -> new ProductNotFoundException(domain.getProductId()));
+                return new CartItemJpaEntity(domain.getId(), null, productJpa, domain.getQuantity());
         }
 
-        UUID map(ProductJpaEntity productJpa);
+        @Named("productIdToProduct")
+        default Product map(UUID productId, @Context ProductJpaRepository productRepo,
+                        @Context ProductMapper productMapper) {
+                ProductJpaEntity productJpa = productRepo
+                                .findById(productId)
+                                .orElseThrow(() -> new ProductNotFoundException(productId));
+                return productMapper.toDomain(productJpa);
+        }
 
-        @Mapping(target = "product", source = "productId")
-        CartItemReadModel toReadModel(CartItem domain, @Context ProductJpaRepository productJpaRepository);
+        @Mapping(target = "product", source = "productId", qualifiedByName = "productIdToProduct")
+        CartItemReadModel toReadModel(CartItem domain, @Context ProductJpaRepository productRepo,
+                        @Context ProductMapper productMapper);
+
+        default UUID map(ProductJpaEntity productJpa) {
+                return productJpa != null ? productJpa.getId() : null;
+        }
 }

@@ -17,7 +17,7 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @Entity
-@Table(name = "user")
+@Table(name = "\"user\"")
 @NoArgsConstructor(access = lombok.AccessLevel.PROTECTED)
 public class UserJpaEntity extends BaseJpaEntity implements Serializable {
 
