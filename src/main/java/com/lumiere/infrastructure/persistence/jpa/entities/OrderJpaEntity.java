@@ -56,13 +56,6 @@ public class OrderJpaEntity extends BaseJpaEntity implements Serializable {
         this.paymentId = paymentId;
         this.total = total;
         this.coupon = coupon;
-
-        if (items != null) {
-            this.items.addAll(items);
-            for (OrderItemJpaEntity item : this.items) {
-                item.setOrderReference(this);
-            }
-        }
     }
 
 }

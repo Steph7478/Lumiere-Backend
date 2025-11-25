@@ -44,17 +44,21 @@ public class OrderItemJpaEntity implements Serializable {
     @Column(nullable = false)
     private BigDecimal unitPrice;
 
+    @Column(nullable = false)
+    private String currency;
+
     public OrderItemJpaEntity(UUID id, OrderJpaEntity order, ProductJpaEntity product, String name, int quantity,
-            BigDecimal unitPrice) {
+            BigDecimal unitPrice, String currency) {
         this.id = id;
         this.order = order;
         this.product = product;
         this.name = name;
         this.quantity = quantity;
         this.unitPrice = unitPrice;
+        this.currency = currency;
     }
 
-    protected void setOrderReference(OrderJpaEntity order) {
+    public void setOrderReference(OrderJpaEntity order) {
         this.order = order;
     }
 }

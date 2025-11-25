@@ -1,6 +1,7 @@
 package com.lumiere.infrastructure.mappers;
 
-import java.util.Objects;
+import java.util.Map;
+import java.util.UUID;
 
 import org.mapstruct.Context;
 import org.mapstruct.Mapper;
@@ -11,26 +12,27 @@ import org.mapstruct.ReportingPolicy;
 import com.lumiere.domain.vo.OrderItem;
 import com.lumiere.infrastructure.mappers.base.BaseMapper;
 import com.lumiere.infrastructure.persistence.jpa.entities.OrderItemJpaEntity;
-import com.lumiere.infrastructure.persistence.jpa.repositories.product.ProductJpaRepository;
+import com.lumiere.infrastructure.persistence.jpa.entities.ProductJpaEntity;
 
 @Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface OrderItemMapper extends BaseMapper<OrderItem, OrderItemJpaEntity> {
 
-        @Mapping(target = ".", source = "domain", qualifiedByName = "orderItemToJpa")
-        OrderItemJpaEntity toJpa(
-                        OrderItem domain,
-                        @Context ProductJpaRepository productJpaRepository);
+        @Mapping(target = "productId", expression = "java(jpaEntity.getProduct() != null ? jpaEntity.getProduct().getId() : null)")
+        OrderItem toDomain(OrderItemJpaEntity jpaEntity);
 
-        @Named("orderItemToJpa")
-        default OrderItemJpaEntity toJpaWithLookup(
-                        OrderItem domain,
-                        @Context ProductJpaRepository productJpaRepository) {
-                var productJpa = productJpaRepository.getReferenceById(Objects.requireNonNull(domain.getProductId()));
+        @Mapping(target = "id", source = "domain.id")
+        @Mapping(target = "product", source = "productId", qualifiedByName = "getProductEntity")
+        @Mapping(target = "name", source = "domain.name")
+        @Mapping(target = "quantity", expression = "java(domain.getQuantity())")
+        @Mapping(target = "unitPrice", expression = "java(domain.getUnitPrice())")
+        @Mapping(target = "currency", expression = "java(domain.getCurrency().name())")
+        @Mapping(target = "order", ignore = true)
+        OrderItemJpaEntity toJpa(OrderItem domain, @Context Map<UUID, ProductJpaEntity> productCache);
 
-                return new OrderItemJpaEntity(
-                                domain.getId(),
-                                null, productJpa,
-                                domain.getName(), domain.getQuantity(),
-                                domain.getUnitPrice());
+        @Named("getProductEntity")
+        default ProductJpaEntity getProductEntity(UUID productId,
+                        @Context Map<UUID, ProductJpaEntity> productCache) {
+
+                return productCache.get(productId);
         }
 }

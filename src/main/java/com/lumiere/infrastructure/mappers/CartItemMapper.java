@@ -22,7 +22,6 @@ public interface CartItemMapper extends BaseMapper<CartItem, CartItemJpaEntity> 
 
         @Mapping(target = "cart", ignore = true)
         @Mapping(target = "product", source = "productId", qualifiedByName = "getProductEntity")
-        @Named("toJpaItems")
         CartItemJpaEntity toJpa(CartItem domain, @Context Map<UUID, ProductJpaEntity> productCache);
 
         @Named("getProductEntity")
