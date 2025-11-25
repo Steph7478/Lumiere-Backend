@@ -4,7 +4,6 @@ import com.lumiere.application.dtos.cart.command.add.AddCartInput;
 import com.lumiere.application.dtos.cart.command.add.AddCartOuput;
 import com.lumiere.application.exceptions.auth.UserNotFoundException;
 import com.lumiere.application.interfaces.cart.IAddCartUseCase;
-import com.lumiere.application.mappers.cart.AddCartReadModel;
 import com.lumiere.application.mappers.cart.CartReadModelMapper;
 import com.lumiere.domain.entities.Cart;
 import com.lumiere.domain.entities.User;
@@ -24,14 +23,11 @@ public class AddCartUseCase implements IAddCartUseCase {
 
         private final UserRepository userRepo;
         private final CartRepository cartRepo;
-        private final AddCartReadModel cartMapper;
         private final CartReadModelMapper readModelMapper;
 
-        public AddCartUseCase(UserRepository userRepo, CartRepository cartRepo,
-                        AddCartReadModel cartReadModelMapper, CartReadModelMapper readModelMapper) {
+        public AddCartUseCase(UserRepository userRepo, CartRepository cartRepo, CartReadModelMapper readModelMapper) {
                 this.userRepo = userRepo;
                 this.cartRepo = cartRepo;
-                this.cartMapper = cartReadModelMapper;
                 this.readModelMapper = readModelMapper;
         }
 
@@ -44,7 +40,7 @@ public class AddCartUseCase implements IAddCartUseCase {
                 Optional<Cart> existingCartOptional = cartRepo.findCartByUserId(user.getId());
                 Cart currentCart = existingCartOptional.orElseGet(() -> CartService.createCart(user));
 
-                Cart finalCart = cartMapper.addProducts(currentCart, input.requestData());
+                Cart finalCart = CartService.addProducts(currentCart, input.requestData().items());
 
                 finalCart = existingCartOptional.isPresent()
                                 ? cartRepo.update(finalCart)

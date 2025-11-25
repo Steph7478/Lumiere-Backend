@@ -1,7 +1,6 @@
 package com.lumiere.infrastructure.persistence.jpa.entities;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -13,31 +12,30 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Getter
+@Setter
 @Entity
 @Table(name = "cart")
-@NoArgsConstructor(access = lombok.AccessLevel.PROTECTED)
-public class CartJpaEntity extends BaseJpaEntity implements Serializable {
+@AllArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PUBLIC)
+public class CartJpaEntity
+        extends BaseJpaEntity implements Serializable {
 
     @OneToOne
     @JoinColumn(name = "user_id", nullable = false)
     private UserJpaEntity user;
 
     @OneToMany(mappedBy = "cart", cascade = CascadeType.ALL, orphanRemoval = true)
-    private final List<CartItemJpaEntity> items = new ArrayList<>();
+    private List<CartItemJpaEntity> items;
 
-    public CartJpaEntity(UUID id, UserJpaEntity user, List<CartItemJpaEntity> items) {
+    public CartJpaEntity(UUID id, UserJpaEntity user) {
         super(id);
         this.user = user;
-
-        if (items != null) {
-            this.items.addAll(items);
-            for (CartItemJpaEntity item : this.items) {
-                item.setCartReference(this);
-            }
-        }
     }
 }

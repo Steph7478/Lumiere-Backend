@@ -1,6 +1,7 @@
 package com.lumiere.infrastructure.persistence.jpa.entities;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import java.io.Serializable;
@@ -12,7 +13,8 @@ import com.lumiere.infrastructure.persistence.jpa.entities.base.BaseJpaEntity;
 @Getter
 @Entity
 @Table(name = "products")
-@NoArgsConstructor(access = lombok.AccessLevel.PROTECTED)
+@NoArgsConstructor
+@AllArgsConstructor
 public class ProductJpaEntity extends BaseJpaEntity implements Serializable {
 
     @Column(nullable = false)

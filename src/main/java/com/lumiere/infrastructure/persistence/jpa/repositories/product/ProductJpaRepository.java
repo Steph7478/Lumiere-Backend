@@ -12,6 +12,7 @@ import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Repository;
 
 import java.math.BigDecimal;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -43,4 +44,8 @@ public interface ProductJpaRepository extends JpaRepository<ProductJpaEntity, UU
         @NonNull
         @EntityGraph(attributePaths = "ratings")
         Optional<ProductJpaEntity> findById(@Nullable UUID id);
+
+        @NonNull
+        @EntityGraph(attributePaths = "ratings")
+        List<ProductJpaEntity> findAllByIdIn(@NonNull Collection<UUID> ids);
 }

@@ -9,13 +9,16 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Getter
+@Setter
 @Entity
 @Table(name = "cart_item")
-@NoArgsConstructor(access = lombok.AccessLevel.PROTECTED)
+@NoArgsConstructor(access = AccessLevel.PUBLIC)
 public class CartItemJpaEntity implements Serializable {
 
     @Id
@@ -39,7 +42,7 @@ public class CartItemJpaEntity implements Serializable {
         this.quantity = quantity;
     }
 
-    protected void setCartReference(CartJpaEntity cart) {
+    public void setCartReference(CartJpaEntity cart) {
         this.cart = cart;
     }
 }

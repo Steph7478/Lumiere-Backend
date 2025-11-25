@@ -1,8 +1,11 @@
 package com.lumiere.infrastructure.persistence.jpa.repositories.product;
 
+import java.util.Collection;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
@@ -21,6 +24,9 @@ import jakarta.persistence.EntityManager;
 @Repository
 public class ProductJpaRepositoryAdapter extends BaseRepositoryAdapter<Product, ProductJpaEntity>
         implements ProductRepository {
+
+    private ProductJpaRepository productRepo;
+    private ProductMapper productMapper;
 
     public ProductJpaRepositoryAdapter(
             ProductJpaRepository productRepo,
@@ -55,4 +61,15 @@ public class ProductJpaRepositoryAdapter extends BaseRepositoryAdapter<Product, 
         return super.update(domain);
     }
 
+    @Cacheable(value = "productJpaList", key = "#ids.stream().sorted().collect(T(java.util.stream.Collectors).joining('_'))")
+    @Transactional(readOnly = true)
+    public List<Product> findAllById(Collection<UUID> ids) {
+        Objects.requireNonNull(ids, "ids cannot be null");
+
+        List<ProductJpaEntity> jpaEntities = productRepo.findAllByIdIn(ids);
+
+        return jpaEntities.stream()
+                .map(productMapper::toDomain)
+                .collect(Collectors.toList());
+    }
 }
