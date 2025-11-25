@@ -1,9 +1,12 @@
 package com.lumiere.infrastructure.persistence.jpa.entities;
 
 import jakarta.persistence.*;
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.List;
@@ -11,10 +14,11 @@ import java.util.UUID;
 import com.lumiere.infrastructure.persistence.jpa.entities.base.BaseJpaEntity;
 
 @Getter
+@Setter
 @Entity
 @Table(name = "products")
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PUBLIC)
 public class ProductJpaEntity extends BaseJpaEntity implements Serializable {
 
     @Column(nullable = false)

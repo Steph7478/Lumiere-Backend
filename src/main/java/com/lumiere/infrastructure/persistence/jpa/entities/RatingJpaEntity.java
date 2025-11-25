@@ -1,17 +1,23 @@
 package com.lumiere.infrastructure.persistence.jpa.entities;
 
 import jakarta.persistence.*;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 import java.io.Serializable;
 import java.util.UUID;
 
 import com.lumiere.infrastructure.persistence.jpa.entities.base.BaseJpaEntity;
 
 @Getter
+@Setter
 @Entity
 @Table(name = "ratings")
-@NoArgsConstructor(access = lombok.AccessLevel.PROTECTED)
+@AllArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PUBLIC)
 public class RatingJpaEntity extends BaseJpaEntity implements Serializable {
 
     @Column(name = "product_id", nullable = false)
