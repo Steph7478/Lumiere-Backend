@@ -1,9 +1,8 @@
 package com.lumiere.domain.readmodels;
 
-import com.lumiere.domain.entities.Product;
+import com.lumiere.infrastructure.persistence.jpa.entities.ProductJpaEntity;
 
 public record CartItemReadModel(
-        Product product,
-        Integer quantity) {
-
+                ProductJpaEntity product,
+                int quantity) {
 }

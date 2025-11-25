@@ -9,6 +9,7 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
 import org.mapstruct.ReportingPolicy;
+
 import java.util.Map;
 import java.util.UUID;
 
@@ -16,7 +17,7 @@ import java.util.UUID;
 public interface CartItemMapper extends BaseMapper<CartItem, CartItemJpaEntity> {
 
         @Override
-        @Mapping(target = "productId", source = "product.id")
+        @Mapping(target = "productId", expression = "java(jpaEntity.getProduct() != null ? jpaEntity.getProduct().getId() : null)")
         CartItem toDomain(CartItemJpaEntity jpaEntity);
 
         @Mapping(target = "cart", ignore = true)

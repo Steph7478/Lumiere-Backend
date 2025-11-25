@@ -4,13 +4,13 @@ import com.lumiere.application.dtos.cart.command.add.AddCartInput;
 import com.lumiere.application.dtos.cart.command.add.AddCartOuput;
 import com.lumiere.application.exceptions.auth.UserNotFoundException;
 import com.lumiere.application.interfaces.cart.IAddCartUseCase;
-import com.lumiere.application.mappers.cart.CartReadModelMapper;
 import com.lumiere.domain.entities.Cart;
 import com.lumiere.domain.entities.User;
 import com.lumiere.domain.readmodels.CartReadModel;
 import com.lumiere.domain.repositories.CartRepository;
 import com.lumiere.domain.repositories.UserRepository;
 import com.lumiere.domain.services.CartService;
+import com.lumiere.infrastructure.mappers.CartMapper;
 
 import jakarta.transaction.Transactional;
 
@@ -23,9 +23,9 @@ public class AddCartUseCase implements IAddCartUseCase {
 
         private final UserRepository userRepo;
         private final CartRepository cartRepo;
-        private final CartReadModelMapper readModelMapper;
+        private final CartMapper readModelMapper;
 
-        public AddCartUseCase(UserRepository userRepo, CartRepository cartRepo, CartReadModelMapper readModelMapper) {
+        public AddCartUseCase(UserRepository userRepo, CartRepository cartRepo, CartMapper readModelMapper) {
                 this.userRepo = userRepo;
                 this.cartRepo = cartRepo;
                 this.readModelMapper = readModelMapper;

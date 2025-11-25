@@ -7,13 +7,13 @@ import com.lumiere.application.dtos.cart.command.remove.RemoveCartOutput;
 import com.lumiere.application.exceptions.auth.UserNotFoundException;
 import com.lumiere.application.exceptions.cart.CartNotFoundException;
 import com.lumiere.application.interfaces.cart.IRemoveCartUseCase;
-import com.lumiere.application.mappers.cart.CartReadModelMapper;
 import com.lumiere.application.mappers.cart.RemoveCartReadModel;
 import com.lumiere.domain.entities.Cart;
 import com.lumiere.domain.entities.User;
 import com.lumiere.domain.readmodels.CartReadModel;
 import com.lumiere.domain.repositories.CartRepository;
 import com.lumiere.domain.repositories.UserRepository;
+import com.lumiere.infrastructure.mappers.CartMapper;
 
 import jakarta.transaction.Transactional;
 
@@ -22,10 +22,10 @@ public class RemoveCartItemUseCase implements IRemoveCartUseCase {
     private final CartRepository cartRepository;
     private final UserRepository userRepository;
     private final RemoveCartReadModel cartMapper;
-    private final CartReadModelMapper readModelMapper;
+    private final CartMapper readModelMapper;
 
     protected RemoveCartItemUseCase(CartRepository cartRepository, UserRepository userRepository,
-            RemoveCartReadModel cartMapper, CartReadModelMapper readModelMapper) {
+            RemoveCartReadModel cartMapper, CartMapper readModelMapper) {
         this.cartRepository = cartRepository;
         this.userRepository = userRepository;
         this.cartMapper = cartMapper;

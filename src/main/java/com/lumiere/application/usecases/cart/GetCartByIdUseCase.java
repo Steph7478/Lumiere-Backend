@@ -10,12 +10,12 @@ import com.lumiere.application.dtos.cart.query.GetCartByIdOutput;
 import com.lumiere.application.exceptions.auth.UserNotFoundException;
 import com.lumiere.application.exceptions.cart.CartNotFoundException;
 import com.lumiere.application.interfaces.cart.IGetCartByIdUseCase;
-import com.lumiere.application.mappers.cart.CartReadModelMapper;
 import com.lumiere.domain.entities.Cart;
 import com.lumiere.domain.entities.User;
 import com.lumiere.domain.readmodels.CartReadModel;
 import com.lumiere.domain.repositories.CartRepository;
 import com.lumiere.domain.repositories.UserRepository;
+import com.lumiere.infrastructure.mappers.CartMapper;
 
 import jakarta.transaction.Transactional;
 
@@ -23,10 +23,10 @@ import jakarta.transaction.Transactional;
 public class GetCartByIdUseCase implements IGetCartByIdUseCase {
 
     private final CartRepository cartRepo;
-    private final CartReadModelMapper readModelMapper;
+    private final CartMapper readModelMapper;
     private final UserRepository userRepo;
 
-    protected GetCartByIdUseCase(CartRepository cartRepo, CartReadModelMapper readModelMapper,
+    protected GetCartByIdUseCase(CartRepository cartRepo, CartMapper readModelMapper,
             UserRepository userRepo) {
         this.cartRepo = cartRepo;
         this.readModelMapper = readModelMapper;
