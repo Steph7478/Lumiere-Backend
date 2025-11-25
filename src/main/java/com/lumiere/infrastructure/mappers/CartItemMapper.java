@@ -23,7 +23,7 @@ public interface CartItemMapper extends BaseMapper<CartItem, CartItemJpaEntity> 
 
         @Mapping(target = "product", source = "item.productId", qualifiedByName = "loadProductRef")
         @Mapping(target = "quantity", source = "item.quantity")
-        CartItemJpaEntity toJpa(CartItem domain, @Context ProductJpaRepository productJpaRepository);
+        CartItemJpaEntity toJpa(CartItem item, @Context ProductJpaRepository productJpaRepository);
 
         @Named("loadProductRef")
         default ProductJpaEntity loadProductReference(UUID productId,

@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
                 UserMapper.class }, unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface CartMapper extends BaseMapper<Cart, CartJpaEntity> {
 
-        @Mapping(target = "items", source = "items", qualifiedByName = "toDomainWithRepo")
+        @Mapping(target = "items", source = "jpaEntity.items", qualifiedByName = "toDomainWithRepo")
         Cart toDomain(CartJpaEntity jpaEntity,
                         @Context CartItemMapper cartItemMapper,
                         @Context ProductJpaRepository productJpaRepository);
