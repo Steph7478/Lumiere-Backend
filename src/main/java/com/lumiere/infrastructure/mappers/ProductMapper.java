@@ -39,23 +39,24 @@ import java.util.stream.Collectors;
                 BigDecimal.class,
                 List.class,
                 Collectors.class,
-                ProductJpaEntity.class,
-                ProductNotFoundException.class
+                RatingMapper.class
 }, unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface ProductMapper extends BaseMapper<Product, ProductJpaEntity> {
+
         @Mapping(target = "priceAmount", source = "price.amount")
         @Mapping(target = "priceCurrency", expression = "java(domain.getPrice().getCurrency().name())")
         @Mapping(target = "stockQuantity", source = "stock.quantity")
         @Mapping(target = "ratings", source = "ratings")
+        @Mapping(target = "name", source = "name")
         @Mapping(target = "createdAt", ignore = true)
         @Mapping(target = "updatedAt", ignore = true)
-        @Mapping(target = "id", ignore = true)
         ProductJpaEntity toJpa(Product domain);
 
         @Mapping(target = "category", expression = "java(nosqlCategory != null ? nosqlCategory.getCategory() : null)")
         @Mapping(target = "subCategory", expression = "java(nosqlCategory != null ? nosqlCategory.getSubcategory() : null)")
         @Mapping(target = "stock", source = "jpaEntity.stockQuantity")
         @Mapping(target = "id", source = "jpaEntity.id")
+        @Mapping(target = "name", source = "jpaEntity.name")
         @Mapping(target = "ratings", source = "jpaEntity.ratings")
         @Mapping(target = "createdAt", source = "jpaEntity.createdAt")
         @Mapping(target = "updatedAt", source = "jpaEntity.updatedAt")
@@ -63,13 +64,6 @@ public interface ProductMapper extends BaseMapper<Product, ProductJpaEntity> {
 
         @Mapping(target = "ratings", source = "ratings")
         Product toDomain(ProductJpaEntity jpaEntity);
-
-        default Product map(UUID productId, @Context ProductJpaRepository productJpaRepository) {
-                ProductJpaEntity jpaEntity = productJpaRepository
-                                .findById(productId)
-                                .orElseThrow(() -> new ProductNotFoundException(productId));
-                return toDomain(jpaEntity);
-        }
 
         @ObjectFactory
         default Product createProduct(ProductJpaEntity jpaEntity, @TargetType Class<Product> targetType) {
@@ -84,4 +78,5 @@ public interface ProductMapper extends BaseMapper<Product, ProductJpaEntity> {
                                 null,
                                 stock);
         }
+
 }

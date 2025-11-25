@@ -23,9 +23,6 @@ import com.lumiere.infrastructure.persistence.jpa.repositories.user.UserJpaRepos
                 UserMapper.class }, unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface OrderMapper extends BaseMapper<Order, OrderJpaEntity> {
 
-        // ----------------------------
-        // DOMAIN ← JPA (toDomain)
-        // ----------------------------
         @Override
         @Mapping(target = "id", source = "id")
         @Mapping(target = "user", source = "user")

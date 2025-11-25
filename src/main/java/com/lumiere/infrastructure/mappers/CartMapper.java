@@ -47,11 +47,10 @@ public interface CartMapper extends BaseMapper<Cart, CartJpaEntity> {
                         List<CartItem> items,
                         @Context CartItemMapper cartItemMapper,
                         @Context ProductJpaRepository productJpaRepository) {
-                if (items == null)
-                        return null;
 
                 return items.stream()
-                                .map(item -> cartItemMapper.toJpa(item, productJpaRepository))
+                                .map(item -> cartItemMapper.toJpa(item,
+                                                productJpaRepository))
                                 .collect(Collectors.toList());
         }
 }
