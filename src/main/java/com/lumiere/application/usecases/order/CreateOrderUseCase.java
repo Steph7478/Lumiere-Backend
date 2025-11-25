@@ -17,21 +17,21 @@ import com.lumiere.domain.repositories.ProductRepository;
 import com.lumiere.domain.repositories.UserRepository;
 import com.lumiere.domain.services.OrderService;
 import com.lumiere.domain.vo.OrderItem;
+import com.lumiere.infrastructure.mappers.OrderMapper;
 import com.lumiere.application.mappers.order.OrderItemUseCaseMapper;
-import com.lumiere.application.mappers.order.OrderReadModelMapper;
 
 @Service
 public class CreateOrderUseCase implements ICreateOrderUseCase {
     private final UserRepository userRepo;
     private final ProductRepository productRepo;
     private final OrderItemUseCaseMapper orderItemMapper;
-    private final OrderReadModelMapper orderReadModel;
+    private final OrderMapper orderReadModel;
     private final OrderRepository orderRepo;
 
     protected CreateOrderUseCase(
             UserRepository userRepo,
             ProductRepository productRepo,
-            OrderItemUseCaseMapper orderItemMapper, OrderRepository orderRepo, OrderReadModelMapper orderReadModel) {
+            OrderItemUseCaseMapper orderItemMapper, OrderRepository orderRepo, OrderMapper orderReadModel) {
         this.userRepo = userRepo;
         this.productRepo = productRepo;
         this.orderItemMapper = orderItemMapper;

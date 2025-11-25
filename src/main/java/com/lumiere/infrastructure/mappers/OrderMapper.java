@@ -13,6 +13,7 @@ import org.mapstruct.ReportingPolicy;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.lumiere.domain.entities.Order;
+import com.lumiere.domain.readmodels.OrderReadModel;
 import com.lumiere.infrastructure.mappers.base.BaseMapper;
 import com.lumiere.infrastructure.persistence.jpa.entities.OrderItemJpaEntity;
 import com.lumiere.infrastructure.persistence.jpa.entities.OrderJpaEntity;
@@ -33,7 +34,6 @@ public abstract class OrderMapper implements BaseMapper<Order, OrderJpaEntity> {
         @Autowired
         protected OrderItemMapper orderItemMapper;
 
-        @Override
         @Mapping(target = "id", source = "id")
         @Mapping(target = "user", source = "user")
         @Mapping(target = "status", source = "status")
@@ -44,7 +44,10 @@ public abstract class OrderMapper implements BaseMapper<Order, OrderJpaEntity> {
         public abstract Order toDomain(OrderJpaEntity jpaEntity);
 
         @Mapping(target = "items", ignore = true)
+        @Mapping(target = "total", source = "domain.total")
         @Mapping(target = "user", source = "domain.user")
+        @Mapping(target = "paymentId", source = "domain.paymentId")
+        @Mapping(target = "coupon", source = "domain.coupon")
         @Mapping(target = "id", source = "domain.id")
         public abstract OrderJpaEntity mapToJpa(Order domain);
 
@@ -73,4 +76,10 @@ public abstract class OrderMapper implements BaseMapper<Order, OrderJpaEntity> {
                                 .collect(Collectors.toMap(ProductJpaEntity::getId, p -> p));
         }
 
+        @Mapping(target = "id", source = "id")
+        @Mapping(target = "status", source = "status")
+        @Mapping(target = "total", source = "total")
+        @Mapping(target = "items", source = "items")
+        @Mapping(target = "coupon", source = "coupon")
+        public abstract OrderReadModel toReadModel(Order order);
 }

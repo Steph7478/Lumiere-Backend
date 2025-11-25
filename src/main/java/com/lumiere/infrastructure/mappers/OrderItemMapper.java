@@ -26,7 +26,7 @@ public interface OrderItemMapper extends BaseMapper<OrderItem, OrderItemJpaEntit
         @Mapping(target = "quantity", expression = "java(domain.getQuantity())")
         @Mapping(target = "unitPrice", expression = "java(domain.getUnitPrice())")
         @Mapping(target = "currency", expression = "java(domain.getCurrency().name())")
-        @Mapping(target = "order", ignore = true)
+        @Mapping(target = "order", source = "domain", ignore = true)
         OrderItemJpaEntity toJpa(OrderItem domain, @Context Map<UUID, ProductJpaEntity> productCache);
 
         @Named("getProductEntity")
