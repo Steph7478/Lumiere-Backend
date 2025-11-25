@@ -4,14 +4,11 @@ import com.lumiere.domain.vo.CartItem;
 import com.lumiere.infrastructure.mappers.base.BaseMapper;
 import com.lumiere.infrastructure.persistence.jpa.entities.CartItemJpaEntity;
 import com.lumiere.infrastructure.persistence.jpa.entities.ProductJpaEntity;
-
 import org.mapstruct.Context;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
 import org.mapstruct.ReportingPolicy;
-
-import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -26,9 +23,6 @@ public interface CartItemMapper extends BaseMapper<CartItem, CartItemJpaEntity> 
         @Mapping(target = "product", source = "productId", qualifiedByName = "getProductEntity")
         @Named("toJpaItems")
         CartItemJpaEntity toJpa(CartItem domain, @Context Map<UUID, ProductJpaEntity> productCache);
-
-        @Named("toJpaItems")
-        List<CartItemJpaEntity> toJpa(List<CartItem> domain, @Context Map<UUID, ProductJpaEntity> productCache);
 
         @Named("getProductEntity")
         default ProductJpaEntity getProductEntity(UUID productId, @Context Map<UUID, ProductJpaEntity> productCache) {
