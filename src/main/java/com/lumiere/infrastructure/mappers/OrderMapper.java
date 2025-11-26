@@ -34,22 +34,10 @@ public abstract class OrderMapper implements BaseMapper<Order, OrderJpaEntity> {
         @Autowired
         protected OrderItemMapper orderItemMapper;
 
-        @Mapping(target = "id", source = "id")
         @Mapping(target = "user", source = "user")
-        @Mapping(target = "status", source = "status")
-        @Mapping(target = "paymentId", source = "paymentId")
-        @Mapping(target = "total", source = "total")
-        @Mapping(target = "items", source = "items")
-        @Mapping(target = "coupon", source = "coupon")
-        @Mapping(target = "currency", source = "currency")
         public abstract Order toDomain(OrderJpaEntity jpaEntity);
 
         @Mapping(target = "items", ignore = true)
-        @Mapping(target = "total", source = "domain.total")
-        @Mapping(target = "user", source = "domain.user")
-        @Mapping(target = "paymentId", source = "domain.paymentId")
-        @Mapping(target = "coupon", source = "domain.coupon")
-        @Mapping(target = "id", source = "domain.id")
         @Mapping(target = "currency", expression = "java(domain.getCurrency().name())")
         public abstract OrderJpaEntity mapToJpa(Order domain);
 

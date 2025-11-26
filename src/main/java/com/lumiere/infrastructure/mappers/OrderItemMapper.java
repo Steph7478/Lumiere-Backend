@@ -18,14 +18,9 @@ import com.lumiere.infrastructure.persistence.jpa.entities.ProductJpaEntity;
 public interface OrderItemMapper extends BaseMapper<OrderItem, OrderItemJpaEntity> {
 
         @Mapping(target = "productId", expression = "java(jpaEntity.getProduct() != null ? jpaEntity.getProduct().getId() : null)")
-        @Mapping(target = "name", source = "name")
-        @Mapping(target = "quantity", source = "quantity")
-        @Mapping(target = "unitPrice", source = "unitPrice")
         OrderItem toDomain(OrderItemJpaEntity jpaEntity);
 
-        @Mapping(target = "id", source = "domain.id")
         @Mapping(target = "product", source = "productId", qualifiedByName = "getProductEntity")
-        @Mapping(target = "name", source = "domain.name")
         @Mapping(target = "quantity", expression = "java(domain.getQuantity())")
         @Mapping(target = "unitPrice", expression = "java(domain.getUnitPrice())")
         @Mapping(target = "order", source = "domain", ignore = true)

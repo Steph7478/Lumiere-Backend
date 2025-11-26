@@ -38,7 +38,6 @@ public abstract class CartMapper implements BaseMapper<Cart, CartJpaEntity> {
 
         @Mapping(target = "items", ignore = true)
         @Mapping(target = "user", source = "domain.user")
-        @Mapping(target = "id", source = "domain.id")
         public abstract CartJpaEntity mapToJpa(Cart domain);
 
         @AfterMapping
