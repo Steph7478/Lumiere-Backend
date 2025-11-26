@@ -20,30 +20,29 @@ import org.mapstruct.Context;
 @Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface UserMapper extends BaseMapper<User, UserJpaEntity> {
 
+    @Mapping(target = "auth.id", source = "auth.id")
+    @Mapping(target = "auth.name", source = "auth.name")
+    @Mapping(target = "auth.email", source = "auth.email")
+    @Mapping(target = "auth.password", source = "auth.passwordHash")
+    @Mapping(target = "auth.isAdmin", source = "auth.admin")
     UserJpaEntity toJpa(User domain, @Context Object... ctx);
 
-    @Override
     @Mapping(target = "auth", ignore = true)
     User toDomain(UserJpaEntity jpaEntity);
 
     @ObjectFactory
-    default User createUser(UserJpaEntity jpaEntity, @TargetType Class<User> targetType) {
-        if (jpaEntity == null)
-            return null;
-
-        Auth auth = mapAuthJpaEntityToAuth(jpaEntity.getAuth());
-        return UserFactory.from(jpaEntity.getId(), auth);
+    default User createUser(UserJpaEntity jpa, @TargetType Class<User> type) {
+        return UserFactory.from(
+                jpa.getId(),
+                mapAuth(jpa.getAuth()));
     }
 
-    default Auth mapAuthJpaEntityToAuth(AuthJpaEntity jpaEntity) {
-        if (jpaEntity == null)
-            return null;
-
+    default Auth mapAuth(AuthJpaEntity jpa) {
         return AuthFactory.from(
-                jpaEntity.getName(),
-                jpaEntity.getEmail(),
+                jpa.getName(),
+                jpa.getEmail(),
                 "**hidden**",
-                Boolean.TRUE.equals(jpaEntity.getIsAdmin()),
+                Boolean.TRUE.equals(jpa.getIsAdmin()),
                 UUID.fromString("00000000-0000-0000-0000-000000000000"));
     }
 }
