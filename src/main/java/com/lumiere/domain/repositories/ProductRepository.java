@@ -8,5 +8,5 @@ import com.lumiere.domain.entities.Product;
 import com.lumiere.domain.repositories.base.BaseRepository;
 
 public interface ProductRepository extends BaseRepository<Product> {
-    List<Product> findAllById(Collection<UUID> ids);
+    List<Product> findAllByIdIn(Collection<UUID> ids);
 }

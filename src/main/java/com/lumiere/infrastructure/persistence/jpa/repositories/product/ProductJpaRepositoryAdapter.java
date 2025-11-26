@@ -9,7 +9,6 @@ import java.util.stream.Collectors;
 
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,14 +24,16 @@ import jakarta.persistence.EntityManager;
 public class ProductJpaRepositoryAdapter extends BaseRepositoryAdapter<Product, ProductJpaEntity>
         implements ProductRepository {
 
-    private ProductJpaRepository productRepo;
-    private ProductMapper productMapper;
+    private final ProductJpaRepository productRepo;
+    private final ProductMapper productMapper;
 
     public ProductJpaRepositoryAdapter(
             ProductJpaRepository productRepo,
             ProductMapper productMapper,
             EntityManager entityManager) {
         super(productRepo, productMapper, entityManager, ProductJpaEntity.class);
+        this.productRepo = productRepo;
+        this.productMapper = productMapper;
     }
 
     @Override
@@ -44,26 +45,23 @@ public class ProductJpaRepositoryAdapter extends BaseRepositoryAdapter<Product, 
     }
 
     @Override
-    @Caching(evict = {
-            @CacheEvict(value = "productJpa", key = "#domain.id"),
-    })
+    @CacheEvict(value = "productJpa", key = "#domain.id")
     @Transactional
     public Product save(Product domain) {
         return super.save(domain);
     }
 
     @Override
-    @Caching(evict = {
-            @CacheEvict(value = "productJpa", key = "#domain.id"),
-    })
+    @CacheEvict(value = "productJpa", key = "#domain.id")
     @Transactional
     public Product update(Product domain) {
         return super.update(domain);
     }
 
-    @Cacheable(value = "productJpaList", key = "#ids.stream().sorted().collect(T(java.util.stream.Collectors).joining('_'))")
+    @Override
+    @Cacheable(value = "productJpaList", key = "T(String).join('_', #ids.![#this.toString()])")
     @Transactional(readOnly = true)
-    public List<Product> findAllById(Collection<UUID> ids) {
+    public List<Product> findAllByIdIn(Collection<UUID> ids) {
         Objects.requireNonNull(ids, "ids cannot be null");
 
         List<ProductJpaEntity> jpaEntities = productRepo.findAllByIdIn(ids);
