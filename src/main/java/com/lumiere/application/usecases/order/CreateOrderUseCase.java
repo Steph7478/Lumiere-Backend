@@ -1,8 +1,6 @@
 package com.lumiere.application.usecases.order;
 
 import java.util.List;
-import java.util.Optional;
-
 import org.springframework.stereotype.Service;
 
 import com.lumiere.application.dtos.order.command.create.CreateOrderInput;
