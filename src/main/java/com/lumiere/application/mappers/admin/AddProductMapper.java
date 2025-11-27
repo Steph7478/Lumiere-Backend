@@ -7,7 +7,6 @@ import org.mapstruct.MappingConstants;
 
 import com.lumiere.application.dtos.admin.command.add.AddProductInput;
 import com.lumiere.application.dtos.admin.command.add.AddProductOutput;
-import com.lumiere.application.mappers.base.BaseMapper;
 import com.lumiere.domain.entities.Product;
 import com.lumiere.domain.entities.ProductCategory;
 import com.lumiere.domain.enums.CategoriesEnum;
@@ -18,7 +17,7 @@ import com.lumiere.domain.vo.Money;
 import com.lumiere.domain.vo.Stock;
 
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
-public interface AddProductMapper extends BaseMapper<Product, AddProductInput> {
+public interface AddProductMapper {
 
     @Mapping(target = "priceAmount", source = "price.amount")
     @Mapping(target = "currency", source = "price.currency")

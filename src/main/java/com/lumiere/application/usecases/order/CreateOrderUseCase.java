@@ -20,11 +20,11 @@ import com.lumiere.domain.entities.User;
 import com.lumiere.domain.enums.CurrencyEnum.CurrencyType;
 import com.lumiere.domain.enums.StatusEnum.Status;
 import com.lumiere.domain.repositories.OrderRepository;
-import com.lumiere.domain.repositories.ProductRepository;
 import com.lumiere.domain.repositories.UserRepository;
 import com.lumiere.domain.services.OrderService;
 import com.lumiere.domain.vo.OrderItem;
 import com.lumiere.infrastructure.mappers.OrderMapper;
+import com.lumiere.application.services.ProductCacheService;
 
 import jakarta.transaction.Transactional;
 
@@ -33,20 +33,22 @@ import com.lumiere.application.mappers.order.OrderItemUseCaseMapper;
 @Service
 public class CreateOrderUseCase implements ICreateOrderUseCase {
     private final UserRepository userRepo;
-    private final ProductRepository productRepo;
     private final OrderItemUseCaseMapper orderItemMapper;
     private final OrderMapper orderReadModel;
     private final OrderRepository orderRepo;
+    private final ProductCacheService productCacheService;
 
     protected CreateOrderUseCase(
             UserRepository userRepo,
-            ProductRepository productRepo,
-            OrderItemUseCaseMapper orderItemMapper, OrderRepository orderRepo, OrderMapper orderReadModel) {
+            OrderItemUseCaseMapper orderItemMapper,
+            OrderRepository orderRepo,
+            OrderMapper orderReadModel,
+            ProductCacheService productCacheService) {
         this.userRepo = userRepo;
-        this.productRepo = productRepo;
         this.orderItemMapper = orderItemMapper;
         this.orderRepo = orderRepo;
         this.orderReadModel = orderReadModel;
+        this.productCacheService = productCacheService;
     }
 
     @Override
@@ -64,17 +66,11 @@ public class CreateOrderUseCase implements ICreateOrderUseCase {
                 .map(itemRequestData -> itemRequestData.productId())
                 .collect(Collectors.toSet());
 
-        List<Product> products = productRepo.findAllByIdIn(productIds);
-
-        Map<UUID, Product> productCache = products.stream()
-                .collect(Collectors.toMap(Product::getId, p -> p));
+        Map<UUID, Product> productCache = productCacheService.loadProductCache(productIds);
 
         List<OrderItem> orderItems = input.requestData().items().stream()
                 .map(itemRequestData -> {
                     Product product = productCache.get(itemRequestData.productId());
-
-                    if (product == null)
-                        throw new ProductNotFoundException(itemRequestData.productId());
 
                     return orderItemMapper.toOrderItem(product, itemRequestData, currency);
                 })

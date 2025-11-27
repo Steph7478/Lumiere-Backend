@@ -25,6 +25,12 @@ public interface ProductMapper extends BaseMapper<Product, ProductJpaEntity> {
         @Mapping(target = "priceAmount", expression = "java(domain.getPrice().getAmount())")
         @Mapping(target = "priceCurrency", expression = "java(domain.getPrice().getCurrency().name())")
         @Mapping(target = "stockQuantity", expression = "java(domain.getStock().getQuantity())")
+        @Mapping(target = "ratings", source = "ratings")
+        ProductJpaEntity map(Product domain);
+
+        @Mapping(target = "priceAmount", expression = "java(domain.getPrice().getAmount())")
+        @Mapping(target = "priceCurrency", expression = "java(domain.getPrice().getCurrency().name())")
+        @Mapping(target = "stockQuantity", expression = "java(domain.getStock().getQuantity())")
         ProductJpaEntity toJpa(Product domain, Object... context);
 
         @Mapping(target = "category", expression = "java(nosqlCategory != null ? nosqlCategory.getCategory() : null)")
@@ -50,5 +56,4 @@ public interface ProductMapper extends BaseMapper<Product, ProductJpaEntity> {
                                 null,
                                 new Stock(jpaEntity.getStockQuantity()));
         }
-
 }

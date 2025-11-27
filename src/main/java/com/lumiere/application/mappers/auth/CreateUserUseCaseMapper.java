@@ -9,10 +9,9 @@ import org.mapstruct.ReportingPolicy;
 import com.lumiere.domain.entities.Auth;
 import com.lumiere.domain.services.AuthService;
 import com.lumiere.application.dtos.auth.command.create.CreateUserInput;
-import com.lumiere.application.mappers.base.BaseMapper;
 
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING, unmappedTargetPolicy = ReportingPolicy.IGNORE)
-public interface CreateUserUseCaseMapper extends BaseMapper<Auth, CreateUserInput> {
+public interface CreateUserUseCaseMapper {
 
     @Mapping(target = "email", source = "email")
     @Mapping(target = "name", source = "name")
