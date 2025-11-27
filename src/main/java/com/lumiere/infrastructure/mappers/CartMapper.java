@@ -10,6 +10,7 @@ import com.lumiere.infrastructure.persistence.jpa.entities.ProductJpaEntity;
 import com.lumiere.infrastructure.persistence.jpa.repositories.product.ProductJpaRepository;
 import com.lumiere.infrastructure.persistence.jpa.repositories.user.UserJpaRepository;
 import org.mapstruct.AfterMapping;
+import org.mapstruct.BeforeMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
@@ -40,11 +41,18 @@ public abstract class CartMapper implements BaseMapper<Cart, CartJpaEntity> {
         @Mapping(target = "user", source = "domain.user")
         public abstract CartJpaEntity mapToJpa(Cart domain);
 
+        @BeforeMapping
+        protected Map<UUID, ProductJpaEntity> loadProductsForCart(Cart domain) {
+                return productJpaRepository.findAllByIdIn(Objects.requireNonNull(
+                                domain.getItems().stream()
+                                                .map(i -> i.getProductId())
+                                                .collect(Collectors.toSet())))
+                                .stream()
+                                .collect(Collectors.toMap(ProductJpaEntity::getId, p -> p));
+        }
+
         @AfterMapping
         protected void mapItemsAndLink(Cart domain, @MappingTarget CartJpaEntity jpaEntity) {
-                if (domain.getItems() == null || domain.getItems().isEmpty())
-                        return;
-
                 Map<UUID, ProductJpaEntity> productCache = loadProductsForCart(domain);
 
                 jpaEntity.setItems(domain.getItems().stream()
@@ -54,15 +62,6 @@ public abstract class CartMapper implements BaseMapper<Cart, CartJpaEntity> {
                                         return itemJpa;
                                 })
                                 .collect(Collectors.toList()));
-        }
-
-        protected Map<UUID, ProductJpaEntity> loadProductsForCart(Cart domain) {
-                return productJpaRepository.findAllByIdIn(Objects.requireNonNull(
-                                domain.getItems().stream()
-                                                .map(i -> i.getProductId())
-                                                .collect(Collectors.toSet())))
-                                .stream()
-                                .collect(Collectors.toMap(ProductJpaEntity::getId, p -> p));
         }
 
         public CartReadModel toReadModel(Cart domain) {
