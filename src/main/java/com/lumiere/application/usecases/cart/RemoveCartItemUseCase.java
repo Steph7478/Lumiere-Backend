@@ -7,13 +7,13 @@ import com.lumiere.application.dtos.cart.command.remove.RemoveCartOutput;
 import com.lumiere.application.exceptions.auth.UserNotFoundException;
 import com.lumiere.application.exceptions.cart.CartNotFoundException;
 import com.lumiere.application.interfaces.cart.IRemoveCartUseCase;
-import com.lumiere.application.mappers.cart.RemoveCartReadModel;
 import com.lumiere.domain.entities.Cart;
 import com.lumiere.domain.entities.User;
 import com.lumiere.domain.readmodels.CartReadModel;
 import com.lumiere.domain.repositories.CartRepository;
 import com.lumiere.domain.repositories.UserRepository;
 import com.lumiere.infrastructure.mappers.CartMapper;
+import com.lumiere.domain.services.CartService;
 
 import jakarta.transaction.Transactional;
 
@@ -21,14 +21,12 @@ import jakarta.transaction.Transactional;
 public class RemoveCartItemUseCase implements IRemoveCartUseCase {
     private final CartRepository cartRepository;
     private final UserRepository userRepository;
-    private final RemoveCartReadModel cartMapper;
     private final CartMapper readModelMapper;
 
     protected RemoveCartItemUseCase(CartRepository cartRepository, UserRepository userRepository,
-            RemoveCartReadModel cartMapper, CartMapper readModelMapper) {
+            CartMapper readModelMapper) {
         this.cartRepository = cartRepository;
         this.userRepository = userRepository;
-        this.cartMapper = cartMapper;
         this.readModelMapper = readModelMapper;
 
     }
@@ -41,7 +39,7 @@ public class RemoveCartItemUseCase implements IRemoveCartUseCase {
 
         Cart cart = cartRepository.findCartByUserId(user.getId()).orElseThrow(CartNotFoundException::new);
 
-        Cart updatedCart = cartMapper.removeProduct(cart, input.requestData());
+        Cart updatedCart = CartService.removeProduct(cart, input.requestData().items());
 
         cartRepository.update(updatedCart);
 

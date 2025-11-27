@@ -54,7 +54,7 @@ public class OrderItemJpaEntity implements Serializable {
         this.unitPrice = unitPrice;
     }
 
-    public void setOrderReference(OrderJpaEntity order) {
+    protected void setOrderReference(OrderJpaEntity order) {
         this.order = order;
     }
 }

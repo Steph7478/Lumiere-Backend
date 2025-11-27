@@ -17,19 +17,16 @@ import com.lumiere.infrastructure.persistence.jpa.entities.ProductJpaEntity;
 @Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface OrderItemMapper extends BaseMapper<OrderItem, OrderItemJpaEntity> {
 
-        @Mapping(target = "productId", expression = "java(jpaEntity.getProduct() != null ? jpaEntity.getProduct().getId() : null)")
+        @Override
+        @Mapping(target = "productId", source = "product.id")
         OrderItem toDomain(OrderItemJpaEntity jpaEntity);
 
-        @Mapping(target = "product", source = "productId", qualifiedByName = "getProductEntity")
-        @Mapping(target = "quantity", expression = "java(domain.getQuantity())")
-        @Mapping(target = "unitPrice", expression = "java(domain.getUnitPrice())")
-        @Mapping(target = "order", source = "domain", ignore = true)
-        OrderItemJpaEntity toJpa(OrderItem domain, @Context Map<UUID, ProductJpaEntity> productCache);
+        @Mapping(target = "product", source = "productId", qualifiedByName = "toProduct")
+        @Mapping(target = "order", ignore = true)
+        OrderItemJpaEntity toJpa(OrderItem domain);
 
-        @Named("getProductEntity")
-        default ProductJpaEntity getProductEntity(UUID productId,
-                        @Context Map<UUID, ProductJpaEntity> productCache) {
-
-                return productCache.get(productId);
+        @Named("toProduct")
+        default ProductJpaEntity toProduct(UUID productId) {
+                return productId == null ? null : new ProductJpaEntity(productId);
         }
 }

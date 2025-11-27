@@ -53,4 +53,9 @@ public class ProductJpaEntity extends BaseJpaEntity implements Serializable {
         this.priceCurrency = priceCurrency;
         this.stockQuantity = stockQuantity;
     }
+
+    public ProductJpaEntity(UUID id) {
+        super(id);
+    }
+
 }

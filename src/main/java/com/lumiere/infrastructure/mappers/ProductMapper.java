@@ -36,8 +36,6 @@ public interface ProductMapper extends BaseMapper<Product, ProductJpaEntity> {
         @Mapping(target = "updatedAt", source = "jpaEntity.updatedAt")
         ProductDetailReadModel toReadModel(ProductJpaEntity jpaEntity, ProductCategory nosqlCategory);
 
-        @Mapping(target = "price", expression = "java(new Money(jpaEntity.getPriceAmount(), CurrencyType.valueOf(jpaEntity.getPriceCurrency())))")
-        @Mapping(target = "stock", expression = "java(new Stock(jpaEntity.getStockQuantity()))")
         @Mapping(target = "createdAt", expression = "java(jpaEntity.getCreatedAt())")
         @Mapping(target = "updatedAt", expression = "java(jpaEntity.getUpdatedAt())")
         default Product toDomain(ProductJpaEntity jpaEntity) {

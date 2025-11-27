@@ -2,6 +2,7 @@ package com.lumiere.infrastructure.persistence.jpa.entities;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.ArrayList; // Importar ArrayList para inicialização
 import java.util.List;
 import java.util.UUID;
 
@@ -36,8 +37,9 @@ public class OrderJpaEntity extends BaseJpaEntity implements Serializable {
     @Column(name = "payment_id")
     private UUID paymentId;
 
-    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
-    private List<OrderItemJpaEntity> items;
+    @Setter(AccessLevel.NONE)
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<OrderItemJpaEntity> items = new ArrayList<>();
 
     @Column(nullable = false)
     private Status status;
@@ -51,6 +53,16 @@ public class OrderJpaEntity extends BaseJpaEntity implements Serializable {
     @Column(nullable = false)
     private String currency;
 
+    public void setItems(List<OrderItemJpaEntity> items) {
+        this.items.clear();
+        if (items != null) {
+            this.items.addAll(items);
+            for (OrderItemJpaEntity item : this.items) {
+                item.setOrderReference(this);
+            }
+        }
+    }
+
     public OrderJpaEntity(UUID id, UserJpaEntity user, Status status, UUID paymentId, BigDecimal total,
             List<OrderItemJpaEntity> items, String coupon) {
         super(id);
@@ -59,6 +71,7 @@ public class OrderJpaEntity extends BaseJpaEntity implements Serializable {
         this.paymentId = paymentId;
         this.total = total;
         this.coupon = coupon;
-    }
 
+        this.setItems(items);
+    }
 }
