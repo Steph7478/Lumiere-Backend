@@ -12,7 +12,6 @@ import com.lumiere.application.dtos.order.command.create.CreateOrderInput;
 import com.lumiere.application.dtos.order.command.create.CreateOrderOutput;
 import com.lumiere.application.exceptions.auth.UserNotFoundException;
 import com.lumiere.application.exceptions.order.OrderAlreadyInProgress;
-import com.lumiere.application.exceptions.product.ProductNotFoundException;
 import com.lumiere.application.interfaces.order.ICreateOrderUseCase;
 import com.lumiere.domain.entities.Order;
 import com.lumiere.domain.entities.Product;
