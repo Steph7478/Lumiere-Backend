@@ -5,7 +5,6 @@ import com.lumiere.domain.readmodels.CartItemReadModel;
 import com.lumiere.domain.readmodels.CartReadModel;
 import com.lumiere.domain.vo.CartItem;
 import com.lumiere.infrastructure.mappers.base.BaseMapper;
-import com.lumiere.infrastructure.persistence.jpa.entities.CartItemJpaEntity;
 import com.lumiere.infrastructure.persistence.jpa.entities.CartJpaEntity;
 import com.lumiere.infrastructure.persistence.jpa.entities.ProductJpaEntity;
 import com.lumiere.infrastructure.persistence.jpa.repositories.product.ProductJpaRepository;
