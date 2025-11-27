@@ -1,6 +1,5 @@
 package com.lumiere.infrastructure.mappers;
 
-import org.mapstruct.Context;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.ReportingPolicy;
