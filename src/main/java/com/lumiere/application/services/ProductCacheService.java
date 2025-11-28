@@ -4,6 +4,7 @@ import com.lumiere.application.exceptions.product.ProductNotFoundException;
 import com.lumiere.domain.entities.Product;
 import com.lumiere.domain.repositories.ProductRepository;
 
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -21,6 +22,7 @@ public class ProductCacheService {
         this.productRepo = productRepo;
     }
 
+    @Cacheable(value = "productJpaList", key = "T(String).join('_', #ids.![#this.toString()])", unless = "#result == null")
     public Map<UUID, Product> loadProductCache(Set<UUID> productIds) {
         if (productIds == null || productIds.isEmpty()) {
             return Map.of();
