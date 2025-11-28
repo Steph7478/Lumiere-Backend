@@ -50,6 +50,10 @@ public final class Routes {
         public static final class ORDER {
             public static final String ORDER_CREATE = "/order/create";
             public static final String ORDER_ADD = "/order/add-item";
+            public static final String ORDER_REMOVE = "/order/remove-item";
+            public static final String ORDER_COUPON = "/order/add-coupon";
+            public static final String ORDER_CANCEL = "/order/cancel";
+            public static final String ORDER_GET = "/order";
 
         }
     }

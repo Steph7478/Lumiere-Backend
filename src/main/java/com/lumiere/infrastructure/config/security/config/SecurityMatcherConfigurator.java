@@ -43,6 +43,10 @@ public final class SecurityMatcherConfigurator {
                     // ORDER
                     api + Routes.PRIVATE.ORDER.ORDER_CREATE,
                     api + Routes.PRIVATE.ORDER.ORDER_ADD,
+                    api + Routes.PRIVATE.ORDER.ORDER_REMOVE,
+                    api + Routes.PRIVATE.ORDER.ORDER_COUPON,
+                    api + Routes.PRIVATE.ORDER.ORDER_CANCEL,
+                    api + Routes.PRIVATE.ORDER.ORDER_GET + "/**",
 
                     // CART
                     api + Routes.PRIVATE.CART.DELETE_CART,
