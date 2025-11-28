@@ -1,5 +1,6 @@
 package com.lumiere.application.usecases.order;
 
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
 
 import com.lumiere.application.dtos.order.command.cancel.CancelOrderInput;
@@ -24,6 +25,7 @@ public class CancelOrderUseCase implements ICancelOrderUseCase {
     }
 
     @Override
+    @CacheEvict(value = "productJpaList", allEntries = true)
     public CancelOrderOutput execute(CancelOrderInput input) {
         User user = userRepo.findUserByAuthId(input.userId()).orElseThrow(UserNotFoundException::new);
 
