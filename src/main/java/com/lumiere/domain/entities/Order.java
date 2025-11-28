@@ -78,9 +78,8 @@ public class Order extends BaseEntity {
     }
 
     public Order addItem(UUID productId, int quantity, BigDecimal price) {
-        if (productId == null || quantity <= 0 || price == null) {
+        if (productId == null || quantity <= 0 || price == null)
             return this;
-        }
 
         return this.updateItem(productId, quantity,
                 (current, modification) -> current + modification,
@@ -88,13 +87,11 @@ public class Order extends BaseEntity {
     }
 
     public Order updateQuantity(UUID productId, int newQuantity) {
-        if (productId == null || newQuantity < 0) {
+        if (productId == null || newQuantity < 0)
             return this;
-        }
 
-        if (newQuantity == 0) {
+        if (newQuantity == 0)
             return this.removeItem(productId);
-        }
 
         return this.updateItem(productId, newQuantity,
                 (current, modification) -> modification,
