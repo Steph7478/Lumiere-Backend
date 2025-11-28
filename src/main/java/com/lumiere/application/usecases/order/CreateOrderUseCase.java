@@ -23,6 +23,7 @@ import com.lumiere.domain.repositories.UserRepository;
 import com.lumiere.domain.services.OrderService;
 import com.lumiere.domain.vo.OrderItem;
 import com.lumiere.infrastructure.mappers.OrderMapper;
+import com.lumiere.application.services.ItemMappingService;
 import com.lumiere.application.services.ProductCacheService;
 
 import jakarta.transaction.Transactional;
@@ -36,18 +37,20 @@ public class CreateOrderUseCase implements ICreateOrderUseCase {
     private final OrderMapper orderReadModel;
     private final OrderRepository orderRepo;
     private final ProductCacheService productCacheService;
+    private final ItemMappingService itemMappingService;
 
     protected CreateOrderUseCase(
             UserRepository userRepo,
             OrderItemUseCaseMapper orderItemMapper,
             OrderRepository orderRepo,
             OrderMapper orderReadModel,
-            ProductCacheService productCacheService) {
+            ProductCacheService productCacheService, ItemMappingService itemMappingService) {
         this.userRepo = userRepo;
         this.orderItemMapper = orderItemMapper;
         this.orderRepo = orderRepo;
         this.orderReadModel = orderReadModel;
         this.productCacheService = productCacheService;
+        this.itemMappingService = itemMappingService;
     }
 
     @Override
@@ -62,18 +65,14 @@ public class CreateOrderUseCase implements ICreateOrderUseCase {
             throw new OrderAlreadyInProgress();
 
         Set<UUID> productIds = input.requestData().items().stream()
-                .map(itemRequestData -> itemRequestData.productId())
+                .map(itemRequestData -> itemRequestData.getProductId())
                 .collect(Collectors.toSet());
 
         Map<UUID, Product> productCache = productCacheService.loadProductCache(productIds);
 
-        List<OrderItem> orderItems = input.requestData().items().stream()
-                .map(itemRequestData -> {
-                    Product product = productCache.get(itemRequestData.productId());
-
-                    return orderItemMapper.toOrderItem(product, itemRequestData, currency);
-                })
-                .toList();
+        List<OrderItem> orderItems = itemMappingService.mapItemsToDomainVO(
+                input.requestData().items(), productCache, itemRequestData -> itemRequestData.getProductId(),
+                (product, itemRequestData) -> orderItemMapper.toOrderItem(product, itemRequestData, null));
 
         Order order = OrderService.createOrder(user, orderItems, currency);
         orderRepo.save(order);

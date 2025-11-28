@@ -14,11 +14,11 @@ import org.springframework.stereotype.Service;
 @Service
 public class ItemMappingService {
 
-    public <I, V> List<V> mapItemsToDomainVO(
+    public <I, O> List<O> mapItemsToDomainVO(
             List<I> itemsRequest,
             Map<UUID, Product> productCache,
             Function<I, UUID> productIdGetter,
-            BiFunction<Product, I, V> itemMapper) {
+            BiFunction<Product, I, O> itemMapper) {
 
         return itemsRequest.stream()
                 .map(itemRequestData -> {
