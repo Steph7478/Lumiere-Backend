@@ -13,5 +13,5 @@ public interface OrderRepository extends BaseRepository<Order> {
 
     boolean existsByUserIdAndStatus(UUID userId, Status status);
 
-    Optional<Order> findCurrentOrderByUserId(UUID userId, Status status);
+    Optional<Order> findByUserIdAndStatus(UUID userId, Status status);
 }

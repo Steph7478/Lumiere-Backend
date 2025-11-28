@@ -20,5 +20,5 @@ public interface OrderJpaRepository extends JpaRepository<OrderJpaEntity, UUID> 
     boolean existsByUserIdAndStatus(UUID userId, Status status);
 
     @EntityGraph(attributePaths = { "user", "items", "items.product" })
-    Optional<OrderJpaEntity> findCurrentOrderByUserId(UUID id, Status status);
+    Optional<OrderJpaEntity> findByUserIdAndStatus(UUID userId, Status status);
 }

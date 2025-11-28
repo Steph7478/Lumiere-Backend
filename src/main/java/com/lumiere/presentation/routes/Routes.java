@@ -49,6 +49,7 @@ public final class Routes {
 
         public static final class ORDER {
             public static final String ORDER_CREATE = "/order/create";
+            public static final String ORDER_ADD = "/order/add-item";
 
         }
     }

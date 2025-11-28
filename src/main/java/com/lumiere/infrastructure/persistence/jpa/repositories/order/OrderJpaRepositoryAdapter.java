@@ -46,8 +46,8 @@ public class OrderJpaRepositoryAdapter extends BaseRepositoryAdapter<Order, Orde
 
     @Override
     @Transactional(readOnly = true)
-    public Optional<Order> findCurrentOrderByUserId(UUID userId, Status status) {
-        return orderJpaRepository.findCurrentOrderByUserId(userId, status).map(orderMapper::toDomain);
+    public Optional<Order> findByUserIdAndStatus(UUID userId, Status status) {
+        return orderJpaRepository.findByUserIdAndStatus(userId, status).map(orderMapper::toDomain);
 
     }
 }

@@ -2,6 +2,7 @@ package com.lumiere.application.usecases.order;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -29,62 +30,63 @@ import jakarta.transaction.Transactional;
 
 @Service
 public class AddItemOrderUsecase implements IAddItemOrderUsecase {
-    private final UserRepository userRepo;
-    private final OrderRepository orderRepo;
-    private final ProductCacheService productCacheService;
-    private final OrderMapper orderReadModel;
+        private final UserRepository userRepo;
+        private final OrderRepository orderRepo;
+        private final ProductCacheService productCacheService;
+        private final OrderMapper orderReadModel;
 
-    protected AddItemOrderUsecase(UserRepository userRepo, OrderRepository orderRepo,
-            ProductCacheService productCacheService, OrderMapper orderReadModel) {
-        this.orderRepo = orderRepo;
-        this.orderReadModel = orderReadModel;
-        this.userRepo = userRepo;
-        this.productCacheService = productCacheService;
-    }
+        protected AddItemOrderUsecase(UserRepository userRepo, OrderRepository orderRepo,
+                        ProductCacheService productCacheService, OrderMapper orderReadModel) {
+                this.orderRepo = orderRepo;
+                this.orderReadModel = orderReadModel;
+                this.userRepo = userRepo;
+                this.productCacheService = productCacheService;
+        }
 
-    @Override
-    @Transactional
-    public AddItemOrderOutput execute(AddItemOrderInput input) {
-        User user = userRepo.findUserByAuthId(input.userId()).orElseThrow(UserNotFoundException::new);
+        @Override
+        @Transactional
+        public AddItemOrderOutput execute(AddItemOrderInput input) {
+                User user = userRepo.findUserByAuthId(input.userId()).orElseThrow(UserNotFoundException::new);
 
-        Order order = orderRepo.findCurrentOrderByUserId(user.getId(), Status.IN_PROGRESS)
-                .orElseThrow(OrderNotFoundException::new);
+                Order order = orderRepo.findByUserIdAndStatus(user.getId(), Status.IN_PROGRESS)
+                                .orElseThrow(OrderNotFoundException::new);
 
-        Set<UUID> newProductIdsToLoad = input.items().stream()
-                .map(AddItemOrderRequestData::productId)
-                .filter(id -> order.getItems().stream()
-                        .noneMatch(item -> item.getProductId().equals(id)))
-                .collect(Collectors.toSet());
+                Set<UUID> newProductIdsToLoad = input.reqData().items().stream()
+                                .map(AddItemOrderRequestData::productId)
+                                .filter(Objects::nonNull)
+                                .filter(id -> order.getItems().stream()
+                                                .noneMatch(item -> item.getProductId().equals(id)))
+                                .collect(Collectors.toSet());
 
-        Map<UUID, Product> productMap = productCacheService.loadProductCache(newProductIdsToLoad);
+                Map<UUID, Product> productMap = productCacheService.loadProductCache(newProductIdsToLoad);
 
-        List<OrderItem> itemsToProcess = input.items().stream().map(inputItem -> {
-            UUID productId = inputItem.productId();
+                List<OrderItem> itemsToProcess = input.reqData().items().stream().map(inputItem -> {
+                        UUID productId = inputItem.productId();
 
-            OrderItem existingItem = order.getItems().stream()
-                    .filter(item -> item.getProductId().equals(productId))
-                    .findFirst()
-                    .orElse(null);
+                        OrderItem existingItem = order.getItems().stream()
+                                        .filter(item -> item.getProductId().equals(productId))
+                                        .findFirst()
+                                        .orElse(null);
 
-            if (existingItem != null) {
-                return new OrderItem(
-                        existingItem.getProductId(),
-                        existingItem.getName(),
-                        inputItem.quantity(),
-                        existingItem.getUnitPrice());
-            } else {
-                Product product = productMap.get(productId);
-                return new OrderItem(
-                        productId,
-                        product.getName(),
-                        inputItem.quantity(),
-                        product.getPrice().getAmount());
-            }
-        }).toList();
+                        if (existingItem != null) {
+                                return new OrderItem(
+                                                existingItem.getProductId(),
+                                                existingItem.getName(),
+                                                inputItem.quantity(),
+                                                existingItem.getUnitPrice());
+                        } else {
+                                Product product = productMap.get(productId);
+                                return new OrderItem(
+                                                productId,
+                                                product.getName(),
+                                                inputItem.quantity(),
+                                                product.getPrice().getAmount());
+                        }
+                }).toList();
 
-        Order newOrder = OrderService.addProducts(order, itemsToProcess);
-        Order savedOrder = orderRepo.update(newOrder);
+                Order newOrder = OrderService.addProducts(order, itemsToProcess);
+                Order savedOrder = orderRepo.update(newOrder);
 
-        return new AddItemOrderOutput(orderReadModel.toReadModel(savedOrder));
-    }
+                return new AddItemOrderOutput(orderReadModel.toReadModel(savedOrder));
+        }
 }
