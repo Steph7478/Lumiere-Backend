@@ -12,11 +12,22 @@ import org.springframework.web.bind.annotation.RestController;
 import com.lumiere.application.dtos.order.command.add.AddItemOrderInput;
 import com.lumiere.application.dtos.order.command.add.AddItemOrderOutput;
 import com.lumiere.application.dtos.order.command.add.AddItemsOrderRequestWrapper;
+import com.lumiere.application.dtos.order.command.cancel.CancelOrderInput;
+import com.lumiere.application.dtos.order.command.cancel.CancelOrderOutput;
+import com.lumiere.application.dtos.order.command.coupon.AddCouponInput;
+import com.lumiere.application.dtos.order.command.coupon.AddCouponOutput;
+import com.lumiere.application.dtos.order.command.coupon.AddCouponRequestData;
 import com.lumiere.application.dtos.order.command.create.CreateOrderInput;
 import com.lumiere.application.dtos.order.command.create.CreateOrderOutput;
 import com.lumiere.application.dtos.order.command.create.CreateOrderRequestData;
+import com.lumiere.application.dtos.order.command.remove.RemoveItemOrderInput;
+import com.lumiere.application.dtos.order.command.remove.RemoveItemOutput;
+import com.lumiere.application.dtos.order.command.remove.RemoveItemRequestData;
+import com.lumiere.application.interfaces.order.IAddCouponOrderUseCase;
 import com.lumiere.application.interfaces.order.IAddItemOrderUsecase;
+import com.lumiere.application.interfaces.order.ICancelOrderUseCase;
 import com.lumiere.application.interfaces.order.ICreateOrderUseCase;
+import com.lumiere.application.interfaces.order.IRemoveItemOrderUseCase;
 import com.lumiere.presentation.controllers.base.BaseController;
 import com.lumiere.presentation.routes.Routes;
 
@@ -26,11 +37,19 @@ import jakarta.validation.Valid;
 public class OrderController extends BaseController {
 
     private final ICreateOrderUseCase createOrderUseCase;
-    private final IAddItemOrderUsecase AddItemOrderUsecase;
+    private final IAddItemOrderUsecase addItemOrderUsecase;
+    private final IRemoveItemOrderUseCase removeItemOrderUseCase;
+    private final IAddCouponOrderUseCase addCouponOrderUseCase;
+    private final ICancelOrderUseCase cancelOrderUseCase;
 
-    protected OrderController(ICreateOrderUseCase createOrderUseCase, IAddItemOrderUsecase AddItemOrderUsecase) {
+    protected OrderController(ICreateOrderUseCase createOrderUseCase, IAddItemOrderUsecase addItemOrderUsecase,
+            IRemoveItemOrderUseCase removeItemOrderUseCase, IAddCouponOrderUseCase addCouponOrderUseCase,
+            ICancelOrderUseCase cancelOrderUseCase) {
         this.createOrderUseCase = createOrderUseCase;
-        this.AddItemOrderUsecase = AddItemOrderUsecase;
+        this.addItemOrderUsecase = addItemOrderUsecase;
+        this.addCouponOrderUseCase = addCouponOrderUseCase;
+        this.removeItemOrderUseCase = removeItemOrderUseCase;
+        this.cancelOrderUseCase = cancelOrderUseCase;
     }
 
     @PostMapping(Routes.PRIVATE.ORDER.ORDER_CREATE)
@@ -53,9 +72,41 @@ public class OrderController extends BaseController {
             @RequestBody @Valid AddItemsOrderRequestWrapper requestData) {
 
         AddItemOrderInput request = new AddItemOrderInput(userId, requestData);
-        AddItemOrderOutput response = AddItemOrderUsecase.execute(request);
+        AddItemOrderOutput response = addItemOrderUsecase.execute(request);
 
         return ResponseEntity.ok(response);
 
+    }
+
+    @PostMapping(Routes.PRIVATE.ORDER.ORDER_REMOVE)
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
+    public ResponseEntity<RemoveItemOutput> removeItemOrder(@AuthenticationPrincipal UUID userId,
+            @RequestBody @Valid RemoveItemRequestData reqData) {
+
+        RemoveItemOrderInput request = new RemoveItemOrderInput(userId, reqData);
+        RemoveItemOutput response = removeItemOrderUseCase.execute(request);
+
+        return ResponseEntity.ok(response);
+    }
+
+    @PostMapping(Routes.PRIVATE.ORDER.ORDER_COUPON)
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
+    public ResponseEntity<AddCouponOutput> removeItemOrder(@AuthenticationPrincipal UUID userId,
+            @RequestBody @Valid AddCouponRequestData reqData) {
+
+        AddCouponInput request = new AddCouponInput(userId, reqData);
+        AddCouponOutput response = addCouponOrderUseCase.execute(request);
+
+        return ResponseEntity.ok(response);
+    }
+
+    @PostMapping(Routes.PRIVATE.ORDER.ORDER_CANCEL)
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
+    public ResponseEntity<CancelOrderOutput> removeItemOrder(@AuthenticationPrincipal UUID userId) {
+
+        CancelOrderInput request = new CancelOrderInput(userId);
+        CancelOrderOutput response = cancelOrderUseCase.execute(request);
+
+        return ResponseEntity.ok(response);
     }
 }
