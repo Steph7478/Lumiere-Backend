@@ -37,7 +37,7 @@ public class ProductJpaRepositoryAdapter extends BaseRepositoryAdapter<Product, 
     }
 
     @Override
-    @Cacheable(value = "productJpa", key = "#id")
+    @Cacheable(value = "productJpa", key = "#id", unless = "#result == null")
     @Transactional(readOnly = true)
     public Optional<Product> findById(UUID id) {
         Objects.requireNonNull(id, "id cannot be null");
@@ -59,7 +59,7 @@ public class ProductJpaRepositoryAdapter extends BaseRepositoryAdapter<Product, 
     }
 
     @Override
-    @Cacheable(value = "productJpaList", key = "T(String).join('_', #ids.![#this.toString()])")
+    @Cacheable(value = "productJpaList", key = "T(String).join('_', #ids.![#this.toString()])", unless = "#result == null")
     @Transactional(readOnly = true)
     public List<Product> findAllByIdIn(Collection<UUID> ids) {
         Objects.requireNonNull(ids, "ids cannot be null");
