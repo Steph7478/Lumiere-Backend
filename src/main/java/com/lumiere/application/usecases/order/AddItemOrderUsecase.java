@@ -14,6 +14,7 @@ import com.lumiere.application.dtos.order.command.add.AddItemOrderOutput;
 import com.lumiere.application.dtos.order.command.add.AddItemOrderRequestData;
 import com.lumiere.application.exceptions.auth.UserNotFoundException;
 import com.lumiere.application.exceptions.order.OrderNotFoundException;
+import com.lumiere.application.exceptions.product.ProductNotFoundException;
 import com.lumiere.application.interfaces.order.IAddItemOrderUsecase;
 import com.lumiere.application.services.ProductCacheService;
 import com.lumiere.domain.entities.Order;
@@ -51,20 +52,18 @@ public class AddItemOrderUsecase implements IAddItemOrderUsecase {
                 Order order = orderRepo.findByUserIdAndStatus(user.getId(), Status.IN_PROGRESS)
                                 .orElseThrow(OrderNotFoundException::new);
 
-                Set<UUID> newProductIdsToLoad = input.reqData().items().stream()
+                Set<UUID> productIdsToLoad = input.reqData().items().stream()
                                 .map(AddItemOrderRequestData::productId)
                                 .filter(Objects::nonNull)
-                                .filter(id -> order.getItems().stream()
-                                                .noneMatch(item -> item.getProductId().equals(id)))
                                 .collect(Collectors.toSet());
 
-                Map<UUID, Product> productMap = productCacheService.loadProductCache(newProductIdsToLoad);
+                Map<UUID, Product> productMap = productCacheService.loadProductCache(productIdsToLoad);
 
                 List<OrderItem> itemsToProcess = input.reqData().items().stream().map(inputItem -> {
                         UUID productId = inputItem.productId();
 
                         OrderItem existingItem = order.getItems().stream()
-                                        .filter(item -> item.getProductId().equals(productId))
+                                        .filter(item -> Objects.equals(item.getProductId(), productId))
                                         .findFirst()
                                         .orElse(null);
 
