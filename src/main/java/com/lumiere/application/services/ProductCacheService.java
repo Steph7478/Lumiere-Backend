@@ -22,7 +22,7 @@ public class ProductCacheService {
         this.productRepo = productRepo;
     }
 
-    @Cacheable(value = "productJpaList", key = "T(String).join('_', #productIds.?[#this != null].![#this.toString()])", unless = "#result == null", condition = "#productIds != null && !#productIds.isEmpty()")
+    @Cacheable(value = "productJpaList", keyGenerator = "sortedSetKeyGenerator", unless = "#result == null", condition = "#productIds != null && !#productIds.isEmpty()")
     public Map<UUID, Product> loadProductCache(Set<UUID> productIds) {
         if (productIds == null || productIds.isEmpty()) {
             return Map.of();

@@ -29,6 +29,11 @@ public class CacheConfig {
         }
 
         @Bean
+        public SortedSetKeyGenerator sortedSetKeyGenerator() {
+                return new SortedSetKeyGenerator();
+        }
+
+        @Bean
         public RedisCacheManager cacheManager(RedisConnectionFactory connectionFactory) {
 
                 RedisCacheConfiguration defaultCache = createCacheConfig(DEFAULT_TTL);

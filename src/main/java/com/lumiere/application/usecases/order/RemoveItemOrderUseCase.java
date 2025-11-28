@@ -3,6 +3,7 @@ package com.lumiere.application.usecases.order;
 import java.util.List;
 import java.util.UUID;
 
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
 
 import com.lumiere.application.dtos.order.command.remove.RemoveItemOrderInput;
@@ -32,6 +33,7 @@ public class RemoveItemOrderUseCase implements IRemoveItemOrderUseCase {
 
     @Override
     @Transactional
+    @CacheEvict(value = "productJpaList", allEntries = true)
     public RemoveItemOutput execute(RemoveItemOrderInput input) {
         User user = userRepo.findUserByAuthId(input.userId()).orElseThrow(UserNotFoundException::new);
 
