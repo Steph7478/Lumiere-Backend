@@ -1,5 +1,7 @@
 package com.lumiere.application.usecases.order;
 
+import org.springframework.stereotype.Service;
+
 import com.lumiere.application.dtos.order.command.coupon.AddCouponInput;
 import com.lumiere.application.dtos.order.command.coupon.AddCouponOutput;
 import com.lumiere.application.exceptions.auth.UserNotFoundException;
@@ -12,6 +14,7 @@ import com.lumiere.domain.repositories.OrderRepository;
 import com.lumiere.domain.repositories.UserRepository;
 import com.lumiere.domain.services.OrderService;
 
+@Service
 public class AddCouponOrderUseCase implements IAddCouponOrderUseCase {
     private final UserRepository userRepo;
     private final OrderRepository orderRepo;
