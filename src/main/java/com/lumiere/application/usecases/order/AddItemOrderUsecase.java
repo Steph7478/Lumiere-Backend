@@ -21,7 +21,6 @@ import com.lumiere.domain.entities.Product;
 import com.lumiere.domain.entities.User;
 import com.lumiere.domain.enums.StatusEnum.Status;
 import com.lumiere.domain.repositories.OrderRepository;
-import com.lumiere.domain.repositories.ProductRepository;
 import com.lumiere.domain.repositories.UserRepository;
 import com.lumiere.domain.services.OrderService;
 import com.lumiere.domain.vo.OrderItem;
@@ -37,7 +36,7 @@ public class AddItemOrderUsecase implements IAddItemOrderUsecase {
     private final OrderMapper orderReadModel;
 
     protected AddItemOrderUsecase(UserRepository userRepo, OrderRepository orderRepo,
-            ProductCacheService productCacheService, OrderMapper orderReadModel, ProductRepository productRepo) {
+            ProductCacheService productCacheService, OrderMapper orderReadModel) {
         this.orderRepo = orderRepo;
         this.orderReadModel = orderReadModel;
         this.userRepo = userRepo;
@@ -76,10 +75,6 @@ public class AddItemOrderUsecase implements IAddItemOrderUsecase {
                         existingItem.getUnitPrice());
             } else {
                 Product product = productMap.get(productId);
-                if (product == null) {
-                    throw new ProductNotFoundException(productId);
-                }
-
                 return new OrderItem(
                         productId,
                         product.getName(),
@@ -87,6 +82,7 @@ public class AddItemOrderUsecase implements IAddItemOrderUsecase {
                         product.getPrice().getAmount());
             }
         }).toList();
+
         Order newOrder = OrderService.addProducts(order, itemsToProcess);
         Order savedOrder = orderRepo.update(newOrder);
 
