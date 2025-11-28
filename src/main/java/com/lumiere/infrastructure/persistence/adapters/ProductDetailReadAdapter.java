@@ -10,6 +10,8 @@ import com.lumiere.infrastructure.mappers.ProductMapper;
 import com.lumiere.infrastructure.persistence.jpa.entities.ProductJpaEntity;
 import com.lumiere.infrastructure.persistence.jpa.repositories.product.ProductJpaRepository;
 import com.lumiere.infrastructure.persistence.jpa.repositories.product.ProductJpaRepositoryAdapter;
+import com.lumiere.infrastructure.persistence.utils.CriteriaUtil;
+import com.lumiere.infrastructure.persistence.utils.PaginationConverter;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -54,7 +56,6 @@ public class ProductDetailReadAdapter implements ProductDetailReadPort {
         return Optional.of(readModel);
     }
 
-    @SuppressWarnings("null")
     @Override
     public Page<ProductDetailReadModel> findProductsByCriteria(ProductSearchCriteria criteria) {
 
@@ -64,12 +65,12 @@ public class ProductDetailReadAdapter implements ProductDetailReadPort {
                 .filter(Objects::nonNull)
                 .toList();
 
+        Pageable pageable = CriteriaUtil.buildPageable(criteria.page(), criteria.size(), criteria.sortBy());
+
         boolean categoryFilterApplied = criteria.category() != null || criteria.subCategory() != null;
         if (categoryFilterApplied && productIds.isEmpty())
-            return new PageImpl<>(Collections.emptyList(),
-                    PageRequest.of(criteria.page(), criteria.size(), Sort.by(criteria.sortBy())), 0);
+            return PaginationConverter.emptyPage(pageable);
 
-        Pageable pageable = PageRequest.of(criteria.page(), criteria.size(), Sort.by(criteria.sortBy()));
         Page<ProductJpaEntity> productPage = sqlRepository.findFilteredProducts(
                 productIds,
                 criteria.name(),
@@ -80,11 +81,8 @@ public class ProductDetailReadAdapter implements ProductDetailReadPort {
         Map<UUID, ProductCategory> categoryMap = categories.stream()
                 .collect(Collectors.toMap(ProductCategory::getId, Function.identity(), (a, b) -> a));
 
-        List<ProductDetailReadModel> readModels = productPage.getContent().stream()
-                .map(jpaEntity -> productDetailMapper.toReadModel(jpaEntity, categoryMap.get(jpaEntity.getId())))
-                .toList();
-
-        return new PageImpl<>(readModels, pageable, productPage.getTotalElements());
+        return PaginationConverter.convert(productPage,
+                jpaEntity -> productDetailMapper.toReadModel(jpaEntity, categoryMap.get(jpaEntity.getId())));
     }
 
     private List<ProductCategory> getCategoriesFromNoSql(ProductSearchCriteria c) {
