@@ -1,6 +1,5 @@
 package com.lumiere.domain.services;
 
-import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
 
@@ -16,12 +15,30 @@ public abstract class OrderService {
         return OrderFactory.create(UUID.randomUUID(), user, items, null, currency);
     }
 
-    public static Order removeProduct(Order order, UUID productId) {
-        return order.removeItem(productId);
+    public static Order addProducts(Order order, List<OrderItem> items) {
+        if (items == null || items.isEmpty())
+            return order;
+
+        Order updatedOrder = order;
+
+        for (OrderItem item : items) {
+            updatedOrder = updatedOrder.addItem(item.getProductId(), item.getQuantity(), item.getUnitPrice());
+        }
+
+        return updatedOrder;
     }
 
-    public static Order addProduct(Order order, UUID productId, int quantity, BigDecimal price) {
-        return order.addItem(productId, quantity, price);
+    public static Order removeProducts(Order order, List<OrderItem> items) {
+        if (items == null || items.isEmpty())
+            return order;
+
+        Order updatedOrder = order;
+
+        for (OrderItem item : items) {
+            updatedOrder = updatedOrder.removeItem(item.getProductId());
+        }
+
+        return updatedOrder;
     }
 
     public static Order useCoupon(Order order, String coupon) {

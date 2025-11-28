@@ -1,6 +1,7 @@
 package com.lumiere.infrastructure.persistence.jpa.repositories.order;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.data.jpa.repository.EntityGraph;
@@ -17,4 +18,7 @@ public interface OrderJpaRepository extends JpaRepository<OrderJpaEntity, UUID> 
     List<OrderJpaEntity> findByUserId(UUID id);
 
     boolean existsByUserIdAndStatus(UUID userId, Status status);
+
+    @EntityGraph(attributePaths = { "user", "items", "items.product" })
+    Optional<OrderJpaEntity> findCurrentOrderByUserId(UUID id, Status status);
 }

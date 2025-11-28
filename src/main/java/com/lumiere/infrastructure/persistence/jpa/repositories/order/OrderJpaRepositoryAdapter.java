@@ -1,6 +1,7 @@
 package com.lumiere.infrastructure.persistence.jpa.repositories.order;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.stereotype.Repository;
@@ -41,5 +42,12 @@ public class OrderJpaRepositoryAdapter extends BaseRepositoryAdapter<Order, Orde
     @Transactional(readOnly = true)
     public boolean existsByUserIdAndStatus(UUID userId, Status status) {
         return orderJpaRepository.existsByUserIdAndStatus(userId, status);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Optional<Order> findCurrentOrderByUserId(UUID userId, Status status) {
+        return orderJpaRepository.findCurrentOrderByUserId(userId, status).map(orderMapper::toDomain);
+
     }
 }
