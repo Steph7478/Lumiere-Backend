@@ -15,6 +15,7 @@ import com.lumiere.application.dtos.order.command.add.AddItemOrderRequestData;
 import com.lumiere.application.exceptions.auth.UserNotFoundException;
 import com.lumiere.application.exceptions.order.OrderNotFoundException;
 import com.lumiere.application.interfaces.order.IAddItemOrderUsecase;
+import com.lumiere.application.services.OrderItemAssemblerService;
 import com.lumiere.application.services.ProductCacheService;
 import com.lumiere.domain.entities.Order;
 import com.lumiere.domain.entities.Product;
@@ -34,13 +35,16 @@ public class AddItemOrderUsecase implements IAddItemOrderUsecase {
         private final OrderRepository orderRepo;
         private final ProductCacheService productCacheService;
         private final OrderMapper orderReadModel;
+        private final OrderItemAssemblerService orderItemAssemblerService;
 
         protected AddItemOrderUsecase(UserRepository userRepo, OrderRepository orderRepo,
-                        ProductCacheService productCacheService, OrderMapper orderReadModel) {
+                        ProductCacheService productCacheService, OrderMapper orderReadModel,
+                        OrderItemAssemblerService orderItemAssemblerService) {
                 this.orderRepo = orderRepo;
                 this.orderReadModel = orderReadModel;
                 this.userRepo = userRepo;
                 this.productCacheService = productCacheService;
+                this.orderItemAssemblerService = orderItemAssemblerService;
         }
 
         @Override
@@ -58,29 +62,9 @@ public class AddItemOrderUsecase implements IAddItemOrderUsecase {
 
                 Map<UUID, Product> productMap = productCacheService.loadProductCache(productIdsToLoad);
 
-                List<OrderItem> itemsToProcess = input.reqData().items().stream().map(inputItem -> {
-                        UUID productId = inputItem.productId();
-
-                        OrderItem existingItem = order.getItems().stream()
-                                        .filter(item -> Objects.equals(item.getProductId(), productId))
-                                        .findFirst()
-                                        .orElse(null);
-
-                        if (existingItem != null) {
-                                return new OrderItem(
-                                                existingItem.getProductId(),
-                                                existingItem.getName(),
-                                                inputItem.quantity(),
-                                                existingItem.getUnitPrice());
-                        } else {
-                                Product product = productMap.get(productId);
-                                return new OrderItem(
-                                                productId,
-                                                product.getName(),
-                                                inputItem.quantity(),
-                                                product.getPrice().getAmount());
-                        }
-                }).toList();
+                List<OrderItem> itemsToProcess = input.reqData().items().stream().map(
+                                inputItem -> orderItemAssemblerService.buildOrderItem(order, productMap, inputItem))
+                                .toList();
 
                 Order newOrder = OrderService.addProducts(order, itemsToProcess);
                 Order savedOrder = orderRepo.update(newOrder);
