@@ -1,5 +1,6 @@
 package com.lumiere.domain.services;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
 
@@ -17,6 +18,10 @@ public abstract class OrderService {
 
     public static Order removeProduct(Order order, UUID productId) {
         return order.removeItem(productId);
+    }
+
+    public static Order addProduct(Order order, UUID productId, int quantity, BigDecimal price) {
+        return order.addItem(productId, quantity, price);
     }
 
     public static Order useCoupon(Order order, String coupon) {
