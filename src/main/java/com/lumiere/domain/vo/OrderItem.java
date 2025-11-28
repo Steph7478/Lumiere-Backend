@@ -5,7 +5,6 @@ import java.util.Objects;
 import java.util.UUID;
 import java.util.stream.Stream;
 
-import com.lumiere.domain.enums.CurrencyEnum.CurrencyType;
 import com.lumiere.domain.vo.base.ValueObject;
 
 public class OrderItem extends ValueObject {
@@ -15,7 +14,7 @@ public class OrderItem extends ValueObject {
     private final int quantity;
     private final BigDecimal unitPrice;
 
-    public OrderItem(UUID productId, String name, int quantity, BigDecimal unitPrice, CurrencyType currency) {
+    public OrderItem(UUID productId, String name, int quantity, BigDecimal unitPrice) {
         this.productId = Objects.requireNonNull(productId, "Product ID cannot be null");
         this.name = Objects.requireNonNull(name, "Name cannot be null");
         this.unitPrice = Objects.requireNonNull(unitPrice, "Unit Price cannot be null");
@@ -49,6 +48,10 @@ public class OrderItem extends ValueObject {
 
     public int getQuantity() {
         return quantity;
+    }
+
+    public OrderItem withQuantity(int newQuantity) {
+        return new OrderItem(this.productId, this.name, newQuantity, this.unitPrice);
     }
 
     public BigDecimal getUnitPrice() {

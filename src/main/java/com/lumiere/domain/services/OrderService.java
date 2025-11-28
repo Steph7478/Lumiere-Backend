@@ -22,4 +22,8 @@ public abstract class OrderService {
     public static Order useCoupon(Order order, String coupon) {
         return order.useCoupon(coupon);
     }
+
+    public static Order markAsPaid(Order order, UUID paymentId) {
+        return order.markAsPaid(paymentId);
+    }
 }
