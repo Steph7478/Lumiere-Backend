@@ -11,12 +11,16 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
+
 import com.lumiere.infrastructure.persistence.jpa.entities.base.BaseJpaEntity;
 
 @Getter
 @Setter
 @Entity
-@Table(name = "products")
+@Table(name = "products", indexes = {
+        @Index(name = "idx_product_price", columnList = "priceAmount"),
+        @Index(name = "idx_product_name", columnList = "name")
+})
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PUBLIC)
 public class ProductJpaEntity extends BaseJpaEntity implements Serializable {
