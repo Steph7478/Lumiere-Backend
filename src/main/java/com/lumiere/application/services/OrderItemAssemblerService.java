@@ -6,14 +6,14 @@ import java.util.UUID;
 
 import org.springframework.stereotype.Service;
 
-import com.lumiere.application.dtos.order.command.add.AddItemOrderRequestData;
+import com.lumiere.application.dtos.order.command.add.AddItemOrderRequestData.OrderItemData;
 import com.lumiere.domain.entities.Order;
 import com.lumiere.domain.entities.Product;
 import com.lumiere.domain.vo.OrderItem;
 
 @Service
 public class OrderItemAssemblerService {
-    public OrderItem buildOrderItem(Order order, Map<UUID, Product> productMap, AddItemOrderRequestData inputItem) {
+    public OrderItem buildOrderItem(Order order, Map<UUID, Product> productMap, OrderItemData inputItem) {
         UUID productId = inputItem.productId();
 
         OrderItem existingItem = order.getItems().stream()

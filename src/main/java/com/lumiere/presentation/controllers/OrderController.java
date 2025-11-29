@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.lumiere.application.dtos.order.command.add.AddItemOrderInput;
 import com.lumiere.application.dtos.order.command.add.AddItemOrderOutput;
-import com.lumiere.application.dtos.order.command.add.AddItemsOrderRequestWrapper;
+import com.lumiere.application.dtos.order.command.add.AddItemOrderRequestData;
 import com.lumiere.application.dtos.order.command.cancel.CancelOrderInput;
 import com.lumiere.application.dtos.order.command.cancel.CancelOrderOutput;
 import com.lumiere.application.dtos.order.command.coupon.AddCouponInput;
@@ -69,7 +69,7 @@ public class OrderController extends BaseController {
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     public ResponseEntity<AddItemOrderOutput> addItemToOrder(
             @AuthenticationPrincipal UUID userId,
-            @RequestBody @Valid AddItemsOrderRequestWrapper requestData) {
+            @RequestBody @Valid AddItemOrderRequestData requestData) {
 
         AddItemOrderInput request = new AddItemOrderInput(userId, requestData);
         AddItemOrderOutput response = addItemOrderUsecase.execute(request);

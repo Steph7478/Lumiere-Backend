@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 
 import com.lumiere.application.dtos.order.command.add.AddItemOrderInput;
 import com.lumiere.application.dtos.order.command.add.AddItemOrderOutput;
-import com.lumiere.application.dtos.order.command.add.AddItemOrderRequestData;
+import com.lumiere.application.dtos.order.command.add.AddItemOrderRequestData.OrderItemData;
 import com.lumiere.application.exceptions.auth.UserNotFoundException;
 import com.lumiere.application.exceptions.order.OrderNotFoundException;
 import com.lumiere.application.interfaces.order.IAddItemOrderUsecase;
@@ -55,14 +55,14 @@ public class AddItemOrderUsecase implements IAddItemOrderUsecase {
                 Order order = orderRepo.findByUserIdAndStatus(user.getId(), Status.IN_PROGRESS)
                                 .orElseThrow(OrderNotFoundException::new);
 
-                Set<UUID> productIdsToLoad = input.reqData().items().stream()
-                                .map(AddItemOrderRequestData::productId)
+                Set<UUID> productIdsToLoad = input.items().items().stream()
+                                .map(OrderItemData::productId)
                                 .filter(Objects::nonNull)
                                 .collect(Collectors.toSet());
 
                 Map<UUID, Product> productMap = productCacheService.loadProductCache(productIdsToLoad);
 
-                List<OrderItem> itemsToProcess = input.reqData().items().stream().map(
+                List<OrderItem> itemsToProcess = input.items().items().stream().map(
                                 inputItem -> orderItemAssemblerService.buildOrderItem(order, productMap, inputItem))
                                 .toList();
 
