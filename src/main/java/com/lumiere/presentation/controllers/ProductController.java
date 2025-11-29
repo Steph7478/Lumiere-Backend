@@ -17,8 +17,10 @@ import com.lumiere.domain.enums.CategoriesEnum;
 import com.lumiere.domain.readmodels.ProductDetailReadModel;
 import com.lumiere.presentation.controllers.base.BaseController;
 import com.lumiere.presentation.routes.Routes;
+import com.lumiere.shared.annotations.cache.CacheableResponse;
 
 @RestController
+@CacheableResponse(maxAgeInSeconds = 900)
 public class ProductController extends BaseController {
 
     private final ProductReadUseCase productReadUseCase;
@@ -64,7 +66,6 @@ public class ProductController extends BaseController {
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "name") String sortBy) {
-
         ProductFindAllCriteria criteria = new ProductFindAllCriteria(
                 page,
                 size,
