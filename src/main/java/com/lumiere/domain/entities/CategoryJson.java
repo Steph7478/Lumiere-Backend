@@ -1,11 +1,16 @@
 package com.lumiere.domain.entities;
 
+import org.springframework.data.redis.core.index.Indexed;
+
 import com.lumiere.domain.enums.CategoriesEnum.Category;
 import com.lumiere.domain.enums.CategoriesEnum.SubCategory;
 
 public class CategoryJson {
 
+    @Indexed
     private Category name;
+
+    @Indexed
     private SubCategory subcategory;
 
     public CategoryJson() {
