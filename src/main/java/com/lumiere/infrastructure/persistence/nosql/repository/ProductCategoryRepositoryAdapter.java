@@ -1,62 +1,72 @@
 package com.lumiere.infrastructure.persistence.nosql.repository;
 
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Repository;
+
 import com.lumiere.domain.entities.ProductCategory;
 import com.lumiere.domain.repositories.NoSqlRepository;
-
-import org.springframework.context.annotation.Primary;
-import org.springframework.stereotype.Repository;
+import com.lumiere.infrastructure.persistence.nosql.entities.ProductCategoryEntity;
 
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
-@Primary
 @Repository
+@Qualifier("productCategoryRepositoryAdapter")
+@RequiredArgsConstructor
 public class ProductCategoryRepositoryAdapter implements NoSqlRepository<ProductCategory> {
 
-    private final NoSqlRepository<ProductCategory> dataStore;
-
-    public ProductCategoryRepositoryAdapter(
-            NoSqlRepository<ProductCategory> dataStore) {
-        this.dataStore = dataStore;
-    }
+    private final ProductCategoryRepository redisRepository;
 
     @Override
-    public void save(ProductCategory product) {
-        Objects.requireNonNull(product.getId());
-        Objects.requireNonNull(product);
-        dataStore.save(product);
-    }
-
-    @Override
-    public ProductCategory findById(UUID id) {
-        Objects.requireNonNull(id);
-        return dataStore.findById(id);
+    public void save(ProductCategory obj) {
+        ProductCategoryEntity entity = new ProductCategoryEntity(obj);
+        redisRepository.save(entity);
     }
 
     @Override
     public void delete(UUID id) {
-        Objects.requireNonNull(id);
-        dataStore.delete(id);
+        redisRepository.deleteById(Objects.requireNonNull(id));
+    }
+
+    @Override
+    public ProductCategory findById(UUID id) {
+        return redisRepository.findById(Objects.requireNonNull(id))
+                .map(ProductCategoryEntity::toDomain)
+                .orElseThrow(() -> new java.util.NoSuchElementException("ProductCategory not found for ID: " + id));
     }
 
     @Override
     public List<ProductCategory> findBySubcategory(String subcategory) {
-        return dataStore.findBySubcategory(subcategory);
+        List<ProductCategoryEntity> entities = redisRepository.findBySubcategoryName(subcategory);
+        return convertToDomainList(entities);
     }
 
     @Override
     public List<ProductCategory> findByCategory(String category) {
-        return dataStore.findByCategory(category);
-    }
-
-    @Override
-    public List<ProductCategory> findByIds(List<UUID> ids) {
-        return dataStore.findByIds(ids);
+        List<ProductCategoryEntity> entities = redisRepository.findByCategoryName(category);
+        return convertToDomainList(entities);
     }
 
     @Override
     public List<ProductCategory> findByCategoryAndSubcategory(String category, String subcategory) {
-        return dataStore.findByCategoryAndSubcategory(category, subcategory);
+        List<ProductCategoryEntity> entities = redisRepository.findByCategoryNameAndSubcategoryName(category,
+                subcategory);
+        return convertToDomainList(entities);
+    }
+
+    @Override
+    public List<ProductCategory> findByIds(List<UUID> ids) {
+        List<ProductCategoryEntity> entities = (List<ProductCategoryEntity>) redisRepository
+                .findAllById(Objects.requireNonNull(ids));
+        return convertToDomainList(entities);
+    }
+
+    private List<ProductCategory> convertToDomainList(List<ProductCategoryEntity> entities) {
+        return entities.stream()
+                .map(ProductCategoryEntity::toDomain)
+                .collect(Collectors.toList());
     }
 }
