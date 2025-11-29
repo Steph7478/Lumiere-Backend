@@ -23,8 +23,6 @@ public class CouponFactory {
             User user,
             String code) {
 
-        Objects.requireNonNull(user, "User entity is required for coupon reconstruction.");
-
         return new Coupon(
                 id,
                 expiredAt,
@@ -36,7 +34,7 @@ public class CouponFactory {
                 code);
     }
 
-    public static Coupon createPromotionalCoupon(Category category, User user) {
+    public static Coupon createUniqueCoupon(Category category, User user, Type type, BigDecimal discount) {
 
         Objects.requireNonNull(user, "User entity is required to create a new coupon.");
 
@@ -44,16 +42,40 @@ public class CouponFactory {
 
         BigDecimal defaultDiscount = new BigDecimal("10.00");
         Type defaultType = Type.PERCENTAGE;
-        boolean defaultIsUnique = false;
+        boolean defaultIsUnique = true;
 
         return new Coupon(
                 null,
                 LocalDateTime.now().plusDays(7),
                 category,
-                defaultDiscount,
-                defaultType,
+                discount != null ? discount : defaultDiscount,
+                type != null ? type : defaultType,
                 defaultIsUnique,
                 user,
                 generatedCode);
+    }
+
+    public static Coupon createGlobalCoupon(
+            Category category,
+            Type type,
+            BigDecimal discount,
+            LocalDateTime expiredAt,
+            String code) {
+        Objects.requireNonNull(code, "Global coupon code must be manually provided.");
+
+        User user = null;
+        BigDecimal defaultDiscount = new BigDecimal("10.00");
+        Type defaultType = Type.PERCENTAGE;
+        boolean defaultIsUnique = false;
+
+        return new Coupon(
+                null,
+                expiredAt != null ? expiredAt : LocalDateTime.now().plusDays(7),
+                category,
+                discount != null ? discount : defaultDiscount,
+                type != null ? type : defaultType,
+                defaultIsUnique,
+                user,
+                code);
     }
 }
