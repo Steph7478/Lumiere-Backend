@@ -5,6 +5,7 @@ import java.util.UUID;
 
 import org.springframework.data.domain.Page;
 
+import com.lumiere.application.dtos.product.query.ProductFindAllCriteria;
 import com.lumiere.application.dtos.product.query.ProductSearchCriteria;
 import com.lumiere.domain.readmodels.ProductDetailReadModel;
 
@@ -12,4 +13,6 @@ public interface ProductDetailReadPort {
     Page<ProductDetailReadModel> findProductsByCriteria(ProductSearchCriteria criteria);
 
     Optional<ProductDetailReadModel> findProductDetailById(UUID id);
+
+    Page<ProductDetailReadModel> findAllProducts(ProductFindAllCriteria criteria);
 }

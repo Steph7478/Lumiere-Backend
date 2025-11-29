@@ -48,4 +48,8 @@ public interface ProductJpaRepository extends JpaRepository<ProductJpaEntity, UU
         @NonNull
         @EntityGraph(attributePaths = "ratings")
         List<ProductJpaEntity> findAllByIdIn(@NonNull Collection<UUID> ids);
+
+        @NonNull
+        @EntityGraph(attributePaths = "ratings")
+        Page<ProductJpaEntity> findAll(@NonNull Pageable pageable);
 }

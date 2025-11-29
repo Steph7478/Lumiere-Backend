@@ -21,7 +21,8 @@ public final class SecurityMatcherConfigurator {
                     api + Routes.PUBLIC.AUTH.LOGIN,
 
                     // PRODUCTS
-                    api + Routes.PUBLIC.PRODUCTS.BASE + "/**")
+                    api + Routes.PUBLIC.PRODUCTS.BASE + "/**",
+                    api + Routes.PUBLIC.PRODUCTS.FILTER + "/**")
                     .permitAll();
             auth.requestMatchers(
                     // AUTH

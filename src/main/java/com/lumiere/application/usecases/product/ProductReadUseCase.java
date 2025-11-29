@@ -1,6 +1,7 @@
 package com.lumiere.application.usecases.product;
 
 import com.lumiere.application.dtos.product.query.ProductDetailsOutput;
+import com.lumiere.application.dtos.product.query.ProductFindAllCriteria;
 import com.lumiere.application.dtos.product.query.ProductSearchCriteria;
 import com.lumiere.application.ports.ProductDetailReadPort;
 import com.lumiere.domain.readmodels.ProductDetailReadModel;
@@ -28,6 +29,12 @@ public class ProductReadUseCase {
 
     public ProductDetailsOutput findByCriteria(ProductSearchCriteria criteria) {
         Page<ProductDetailReadModel> productPage = productDetailReadPort.findProductsByCriteria(criteria);
+
+        return ProductDetailsOutput.fromPage(productPage);
+    }
+
+    public ProductDetailsOutput findAllProducts(ProductFindAllCriteria criteria) {
+        Page<ProductDetailReadModel> productPage = productDetailReadPort.findAllProducts(criteria);
 
         return ProductDetailsOutput.fromPage(productPage);
     }

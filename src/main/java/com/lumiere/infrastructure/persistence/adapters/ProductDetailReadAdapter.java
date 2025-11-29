@@ -1,5 +1,6 @@
 package com.lumiere.infrastructure.persistence.adapters;
 
+import com.lumiere.application.dtos.product.query.ProductFindAllCriteria;
 import com.lumiere.application.dtos.product.query.ProductSearchCriteria;
 import com.lumiere.application.ports.ProductDetailReadPort;
 import com.lumiere.domain.entities.Product;
@@ -57,6 +58,28 @@ public class ProductDetailReadAdapter implements ProductDetailReadPort {
     }
 
     @Override
+    public Page<ProductDetailReadModel> findAllProducts(ProductFindAllCriteria criteria) {
+        Pageable pageable = CriteriaUtil.buildPageable(criteria.page(), criteria.size(), criteria.sortBy());
+
+        Page<ProductJpaEntity> productPage = sqlRepository.findAll(Objects.requireNonNull(pageable));
+
+        if (productPage.isEmpty())
+            return PaginationConverter.emptyPage(pageable);
+
+        List<UUID> pageProductIds = productPage.getContent().stream()
+                .map(ProductJpaEntity::getId)
+                .toList();
+
+        List<ProductCategory> categoriesOnPage = nosqlRepository.findByIds(pageProductIds);
+
+        Map<UUID, ProductCategory> categoryMap = categoriesOnPage.stream()
+                .collect(Collectors.toMap(ProductCategory::getId, Function.identity(), (a, b) -> a));
+
+        return PaginationConverter.convert(productPage,
+                jpaEntity -> productDetailMapper.toReadModel(jpaEntity, categoryMap.get(jpaEntity.getId())));
+    }
+
+    @Override
     public Page<ProductDetailReadModel> findProductsByCriteria(ProductSearchCriteria criteria) {
 
         List<UUID> filteredProductIds = Collections.emptyList();
@@ -109,4 +132,5 @@ public class ProductDetailReadAdapter implements ProductDetailReadPort {
         }
         return Collections.emptyList();
     }
+
 }

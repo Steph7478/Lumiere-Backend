@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.lumiere.application.dtos.product.query.ProductDetailsOutput;
+import com.lumiere.application.dtos.product.query.ProductFindAllCriteria;
 import com.lumiere.application.dtos.product.query.ProductSearchCriteria;
 import com.lumiere.application.usecases.product.ProductReadUseCase;
 import com.lumiere.domain.enums.CategoriesEnum;
@@ -33,7 +34,7 @@ public class ProductController extends BaseController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    @GetMapping(Routes.PUBLIC.PRODUCTS.BASE)
+    @GetMapping(Routes.PUBLIC.PRODUCTS.FILTER)
     public ResponseEntity<ProductDetailsOutput> findProductsByCriteria(
             @RequestParam(required = false) String name,
             @RequestParam(required = false) CategoriesEnum.Category category,
@@ -55,6 +56,21 @@ public class ProductController extends BaseController {
                 sortBy);
 
         ProductDetailsOutput output = productReadUseCase.findByCriteria(criteria);
+        return ResponseEntity.ok(output);
+    }
+
+    @GetMapping(Routes.PUBLIC.PRODUCTS.BASE)
+    public ResponseEntity<ProductDetailsOutput> findAllProducts(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "name") String sortBy) {
+
+        ProductFindAllCriteria criteria = new ProductFindAllCriteria(
+                page,
+                size,
+                sortBy);
+
+        ProductDetailsOutput output = productReadUseCase.findAllProducts(criteria);
         return ResponseEntity.ok(output);
     }
 }
