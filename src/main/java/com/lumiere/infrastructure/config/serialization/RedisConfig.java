@@ -1,4 +1,4 @@
-package com.lumiere.infrastructure.persistence.nosql.db;
+package com.lumiere.infrastructure.config.serialization;
 
 import java.util.Objects;
 
