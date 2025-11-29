@@ -20,7 +20,7 @@ import com.lumiere.presentation.routes.Routes;
 import com.lumiere.shared.annotations.cache.CacheableResponse;
 
 @RestController
-@CacheableResponse(maxAgeInSeconds = 900)
+@CacheableResponse(maxAgeInSeconds = 900, sMaxAgeInSeconds = 3600)
 public class ProductController extends BaseController {
 
     private final ProductReadUseCase productReadUseCase;
