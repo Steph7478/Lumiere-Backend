@@ -1,7 +1,6 @@
 package com.lumiere.infrastructure.persistence.nosql.repository;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Repository;
 
 import com.lumiere.domain.entities.ProductCategory;
@@ -14,7 +13,6 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Repository
-@Qualifier("productCategoryRepositoryAdapter")
 @RequiredArgsConstructor
 public class ProductCategoryRepositoryAdapter implements NoSqlRepository<ProductCategory> {
 
