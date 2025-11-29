@@ -37,8 +37,9 @@ public class RedisJsonRepository implements NoSqlRepository<ProductCategory> {
         String key = obj.getId().toString();
         Objects.requireNonNull(key);
 
-        String subcategoryString = obj.getSubcategory().toString();
-        String categoryString = obj.getCategory().toString();
+        String categoryString = obj.getCategory().getName().toString();
+        String subcategoryString = obj.getCategory().getSubcategory().toString();
+
         valueOperations.set(key, obj);
 
         genericJsonRedisTemplate.opsForSet().add("subcategory:" + subcategoryString, obj.getId());
@@ -51,8 +52,8 @@ public class RedisJsonRepository implements NoSqlRepository<ProductCategory> {
         Objects.requireNonNull(key);
         ProductCategory obj = findById(id);
 
-        String subcategoryString = obj.getSubcategory().toString();
-        String categoryString = obj.getCategory().toString();
+        String categoryString = obj.getCategory().getName().toString();
+        String subcategoryString = obj.getCategory().getSubcategory().toString();
 
         genericJsonRedisTemplate.opsForSet().remove("subcategory:" + subcategoryString, id);
         Long size = genericJsonRedisTemplate.opsForSet().size("subcategory:" + subcategoryString);
@@ -150,7 +151,7 @@ public class RedisJsonRepository implements NoSqlRepository<ProductCategory> {
         return results.stream()
                 .filter(Objects::nonNull)
                 .map(this::convertToProductCategory)
-                .filter(pc -> category.equals(pc.getCategory().toString()))
+                .filter(pc -> category.equals(pc.getCategory().getName().toString()))
                 .collect(Collectors.toList());
     }
 

@@ -33,8 +33,8 @@ public interface ProductMapper extends BaseMapper<Product, ProductJpaEntity> {
         @Mapping(target = "stockQuantity", expression = "java(domain.getStock().getQuantity())")
         ProductJpaEntity toJpa(Product domain, Object... context);
 
-        @Mapping(target = "category", expression = "java(nosqlCategory != null ? nosqlCategory.getCategory() : null)")
-        @Mapping(target = "subCategory", expression = "java(nosqlCategory != null ? nosqlCategory.getSubcategory() : null)")
+        @Mapping(target = "category", expression = "java(nosqlCategory != null ? nosqlCategory.getCategory().getName() : null)")
+        @Mapping(target = "subCategory", expression = "java(nosqlCategory != null ? nosqlCategory.getCategory().getSubcategory() : null)")
         @Mapping(target = "stock", source = "jpaEntity.stockQuantity")
         @Mapping(target = "price", expression = "java(new Money(jpaEntity.getPriceAmount(), CurrencyType.valueOf(jpaEntity.getPriceCurrency())))")
         @Mapping(target = "id", source = "jpaEntity.id")

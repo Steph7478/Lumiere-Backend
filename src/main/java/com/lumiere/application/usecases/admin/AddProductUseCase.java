@@ -41,6 +41,9 @@ public class AddProductUseCase implements IAddProductUseCase {
         ProductCategory category = addProductMapper.toProductCategoryEntity(product.getId(), input);
         categoryRepository.save(category);
 
-        return addProductMapper.toOutputDTO(product, category.getCategory(), category.getSubcategory());
+        return addProductMapper.toOutputDTO(
+                product,
+                category.getCategory().getName(),
+                category.getCategory().getSubcategory());
     }
 }

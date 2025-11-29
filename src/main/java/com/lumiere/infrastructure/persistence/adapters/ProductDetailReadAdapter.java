@@ -59,26 +59,36 @@ public class ProductDetailReadAdapter implements ProductDetailReadPort {
     @Override
     public Page<ProductDetailReadModel> findProductsByCriteria(ProductSearchCriteria criteria) {
 
-        List<ProductCategory> categories = getCategoriesFromNoSql(criteria);
-        List<UUID> productIds = categories.stream()
-                .map(ProductCategory::getId)
-                .filter(Objects::nonNull)
-                .toList();
+        List<UUID> filteredProductIds = Collections.emptyList();
+        boolean categoryFilterApplied = criteria.category() != null || criteria.subCategory() != null;
+
+        if (categoryFilterApplied) {
+            List<ProductCategory> filteredCategories = getCategoriesFromNoSql(criteria);
+            filteredProductIds = filteredCategories.stream()
+                    .map(ProductCategory::getId)
+                    .filter(Objects::nonNull)
+                    .toList();
+        }
 
         Pageable pageable = CriteriaUtil.buildPageable(criteria.page(), criteria.size(), criteria.sortBy());
 
-        boolean categoryFilterApplied = criteria.category() != null || criteria.subCategory() != null;
-        if (categoryFilterApplied && productIds.isEmpty())
+        if (categoryFilterApplied && filteredProductIds.isEmpty())
             return PaginationConverter.emptyPage(pageable);
 
         Page<ProductJpaEntity> productPage = sqlRepository.findFilteredProducts(
-                productIds,
+                filteredProductIds,
                 criteria.name(),
                 criteria.priceMin(),
                 criteria.priceMax(),
                 pageable);
 
-        Map<UUID, ProductCategory> categoryMap = categories.stream()
+        List<UUID> pageProductIds = productPage.getContent().stream()
+                .map(ProductJpaEntity::getId)
+                .toList();
+
+        List<ProductCategory> categoriesOnPage = nosqlRepository.findByIds(pageProductIds);
+
+        Map<UUID, ProductCategory> categoryMap = categoriesOnPage.stream()
                 .collect(Collectors.toMap(ProductCategory::getId, Function.identity(), (a, b) -> a));
 
         return PaginationConverter.convert(productPage,
@@ -86,8 +96,6 @@ public class ProductDetailReadAdapter implements ProductDetailReadPort {
     }
 
     private List<ProductCategory> getCategoriesFromNoSql(ProductSearchCriteria c) {
-        if (c.category() == null && c.subCategory() == null)
-            return Collections.emptyList();
 
         final String cat = c.category() != null ? c.category().name() : null;
         final String sub = c.subCategory() != null ? c.subCategory().name() : null;
