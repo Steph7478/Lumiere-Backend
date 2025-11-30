@@ -1,10 +1,13 @@
 package com.lumiere.infrastructure.config.security.config;
 
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.context.annotation.Configuration;
+
 import com.lumiere.presentation.routes.Routes;
 
 import java.util.stream.Stream;
 
+@Configuration(proxyBeanMethods = false)
 public final class SecurityMatcherConfigurator {
 
         private SecurityMatcherConfigurator() {
@@ -27,46 +30,25 @@ public final class SecurityMatcherConfigurator {
                 };
 
                 String[] adminEndpoints = {
-                                Routes.PRIVATE.ADMIN.ADD_PRODUCT,
-                                Routes.PRIVATE.ADMIN.UPDATE_PRODUCT + "/**",
-                                Routes.PRIVATE.ADMIN.INCREASE_STOCK + "/**",
-                                Routes.PRIVATE.ADMIN.DECREASE_STOCK + "/**",
-                                Routes.PRIVATE.ADMIN.UPDATE_PRICE + "/**",
+                                Routes.PRIVATE.ADMIN.BASE + "/**"
                 };
 
                 String[] userEndpoints = {
-                                Routes.PRIVATE.AUTH.LOGOUT,
-                                Routes.PRIVATE.AUTH.ME,
-                                Routes.PRIVATE.AUTH.UPDATE,
-                                Routes.PRIVATE.AUTH.DELETE,
-                                Routes.PRIVATE.USER.PROFILE,
-                                Routes.PRIVATE.ORDER.ORDER_CREATE,
-                                Routes.PRIVATE.ORDER.ORDER_ADD,
-                                Routes.PRIVATE.ORDER.ORDER_REMOVE,
-                                Routes.PRIVATE.ORDER.ORDER_COUPON,
-                                Routes.PRIVATE.ORDER.ORDER_CANCEL,
-                                Routes.PRIVATE.ORDER.ORDER_GET + "/**",
-                                Routes.PRIVATE.CART.DELETE_CART,
-                                Routes.PRIVATE.CART.GET_CART + "/**",
-                                Routes.PRIVATE.CART.REMOVE_MULTIPLE,
-                                Routes.PRIVATE.CART.REMOVE_SINGLE,
-                                Routes.PRIVATE.CART.ADD_MULTIPLE,
-                                Routes.PRIVATE.CART.ADD_SINGLE
+                                Routes.PRIVATE.AUTH.BASE + "/**",
+                                Routes.PRIVATE.USER.BASE + "/**",
+                                Routes.PRIVATE.CART.BASE + "/**",
+                                Routes.PRIVATE.ORDER.BASE + "/**"
                 };
 
-                String[] publicMatchers = prefixEndpoints(API_VERSION_PREFIX, publicEndpoints);
-                String[] adminMatchers = prefixEndpoints(API_VERSION_PREFIX, adminEndpoints);
-                String[] userMatchers = prefixEndpoints(API_VERSION_PREFIX, userEndpoints);
-
                 http.authorizeHttpRequests(auth -> {
-                        auth.requestMatchers(adminMatchers)
+                        auth.requestMatchers(prefixEndpoints(API_VERSION_PREFIX, publicEndpoints))
+                                        .permitAll();
+
+                        auth.requestMatchers(prefixEndpoints(API_VERSION_PREFIX, adminEndpoints))
                                         .hasRole("ADMIN");
 
-                        auth.requestMatchers(userMatchers)
+                        auth.requestMatchers(prefixEndpoints(API_VERSION_PREFIX, userEndpoints))
                                         .authenticated();
-
-                        auth.requestMatchers(publicMatchers)
-                                        .permitAll();
 
                         auth.anyRequest().denyAll();
                 });

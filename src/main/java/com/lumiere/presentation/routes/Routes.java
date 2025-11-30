@@ -8,54 +8,59 @@ public final class Routes {
     public static final class PUBLIC {
 
         public static final class AUTH {
-            public static final String REGISTER = "/auth/register";
-            public static final String LOGIN = "/auth/login";
+            public static final String BASE = "/auth";
+            public static final String REGISTER = BASE + "/register";
+            public static final String LOGIN = BASE + "/login";
         }
 
         public static final class PRODUCTS {
             public static final String BASE = "/products";
-            public static final String FILTER = "/products/filter";
+            public static final String FILTER = BASE + "/filter";
         }
     }
 
     public static final class PRIVATE {
 
         public static final class AUTH {
-            public static final String ME = "/auth/me";
-            public static final String UPDATE = "/auth/update";
-            public static final String LOGOUT = "/auth/logout";
-            public static final String DELETE = "/auth/delete";
+            public static final String BASE = "/auth";
+            public static final String ME = BASE + "/me";
+            public static final String UPDATE = BASE + "/update";
+            public static final String LOGOUT = BASE + "/logout";
+            public static final String DELETE = BASE + "/delete";
         }
 
         public static final class USER {
-            public static final String PROFILE = "/user/profile";
+            public static final String BASE = "/user";
+            public static final String PROFILE = BASE + "/profile";
         }
 
         public static final class ADMIN {
-            public static final String ADD_PRODUCT = "/admin/add-product";
-            public static final String UPDATE_PRODUCT = "/admin/update-product";
-            public static final String INCREASE_STOCK = "/admin/increase-stock";
-            public static final String DECREASE_STOCK = "/admin/decrease-stock";
-            public static final String UPDATE_PRICE = "/admin/update-price";
+            public static final String BASE = "/admin";
+            public static final String ADD_PRODUCT = BASE + "/add-product";
+            public static final String UPDATE_PRODUCT = BASE + "/update-product";
+            public static final String INCREASE_STOCK = BASE + "/increase-stock";
+            public static final String DECREASE_STOCK = BASE + "/decrease-stock";
+            public static final String UPDATE_PRICE = BASE + "/update-price";
         }
 
         public static final class CART {
-            public static final String ADD_MULTIPLE = "/cart/add-multiple";
-            public static final String ADD_SINGLE = "/cart/add-single";
-            public static final String REMOVE_MULTIPLE = "/cart/remove-multiple";
-            public static final String REMOVE_SINGLE = "/cart/remove-single";
-            public static final String GET_CART = "/cart";
-            public static final String DELETE_CART = "/cart/delete-cart";
+            public static final String BASE = "/cart";
+            public static final String ADD_MULTIPLE = BASE + "/add-multiple";
+            public static final String ADD_SINGLE = BASE + "/add-single";
+            public static final String REMOVE_MULTIPLE = BASE + "/remove-multiple";
+            public static final String REMOVE_SINGLE = BASE + "/remove-single";
+            public static final String GET_CART = BASE;
+            public static final String DELETE_CART = BASE + "/delete-cart";
         }
 
         public static final class ORDER {
-            public static final String ORDER_CREATE = "/order/create";
-            public static final String ORDER_ADD = "/order/add-item";
-            public static final String ORDER_REMOVE = "/order/remove-item";
-            public static final String ORDER_COUPON = "/order/add-coupon";
-            public static final String ORDER_CANCEL = "/order/cancel";
-            public static final String ORDER_GET = "/order";
-
+            public static final String BASE = "/order";
+            public static final String ORDER_CREATE = BASE + "/create";
+            public static final String ORDER_ADD = BASE + "/add-item";
+            public static final String ORDER_REMOVE = BASE + "/remove-item";
+            public static final String ORDER_COUPON = BASE + "/add-coupon";
+            public static final String ORDER_CANCEL = BASE + "/cancel";
+            public static final String ORDER_GET = BASE;
         }
     }
 }
