@@ -6,7 +6,6 @@ public final class Routes {
     }
 
     public static final class PUBLIC {
-
         public static final class AUTH {
             public static final String BASE = "/auth";
             public static final String REGISTER = BASE + "/register";
@@ -20,7 +19,6 @@ public final class Routes {
     }
 
     public static final class PRIVATE {
-
         public static final class AUTH {
             public static final String BASE = "/auth";
             public static final String ME = BASE + "/me";
@@ -55,12 +53,12 @@ public final class Routes {
 
         public static final class ORDER {
             public static final String BASE = "/order";
-            public static final String ORDER_CREATE = BASE + "/create";
-            public static final String ORDER_ADD = BASE + "/add-item";
-            public static final String ORDER_REMOVE = BASE + "/remove-item";
-            public static final String ORDER_COUPON = BASE + "/add-coupon";
-            public static final String ORDER_CANCEL = BASE + "/cancel";
-            public static final String ORDER_GET = BASE;
+            public static final String CREATE = BASE + "/create";
+            public static final String ADD = BASE + "/add-item";
+            public static final String REMOVE = BASE + "/remove-item";
+            public static final String COUPON = BASE + "/add-coupon";
+            public static final String CANCEL = BASE + "/cancel";
+            public static final String GET = BASE;
         }
     }
 }

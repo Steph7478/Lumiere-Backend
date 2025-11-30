@@ -53,7 +53,7 @@ public class OrderController {
     }
 
     @ApiVersion("v1")
-    @PostMapping(Routes.PRIVATE.ORDER.ORDER_CREATE)
+    @PostMapping(Routes.PRIVATE.ORDER.CREATE)
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     public ResponseEntity<CreateOrderOutput> createOrder(
             @AuthenticationPrincipal UUID userId,
@@ -67,7 +67,7 @@ public class OrderController {
     }
 
     @ApiVersion("v1")
-    @PostMapping(Routes.PRIVATE.ORDER.ORDER_ADD)
+    @PostMapping(Routes.PRIVATE.ORDER.ADD)
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     public ResponseEntity<AddItemOrderOutput> addItemToOrder(
             @AuthenticationPrincipal UUID userId,
@@ -81,7 +81,7 @@ public class OrderController {
     }
 
     @ApiVersion("v1")
-    @PostMapping(Routes.PRIVATE.ORDER.ORDER_REMOVE)
+    @PostMapping(Routes.PRIVATE.ORDER.REMOVE)
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     public ResponseEntity<RemoveItemOutput> removeItemOrder(@AuthenticationPrincipal UUID userId,
             @RequestBody @Valid RemoveItemRequestData reqData) {
@@ -93,7 +93,7 @@ public class OrderController {
     }
 
     @ApiVersion("v1")
-    @PostMapping(Routes.PRIVATE.ORDER.ORDER_COUPON)
+    @PostMapping(Routes.PRIVATE.ORDER.COUPON)
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     public ResponseEntity<AddCouponOutput> removeItemOrder(@AuthenticationPrincipal UUID userId,
             @RequestBody @Valid AddCouponRequestData reqData) {
@@ -105,7 +105,7 @@ public class OrderController {
     }
 
     @ApiVersion("v1")
-    @PostMapping(Routes.PRIVATE.ORDER.ORDER_CANCEL)
+    @PostMapping(Routes.PRIVATE.ORDER.CANCEL)
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     public ResponseEntity<CancelOrderOutput> removeItemOrder(@AuthenticationPrincipal UUID userId) {
 
