@@ -1,6 +1,5 @@
 package com.lumiere.presentation.controllers;
 
-import com.lumiere.presentation.controllers.base.BaseController;
 import com.lumiere.application.dtos.auth.command.create.CreateUserHandler;
 import com.lumiere.application.dtos.auth.command.create.CreateUserInput;
 import com.lumiere.application.dtos.auth.command.create.CreateUserOutput;
@@ -23,6 +22,7 @@ import com.lumiere.application.interfaces.auth.ILogoutUseCase;
 import com.lumiere.application.interfaces.auth.IUpdateUser;
 import com.lumiere.infrastructure.http.cookies.CookieFactory;
 import com.lumiere.presentation.routes.Routes;
+import com.lumiere.shared.annotations.api.ApiVersion;
 import com.lumiere.shared.annotations.logs.Loggable;
 
 import jakarta.servlet.http.Cookie;
@@ -39,7 +39,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-public class AuthController extends BaseController {
+public class AuthController {
 
     private final ICreateUserUseCase createUserUseCase;
     private final ILoginUseCase loginUseCase;
@@ -64,6 +64,7 @@ public class AuthController extends BaseController {
 
     // GET
 
+    @ApiVersion("v1")
     @Loggable
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     @GetMapping(Routes.PRIVATE.AUTH.ME)
@@ -73,6 +74,7 @@ public class AuthController extends BaseController {
         return ResponseEntity.ok(response);
     }
 
+    @ApiVersion("v1")
     @Loggable
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     @PostMapping(Routes.PRIVATE.AUTH.LOGOUT)
@@ -90,6 +92,7 @@ public class AuthController extends BaseController {
 
     // POST
 
+    @ApiVersion("v1")
     @Loggable
     @PostMapping(Routes.PUBLIC.AUTH.REGISTER)
     public ResponseEntity<CreateUserOutput> registerUser(
@@ -106,6 +109,7 @@ public class AuthController extends BaseController {
         return ResponseEntity.status(HttpStatus.CREATED).body(body);
     }
 
+    @ApiVersion("v1")
     @Loggable
     @PostMapping(Routes.PUBLIC.AUTH.LOGIN)
     public ResponseEntity<CreateUserOutput> loginUser(
@@ -123,6 +127,7 @@ public class AuthController extends BaseController {
 
     // PUT
 
+    @ApiVersion("v1")
     @Loggable
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     @PutMapping(Routes.PRIVATE.AUTH.UPDATE)
@@ -142,6 +147,7 @@ public class AuthController extends BaseController {
 
     // PATCH
 
+    @ApiVersion("v1")
     @Loggable
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     @PatchMapping(Routes.PRIVATE.AUTH.UPDATE)
@@ -160,6 +166,7 @@ public class AuthController extends BaseController {
 
     // DELETE
 
+    @ApiVersion("v1")
     @Loggable
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     @DeleteMapping(Routes.PRIVATE.AUTH.DELETE)

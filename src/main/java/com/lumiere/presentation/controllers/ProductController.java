@@ -15,13 +15,13 @@ import com.lumiere.application.dtos.product.query.ProductSearchCriteria;
 import com.lumiere.application.usecases.product.ProductReadUseCase;
 import com.lumiere.domain.enums.CategoriesEnum;
 import com.lumiere.domain.readmodels.ProductDetailReadModel;
-import com.lumiere.presentation.controllers.base.BaseController;
 import com.lumiere.presentation.routes.Routes;
+import com.lumiere.shared.annotations.api.ApiVersion;
 import com.lumiere.shared.annotations.cache.CacheableResponse;
 
 @RestController
 @CacheableResponse(maxAgeInSeconds = 900, sMaxAgeInSeconds = 3600)
-public class ProductController extends BaseController {
+public class ProductController {
 
     private final ProductReadUseCase productReadUseCase;
 
@@ -29,6 +29,7 @@ public class ProductController extends BaseController {
         this.productReadUseCase = productReadUseCase;
     }
 
+    @ApiVersion("v1")
     @GetMapping(Routes.PUBLIC.PRODUCTS.BASE + "/{id}")
     public ResponseEntity<ProductDetailReadModel> getProductDetailById(@PathVariable UUID id) {
         return productReadUseCase.findDetailById(id)
@@ -36,6 +37,7 @@ public class ProductController extends BaseController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
+    @ApiVersion("v1")
     @GetMapping(Routes.PUBLIC.PRODUCTS.FILTER)
     public ResponseEntity<ProductDetailsOutput> findProductsByCriteria(
             @RequestParam(required = false) String name,
@@ -61,6 +63,7 @@ public class ProductController extends BaseController {
         return ResponseEntity.ok(output);
     }
 
+    @ApiVersion("v1")
     @GetMapping(Routes.PUBLIC.PRODUCTS.BASE)
     public ResponseEntity<ProductDetailsOutput> findAllProducts(
             @RequestParam(defaultValue = "0") int page,

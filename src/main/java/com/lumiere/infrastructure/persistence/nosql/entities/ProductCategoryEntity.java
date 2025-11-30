@@ -27,4 +27,12 @@ public class ProductCategoryEntity {
         this.id = domainProductCategory.getId();
         this.categoryJson = domainProductCategory.getCategory();
     }
+
+    public ProductCategory toDomain() {
+        return new ProductCategory(
+                this.id,
+                this.categoryJson.getName(),
+                this.categoryJson.getSubcategory());
+    }
+
 }

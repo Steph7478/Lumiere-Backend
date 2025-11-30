@@ -28,13 +28,13 @@ import com.lumiere.application.interfaces.order.IAddItemOrderUsecase;
 import com.lumiere.application.interfaces.order.ICancelOrderUseCase;
 import com.lumiere.application.interfaces.order.ICreateOrderUseCase;
 import com.lumiere.application.interfaces.order.IRemoveItemOrderUseCase;
-import com.lumiere.presentation.controllers.base.BaseController;
 import com.lumiere.presentation.routes.Routes;
+import com.lumiere.shared.annotations.api.ApiVersion;
 
 import jakarta.validation.Valid;
 
 @RestController
-public class OrderController extends BaseController {
+public class OrderController {
 
     private final ICreateOrderUseCase createOrderUseCase;
     private final IAddItemOrderUsecase addItemOrderUsecase;
@@ -52,6 +52,7 @@ public class OrderController extends BaseController {
         this.cancelOrderUseCase = cancelOrderUseCase;
     }
 
+    @ApiVersion("v1")
     @PostMapping(Routes.PRIVATE.ORDER.ORDER_CREATE)
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     public ResponseEntity<CreateOrderOutput> createOrder(
@@ -65,6 +66,7 @@ public class OrderController extends BaseController {
 
     }
 
+    @ApiVersion("v1")
     @PostMapping(Routes.PRIVATE.ORDER.ORDER_ADD)
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     public ResponseEntity<AddItemOrderOutput> addItemToOrder(
@@ -78,6 +80,7 @@ public class OrderController extends BaseController {
 
     }
 
+    @ApiVersion("v1")
     @PostMapping(Routes.PRIVATE.ORDER.ORDER_REMOVE)
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     public ResponseEntity<RemoveItemOutput> removeItemOrder(@AuthenticationPrincipal UUID userId,
@@ -89,6 +92,7 @@ public class OrderController extends BaseController {
         return ResponseEntity.ok(response);
     }
 
+    @ApiVersion("v1")
     @PostMapping(Routes.PRIVATE.ORDER.ORDER_COUPON)
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     public ResponseEntity<AddCouponOutput> removeItemOrder(@AuthenticationPrincipal UUID userId,
@@ -100,6 +104,7 @@ public class OrderController extends BaseController {
         return ResponseEntity.ok(response);
     }
 
+    @ApiVersion("v1")
     @PostMapping(Routes.PRIVATE.ORDER.ORDER_CANCEL)
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     public ResponseEntity<CancelOrderOutput> removeItemOrder(@AuthenticationPrincipal UUID userId) {

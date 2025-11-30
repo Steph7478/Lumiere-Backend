@@ -3,7 +3,6 @@ package com.lumiere.application.mappers.admin;
 import java.util.UUID;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import org.mapstruct.MappingConstants;
 
 import com.lumiere.application.dtos.admin.command.add.AddProductInput;
 import com.lumiere.application.dtos.admin.command.add.AddProductOutput;
@@ -16,7 +15,7 @@ import com.lumiere.domain.services.ProductService;
 import com.lumiere.domain.vo.Money;
 import com.lumiere.domain.vo.Stock;
 
-@Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
+@Mapper(componentModel = "spring")
 public interface AddProductMapper {
 
     @Mapping(target = "priceAmount", source = "price.amount")

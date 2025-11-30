@@ -8,7 +8,7 @@ import com.lumiere.infrastructure.mappers.ProductMapper;
 import com.lumiere.infrastructure.persistence.jpa.entities.ProductJpaEntity;
 import com.lumiere.infrastructure.persistence.jpa.repositories.product.ProductJpaRepository;
 import com.lumiere.infrastructure.persistence.nosql.entities.ProductCategoryEntity;
-import com.lumiere.infrastructure.persistence.nosql.repository.ProductCategoryRepository; // CORRIGIDO PARA A INTERFACE QUE RETORNA *ENTITY
+import com.lumiere.infrastructure.persistence.nosql.repository.ProductCategoryRepository;
 import com.lumiere.infrastructure.persistence.utils.CriteriaUtil;
 import com.lumiere.infrastructure.persistence.utils.PaginationConverter;
 import org.springframework.data.domain.Page;

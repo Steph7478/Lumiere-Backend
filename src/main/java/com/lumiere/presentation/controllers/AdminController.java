@@ -32,15 +32,15 @@ import com.lumiere.application.interfaces.admin.IDecreaseStockUseCase;
 import com.lumiere.application.interfaces.admin.IIncreaseStockUseCase;
 import com.lumiere.application.interfaces.admin.IModifyProductUseCase;
 import com.lumiere.application.interfaces.admin.IUpdatePriceUseCase;
-import com.lumiere.presentation.controllers.base.BaseController;
 import com.lumiere.presentation.routes.Routes;
+import com.lumiere.shared.annotations.api.ApiVersion;
 
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 
 @Validated
 @RestController
-public class AdminController extends BaseController {
+public class AdminController {
     private final IAddProductUseCase addProductUseCase;
     private final IModifyProductUseCase modifyProductUseCase;
     private final IIncreaseStockUseCase increaseStockUseCase;
@@ -57,6 +57,7 @@ public class AdminController extends BaseController {
         this.updatePriceUseCase = updatePriceUseCase;
     }
 
+    @ApiVersion("v1")
     @PreAuthorize("hasRole('ADMIN') and hasAuthority('PRODUCT_ADD')")
     @PostMapping(Routes.PRIVATE.ADMIN.ADD_PRODUCT)
     public ResponseEntity<AddProductOutput> addProduct(@Valid @RequestBody AddProductInput req,
@@ -66,6 +67,7 @@ public class AdminController extends BaseController {
         return ResponseEntity.status(HttpStatus.ACCEPTED).body(appDTO);
     }
 
+    @ApiVersion("v1")
     @PreAuthorize("hasRole('ADMIN') and hasAuthority('PRODUCT_UPDATE')")
     @PutMapping(Routes.PRIVATE.ADMIN.UPDATE_PRODUCT + "/{id}")
     public ResponseEntity<ModifyProductOutput> putProduct(@PathVariable UUID id,
@@ -81,6 +83,7 @@ public class AdminController extends BaseController {
         return ResponseEntity.status(HttpStatus.ACCEPTED).body(responseDTO);
     }
 
+    @ApiVersion("v1")
     @PreAuthorize("hasRole('ADMIN') and hasAuthority('PRODUCT_UPDATE')")
     @PatchMapping(Routes.PRIVATE.ADMIN.UPDATE_PRODUCT + "/{id}")
     public ResponseEntity<ModifyProductOutput> patchProduct(@PathVariable UUID id,
@@ -97,6 +100,7 @@ public class AdminController extends BaseController {
         return ResponseEntity.status(HttpStatus.ACCEPTED).body(responseDTO);
     }
 
+    @ApiVersion("v1")
     @PreAuthorize("hasRole('ADMIN') and hasAuthority('PRODUCT_UPDATE')")
     @PatchMapping(Routes.PRIVATE.ADMIN.INCREASE_STOCK + "/{id}")
     public ResponseEntity<IncreaseStockOutput> increaseStock(@PathVariable UUID id,
@@ -109,6 +113,7 @@ public class AdminController extends BaseController {
 
     }
 
+    @ApiVersion("v1")
     @PreAuthorize("hasRole('ADMIN') and hasAuthority('PRODUCT_UPDATE')")
     @PatchMapping(Routes.PRIVATE.ADMIN.DECREASE_STOCK + "/{id}")
     public ResponseEntity<DecreaseStockOutput> decreaseStock(@PathVariable UUID id,
@@ -120,6 +125,7 @@ public class AdminController extends BaseController {
         return ResponseEntity.status(HttpStatus.ACCEPTED).body(responseDTO);
     }
 
+    @ApiVersion("v1")
     @PreAuthorize("hasRole('ADMIN') and hasAuthority('PRODUCT_UPDATE')")
     @PatchMapping(Routes.PRIVATE.ADMIN.UPDATE_PRICE + "/{id}")
     public ResponseEntity<UpdatePriceOutput> updatePrice(@PathVariable UUID id,
