@@ -23,7 +23,7 @@ public class ApiVersionConfig implements WebMvcRegistrations {
                 var v = AnnotatedElementUtils.findMergedAnnotation(method, ApiVersion.class);
                 if (v != null)
                     mappingInfo = RequestMappingInfo.paths(
-                            Arrays.stream(v.value()).map(v -> "/api/" + v).toArray(String[]::new)).build()
+                            Arrays.stream(v.value()).map(version -> "/api/" + version).toArray(String[]::new)).build()
                             .combine(mappingInfo);
 
                 super.registerHandlerMethod(handler, method, mappingInfo);
