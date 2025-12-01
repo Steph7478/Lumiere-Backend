@@ -4,8 +4,6 @@ import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
 
-import org.springframework.data.jpa.repository.JpaRepository;
-
 import com.lumiere.domain.entities.Coupon;
 import com.lumiere.domain.repositories.CouponRepository;
 import com.lumiere.infrastructure.mappers.CouponMapper;
@@ -20,7 +18,7 @@ public class CouponJpaRepositoryAdapter extends BaseRepositoryAdapter<Coupon, Co
     private final CouponJpaRepository couponRepo;
     private final CouponMapper mapper;
 
-    protected CouponJpaRepositoryAdapter(JpaRepository<CouponJpaEntity, UUID> jpaRepository,
+    protected CouponJpaRepositoryAdapter(CouponJpaRepository jpaRepository,
             CouponMapper mapper, EntityManager entityManager, CouponJpaRepository couponRepo) {
         super(jpaRepository, mapper, entityManager, CouponJpaEntity.class);
 
