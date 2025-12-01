@@ -52,7 +52,7 @@ public class OrderController {
         this.cancelOrderUseCase = cancelOrderUseCase;
     }
 
-    @ApiVersion("v1")
+    @ApiVersion("1")
     @PostMapping(Routes.PRIVATE.ORDER.CREATE)
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     public ResponseEntity<CreateOrderOutput> createOrder(
@@ -66,7 +66,7 @@ public class OrderController {
 
     }
 
-    @ApiVersion("v1")
+    @ApiVersion("1")
     @PostMapping(Routes.PRIVATE.ORDER.ADD)
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     public ResponseEntity<AddItemOrderOutput> addItemToOrder(
@@ -80,7 +80,7 @@ public class OrderController {
 
     }
 
-    @ApiVersion("v1")
+    @ApiVersion("1")
     @PostMapping(Routes.PRIVATE.ORDER.REMOVE)
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     public ResponseEntity<RemoveItemOutput> removeItemOrder(@AuthenticationPrincipal UUID userId,
@@ -92,7 +92,7 @@ public class OrderController {
         return ResponseEntity.ok(response);
     }
 
-    @ApiVersion("v1")
+    @ApiVersion("1")
     @PostMapping(Routes.PRIVATE.ORDER.COUPON)
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     public ResponseEntity<AddCouponOutput> removeItemOrder(@AuthenticationPrincipal UUID userId,
@@ -104,7 +104,7 @@ public class OrderController {
         return ResponseEntity.ok(response);
     }
 
-    @ApiVersion("v1")
+    @ApiVersion("1")
     @PostMapping(Routes.PRIVATE.ORDER.CANCEL)
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     public ResponseEntity<CancelOrderOutput> removeItemOrder(@AuthenticationPrincipal UUID userId) {

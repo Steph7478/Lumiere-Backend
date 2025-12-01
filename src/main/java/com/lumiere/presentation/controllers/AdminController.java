@@ -57,7 +57,7 @@ public class AdminController {
         this.updatePriceUseCase = updatePriceUseCase;
     }
 
-    @ApiVersion("v1")
+    @ApiVersion("1")
     @PreAuthorize("hasRole('ADMIN') and hasAuthority('PRODUCT_ADD')")
     @PostMapping(Routes.PRIVATE.ADMIN.ADD_PRODUCT)
     public ResponseEntity<AddProductOutput> addProduct(@Valid @RequestBody AddProductInput req,
@@ -67,7 +67,7 @@ public class AdminController {
         return ResponseEntity.status(HttpStatus.ACCEPTED).body(appDTO);
     }
 
-    @ApiVersion("v1")
+    @ApiVersion("1")
     @PreAuthorize("hasRole('ADMIN') and hasAuthority('PRODUCT_UPDATE')")
     @PutMapping(Routes.PRIVATE.ADMIN.UPDATE_PRODUCT + "/{id}")
     public ResponseEntity<ModifyProductOutput> putProduct(@PathVariable UUID id,
@@ -83,7 +83,7 @@ public class AdminController {
         return ResponseEntity.status(HttpStatus.ACCEPTED).body(responseDTO);
     }
 
-    @ApiVersion("v1")
+    @ApiVersion("1")
     @PreAuthorize("hasRole('ADMIN') and hasAuthority('PRODUCT_UPDATE')")
     @PatchMapping(Routes.PRIVATE.ADMIN.UPDATE_PRODUCT + "/{id}")
     public ResponseEntity<ModifyProductOutput> patchProduct(@PathVariable UUID id,
@@ -100,7 +100,7 @@ public class AdminController {
         return ResponseEntity.status(HttpStatus.ACCEPTED).body(responseDTO);
     }
 
-    @ApiVersion("v1")
+    @ApiVersion("1")
     @PreAuthorize("hasRole('ADMIN') and hasAuthority('PRODUCT_UPDATE')")
     @PatchMapping(Routes.PRIVATE.ADMIN.INCREASE_STOCK + "/{id}")
     public ResponseEntity<IncreaseStockOutput> increaseStock(@PathVariable UUID id,
@@ -113,7 +113,7 @@ public class AdminController {
 
     }
 
-    @ApiVersion("v1")
+    @ApiVersion("1")
     @PreAuthorize("hasRole('ADMIN') and hasAuthority('PRODUCT_UPDATE')")
     @PatchMapping(Routes.PRIVATE.ADMIN.DECREASE_STOCK + "/{id}")
     public ResponseEntity<DecreaseStockOutput> decreaseStock(@PathVariable UUID id,
@@ -125,7 +125,7 @@ public class AdminController {
         return ResponseEntity.status(HttpStatus.ACCEPTED).body(responseDTO);
     }
 
-    @ApiVersion("v1")
+    @ApiVersion("1")
     @PreAuthorize("hasRole('ADMIN') and hasAuthority('PRODUCT_UPDATE')")
     @PatchMapping(Routes.PRIVATE.ADMIN.UPDATE_PRICE + "/{id}")
     public ResponseEntity<UpdatePriceOutput> updatePrice(@PathVariable UUID id,

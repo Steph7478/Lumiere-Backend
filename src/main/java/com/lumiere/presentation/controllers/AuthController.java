@@ -23,8 +23,6 @@ import com.lumiere.application.interfaces.auth.IUpdateUser;
 import com.lumiere.infrastructure.http.cookies.CookieFactory;
 import com.lumiere.presentation.routes.Routes;
 import com.lumiere.shared.annotations.api.ApiVersion;
-import com.lumiere.shared.annotations.logs.Loggable;
-
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -64,8 +62,7 @@ public class AuthController {
 
     // GET
 
-    @ApiVersion("v1")
-    @Loggable
+    @ApiVersion("1")
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     @GetMapping(Routes.PRIVATE.AUTH.ME)
     public ResponseEntity<GetMeOutput> getMe(@AuthenticationPrincipal UUID userId) {
@@ -74,8 +71,7 @@ public class AuthController {
         return ResponseEntity.ok(response);
     }
 
-    @ApiVersion("v1")
-    @Loggable
+    @ApiVersion("1")
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     @PostMapping(Routes.PRIVATE.AUTH.LOGOUT)
     public ResponseEntity<LogoutOutput> logout(HttpServletRequest req, HttpServletResponse res) {
@@ -92,8 +88,7 @@ public class AuthController {
 
     // POST
 
-    @ApiVersion("v1")
-    @Loggable
+    @ApiVersion("1")
     @PostMapping(Routes.PUBLIC.AUTH.REGISTER)
     public ResponseEntity<CreateUserOutput> registerUser(
             @Valid @RequestBody CreateUserInput requestDTO,
@@ -109,8 +104,7 @@ public class AuthController {
         return ResponseEntity.status(HttpStatus.CREATED).body(body);
     }
 
-    @ApiVersion("v1")
-    @Loggable
+    @ApiVersion("1")
     @PostMapping(Routes.PUBLIC.AUTH.LOGIN)
     public ResponseEntity<CreateUserOutput> loginUser(
             @Valid @RequestBody LoginInput requestDTO, HttpServletResponse response) {
@@ -127,8 +121,7 @@ public class AuthController {
 
     // PUT
 
-    @ApiVersion("v1")
-    @Loggable
+    @ApiVersion("1")
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     @PutMapping(Routes.PRIVATE.AUTH.UPDATE)
     public ResponseEntity<UpdateUserOutput> updatePutUser(@AuthenticationPrincipal UUID userId,
@@ -147,8 +140,7 @@ public class AuthController {
 
     // PATCH
 
-    @ApiVersion("v1")
-    @Loggable
+    @ApiVersion("1")
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     @PatchMapping(Routes.PRIVATE.AUTH.UPDATE)
     public ResponseEntity<UpdateUserOutput> updatePatchUser(@AuthenticationPrincipal UUID userId,
@@ -166,8 +158,7 @@ public class AuthController {
 
     // DELETE
 
-    @ApiVersion("v1")
-    @Loggable
+    @ApiVersion("1")
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     @DeleteMapping(Routes.PRIVATE.AUTH.DELETE)
     public ResponseEntity<DeleteUserOutput> deleteUser(@AuthenticationPrincipal UUID userId) {

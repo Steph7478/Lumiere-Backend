@@ -29,7 +29,7 @@ public class ProductController {
         this.productReadUseCase = productReadUseCase;
     }
 
-    @ApiVersion("v1")
+    @ApiVersion("1")
     @GetMapping(Routes.PUBLIC.PRODUCTS.BASE + "/{id}")
     public ResponseEntity<ProductDetailReadModel> getProductDetailById(@PathVariable UUID id) {
         return productReadUseCase.findDetailById(id)
@@ -37,7 +37,7 @@ public class ProductController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    @ApiVersion("v1")
+    @ApiVersion("1")
     @GetMapping(Routes.PUBLIC.PRODUCTS.FILTER)
     public ResponseEntity<ProductDetailsOutput> findProductsByCriteria(
             @RequestParam(required = false) String name,
@@ -63,7 +63,7 @@ public class ProductController {
         return ResponseEntity.ok(output);
     }
 
-    @ApiVersion("v1")
+    @ApiVersion("1")
     @GetMapping(Routes.PUBLIC.PRODUCTS.BASE)
     public ResponseEntity<ProductDetailsOutput> findAllProducts(
             @RequestParam(defaultValue = "0") int page,

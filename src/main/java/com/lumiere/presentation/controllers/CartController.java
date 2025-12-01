@@ -53,7 +53,7 @@ public class CartController {
         this.deleteCartUseCase = deleteCartUseCase;
     }
 
-    @ApiVersion("v1")
+    @ApiVersion("1")
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     @DeleteMapping(Routes.PRIVATE.CART.DELETE_CART)
     public ResponseEntity<DeleteCartOutput> deleteCart(@AuthenticationPrincipal UUID id) {
@@ -63,7 +63,7 @@ public class CartController {
         return ResponseEntity.ok(response);
     }
 
-    @ApiVersion("v1")
+    @ApiVersion("1")
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     @GetMapping(Routes.PRIVATE.CART.GET_CART)
     public ResponseEntity<GetCartByIdOutput> getCartForUser(@AuthenticationPrincipal UUID userId) {
@@ -73,7 +73,7 @@ public class CartController {
         return ResponseEntity.ok(response);
     }
 
-    @ApiVersion("v1")
+    @ApiVersion("1")
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     @GetMapping(Routes.PRIVATE.CART.GET_CART + "/{cartId}")
     public ResponseEntity<GetCartByIdOutput> getCartById(@AuthenticationPrincipal UUID userId,
@@ -84,7 +84,7 @@ public class CartController {
         return ResponseEntity.ok(response);
     }
 
-    @ApiVersion("v1")
+    @ApiVersion("1")
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     @PostMapping(Routes.PRIVATE.CART.ADD_MULTIPLE)
     public ResponseEntity<AddCartOuput> addToCartMultiple(@AuthenticationPrincipal UUID id,
@@ -95,7 +95,7 @@ public class CartController {
         return ResponseEntity.ok(response);
     }
 
-    @ApiVersion("v1")
+    @ApiVersion("1")
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     @PostMapping(Routes.PRIVATE.CART.ADD_SINGLE)
     public ResponseEntity<AddCartOuput> addToCartSingle(@AuthenticationPrincipal UUID id,
@@ -114,7 +114,7 @@ public class CartController {
         return ResponseEntity.ok(response);
     }
 
-    @ApiVersion("v1")
+    @ApiVersion("1")
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     @PostMapping(Routes.PRIVATE.CART.REMOVE_MULTIPLE)
     public ResponseEntity<RemoveCartOutput> removeToCartMultiple(@AuthenticationPrincipal UUID id,
@@ -125,7 +125,7 @@ public class CartController {
         return ResponseEntity.ok(response);
     }
 
-    @ApiVersion("v1")
+    @ApiVersion("1")
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     @PostMapping(Routes.PRIVATE.CART.REMOVE_SINGLE)
     public ResponseEntity<RemoveCartOutput> removeToCartSingle(@AuthenticationPrincipal UUID id,
