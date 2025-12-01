@@ -15,20 +15,20 @@ import jakarta.persistence.EntityManager;
 public class CouponJpaRepositoryAdapter extends BaseRepositoryAdapter<Coupon, CouponJpaEntity>
         implements CouponRepository {
 
-    private final CouponJpaRepository couponRepo;
+    private final CouponJpaRepository jpaRepository;
     private final CouponMapper mapper;
 
     protected CouponJpaRepositoryAdapter(CouponJpaRepository jpaRepository,
-            CouponMapper mapper, EntityManager entityManager, CouponJpaRepository couponRepo) {
+            CouponMapper mapper, EntityManager entityManager) {
         super(jpaRepository, mapper, entityManager, CouponJpaEntity.class);
 
-        this.couponRepo = couponRepo;
+        this.jpaRepository = jpaRepository;
         this.mapper = mapper;
     }
 
     @Override
     public List<Coupon> findAvailableCoupons(UUID userId, Instant now) {
-        return couponRepo.findAvailableCoupons(userId, now)
+        return jpaRepository.findAvailableCoupons(userId, now)
                 .stream()
                 .map(mapper::toDomain)
                 .toList();
