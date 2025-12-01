@@ -1,78 +1,31 @@
 package com.lumiere.application.mappers.admin;
 
 import java.util.List;
-import java.util.UUID;
-import java.util.stream.IntStream;
 
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.ReportingPolicy;
 
-import com.lumiere.application.dtos.admin.command.add.AddProductInput;
 import com.lumiere.application.dtos.admin.command.add.AddProductOutput;
 import com.lumiere.application.dtos.admin.command.add.AddProductRequestData;
 import com.lumiere.domain.entities.Product;
-import com.lumiere.domain.entities.ProductCategory;
-import com.lumiere.domain.enums.CategoriesEnum;
-import com.lumiere.domain.factories.ProductFactory;
 import com.lumiere.domain.readmodels.ProductDetailReadModel;
-import com.lumiere.domain.services.ProductCategoryService;
-import com.lumiere.domain.vo.Money;
-import com.lumiere.domain.vo.Stock;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface AddProductMapper {
+    @Mapping(target = "id", expression = "java(product.getId().toString())")
+    @Mapping(target = "name", source = "product.name")
+    @Mapping(target = "description", source = "product.description")
+    @Mapping(target = "price", source = "product.price")
+    @Mapping(target = "ratings", source = "product.ratings")
+    @Mapping(target = "stock", expression = "java(product.getStock().getQuantity())")
+    @Mapping(target = "createdAt", source = "product.createdAt")
+    @Mapping(target = "updatedAt", source = "product.updatedAt")
+    @Mapping(target = "category", source = "dto.category")
+    @Mapping(target = "subCategory", source = "dto.subcategory")
+    ProductDetailReadModel toReadModel(Product product, AddProductRequestData dto);
 
-    default Product toEntity(AddProductRequestData dto) {
-        return ProductFactory.create(
-                dto.name(),
-                dto.description(),
-                new Money(dto.priceAmount(), dto.currency()),
-                new Stock(dto.stockQuantity()));
-    }
-
-    default List<Product> toEntities(AddProductInput input) {
-        return input.items().stream()
-                .map(this::toEntity)
-                .toList();
-    }
-
-    default ProductCategory toProductCategoryEntity(UUID productId, AddProductRequestData dto) {
-        return ProductCategoryService.createProductCategory(
-                productId,
-                dto.category(),
-                dto.subcategory());
-    }
-
-    default ProductDetailReadModel toReadModel(
-            Product product,
-            CategoriesEnum.Category category,
-            CategoriesEnum.SubCategory subCategory) {
-
-        return new ProductDetailReadModel(
-                product.getId().toString(),
-                product.getName(),
-                product.getDescription(),
-                product.getPrice(),
-                product.getRatings(),
-                product.getStock().getQuantity(),
-                product.getCreatedAt(),
-                product.getUpdatedAt(),
-                category,
-                subCategory);
-    }
-
-    default List<ProductDetailReadModel> toReadModels(
-            List<Product> products,
-            List<AddProductRequestData> items) {
-
-        return IntStream.range(0, products.size())
-                .mapToObj(i -> toReadModel(
-                        products.get(i),
-                        items.get(i).category(),
-                        items.get(i).subcategory()))
-                .toList();
-    }
-
-    default AddProductOutput toOutputDTO(List<ProductDetailReadModel> models) {
+    default AddProductOutput toOutput(List<ProductDetailReadModel> models) {
         return new AddProductOutput(models);
     }
 }
