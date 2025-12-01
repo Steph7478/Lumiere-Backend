@@ -53,14 +53,12 @@ public class AddProductUseCase implements IAddProductUseCase {
                                 .map(productRepository::save)
                                 .toList();
 
-                List<ProductCategory> categories = IntStream.range(0, products.size())
+                IntStream.range(0, products.size())
                                 .mapToObj(i -> ProductCategoryService.createProductCategory(
                                                 products.get(i).getId(),
                                                 input.items().get(i).category(),
                                                 input.items().get(i).subcategory()))
-                                .toList();
-
-                categories.forEach(categoryRepository::save);
+                                .forEach(categoryRepository::save);
 
                 List<ProductDetailReadModel> readModels = IntStream.range(0, products.size())
                                 .mapToObj(i -> mapper.toReadModel(products.get(i), input.items().get(i)))
