@@ -16,8 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.lumiere.application.dtos.cart.command.add.AddCartInput;
 import com.lumiere.application.dtos.cart.command.add.AddCartOuput;
-import com.lumiere.application.dtos.cart.command.add.AddMultipleItemsRequestData;
-import com.lumiere.application.dtos.cart.command.add.AddSingleItemRequestData;
+import com.lumiere.application.dtos.cart.command.add.AddtemsRequestData;
 import com.lumiere.application.dtos.cart.command.delete.DeleteCartInput;
 import com.lumiere.application.dtos.cart.command.delete.DeleteCartOutput;
 import com.lumiere.application.dtos.cart.command.remove.RemoveCartInput;
@@ -88,7 +87,7 @@ public class CartController {
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     @PostMapping(Routes.PRIVATE.CART.ADD_MULTIPLE)
     public ResponseEntity<AddCartOuput> addToCartMultiple(@AuthenticationPrincipal UUID id,
-            @Valid @RequestBody AddMultipleItemsRequestData requestData, HttpServletResponse res) {
+            @Valid @RequestBody AddtemsRequestData requestData, HttpServletResponse res) {
         AddCartInput request = new AddCartInput(id, requestData);
         AddCartOuput response = addCartUseCase.execute(request);
 
@@ -99,15 +98,9 @@ public class CartController {
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     @PostMapping(Routes.PRIVATE.CART.ADD_SINGLE)
     public ResponseEntity<AddCartOuput> addToCartSingle(@AuthenticationPrincipal UUID id,
-            @Valid @RequestBody AddSingleItemRequestData requestData, HttpServletResponse res) {
+            @Valid @RequestBody CartItem requestData, HttpServletResponse res) {
 
-        CartItem singleCartItem = new CartItem(
-                requestData.productId(),
-                requestData.quantity());
-
-        AddCartInput request = new AddCartInput(
-                id,
-                new AddMultipleItemsRequestData(List.of(singleCartItem)));
+        AddCartInput request = new AddCartInput(id, new AddtemsRequestData(List.of(requestData)));
 
         AddCartOuput response = addCartUseCase.execute(request);
 

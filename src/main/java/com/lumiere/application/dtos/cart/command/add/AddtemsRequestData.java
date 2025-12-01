@@ -4,5 +4,5 @@ import java.util.List;
 
 import com.lumiere.domain.vo.CartItem;
 
-public record AddMultipleItemsRequestData(List<CartItem> items) {
+public record AddtemsRequestData(List<CartItem> items) {
 }
