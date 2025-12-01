@@ -2,7 +2,7 @@ package com.lumiere.infrastructure.persistence.jpa.entities;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.util.ArrayList; // Importar ArrayList para inicialização
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
