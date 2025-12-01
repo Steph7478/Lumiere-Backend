@@ -34,7 +34,8 @@ public class CouponFactory {
                 code);
     }
 
-    public static Coupon createUniqueCoupon(Category category, User user, Type type, BigDecimal discount) {
+    public static Coupon createUniqueCoupon(Category category, User user, Type type, BigDecimal discount,
+            LocalDateTime expiredAt) {
 
         Objects.requireNonNull(user, "User entity is required to create a new coupon.");
 
@@ -46,7 +47,7 @@ public class CouponFactory {
 
         return new Coupon(
                 null,
-                LocalDateTime.now().plusDays(7),
+                expiredAt != null ? expiredAt : LocalDateTime.now().plusDays(7),
                 category,
                 discount != null ? discount : defaultDiscount,
                 type != null ? type : defaultType,

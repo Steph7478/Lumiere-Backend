@@ -17,6 +17,7 @@ public class Coupon extends BaseEntity {
     private final Type type;
     private final boolean isUnique;
     private final User user;
+    // TODO: Value Object of Code
     private final String code;
 
     public Coupon(UUID id, LocalDateTime expiredAt, Category category,
@@ -36,8 +37,12 @@ public class Coupon extends BaseEntity {
         if (type == Type.PERCENTAGE && discount.compareTo(new BigDecimal("100")) > 0)
             throw new IllegalArgumentException("Percentage discount cannot exceed 100.");
 
+        this.user = user;
+        if (user == null && isUnique)
+            throw new IllegalArgumentException("A global coupon (user is null) cannot be unique.");
+
         this.category = Objects.requireNonNull(category, "category cannot be null");
-        this.user = Objects.requireNonNull(user, "user cannot be null");
+
         this.code = Objects.requireNonNull(code, "code cannot be null");
         this.isUnique = isUnique;
     }

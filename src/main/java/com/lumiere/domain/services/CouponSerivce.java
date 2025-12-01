@@ -16,7 +16,8 @@ public abstract class CouponSerivce {
         return CouponFactory.createGlobalCoupon(category, type, discount, expiredAt, code);
     }
 
-    public static Coupon uniqueCoupon(Category category, User user, Type type, BigDecimal discount) {
-        return CouponFactory.createUniqueCoupon(category, user, type, discount);
+    public static Coupon uniqueCoupon(Category category, User user, Type type, BigDecimal discount,
+            LocalDateTime expiredAt) {
+        return CouponFactory.createUniqueCoupon(category, user, type, discount, expiredAt);
     }
 }
