@@ -1,5 +1,8 @@
 package com.lumiere.application.usecases.admin;
 
+import java.util.List;
+import java.util.stream.IntStream;
+
 import org.springframework.stereotype.Service;
 
 import com.lumiere.application.dtos.admin.command.add.AddProductInput;
@@ -25,6 +28,7 @@ public class AddProductUseCase implements IAddProductUseCase {
             ProductRepository productRepository,
             NoSqlRepository<ProductCategory> categoryRepository,
             AddProductMapper addProductMapper) {
+
         this.productRepository = productRepository;
         this.categoryRepository = categoryRepository;
         this.addProductMapper = addProductMapper;
@@ -35,15 +39,18 @@ public class AddProductUseCase implements IAddProductUseCase {
     @RequireAdmin
     public AddProductOutput execute(AddProductInput input) {
 
-        Product product = addProductMapper.toEntity(input);
-        productRepository.save(product);
+        List<Product> products = addProductMapper.toEntities(input);
+        products.forEach(productRepository::save);
 
-        ProductCategory category = addProductMapper.toProductCategoryEntity(product.getId(), input);
-        categoryRepository.save(category);
+        List<ProductCategory> categories = IntStream.range(0, products.size())
+                .mapToObj(i -> addProductMapper.toProductCategoryEntity(
+                        products.get(i).getId(),
+                        input.items().get(i)))
+                .toList();
+
+        categories.forEach(categoryRepository::save);
 
         return addProductMapper.toOutputDTO(
-                product,
-                category.getCategory().getName(),
-                category.getCategory().getSubcategory());
+                addProductMapper.toReadModels(products, input.items()));
     }
 }

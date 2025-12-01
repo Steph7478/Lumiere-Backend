@@ -34,7 +34,8 @@ public final class Routes {
 
         public static final class ADMIN {
             public static final String BASE = "/admin";
-            public static final String ADD_PRODUCT = BASE + "/add-product";
+            public static final String ADD_MULTIPLE = BASE + "/add-mutiple";
+            public static final String ADD_SINGLE = BASE + "/add-single";
             public static final String UPDATE_PRODUCT = BASE + "/update-product";
             public static final String INCREASE_STOCK = BASE + "/increase-stock";
             public static final String DECREASE_STOCK = BASE + "/decrease-stock";

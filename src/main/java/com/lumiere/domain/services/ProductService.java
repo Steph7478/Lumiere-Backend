@@ -1,21 +1,22 @@
 package com.lumiere.domain.services;
 
+import java.util.List;
 import java.util.Optional;
 
 import com.lumiere.domain.entities.Product;
 import com.lumiere.domain.factories.ProductFactory;
 import com.lumiere.domain.vo.Money;
-import com.lumiere.domain.vo.Stock;
 
 public abstract class ProductService {
 
-    public static Product createProduct(
-            String name,
-            String description,
-            Money price,
-            Stock stock) {
-
-        return ProductFactory.create(name, description, price, stock);
+    public static List<Product> createProducts(List<Product> products) {
+        return products.stream()
+                .map(p -> ProductFactory.create(
+                        p.getName(),
+                        p.getDescription(),
+                        p.getPrice(),
+                        p.getStock()))
+                .toList();
     }
 
     public static void update(Product product, Optional<String> name, Optional<String> description) {

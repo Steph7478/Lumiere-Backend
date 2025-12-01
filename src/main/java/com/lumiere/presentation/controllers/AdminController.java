@@ -1,5 +1,6 @@
 package com.lumiere.presentation.controllers;
 
+import java.util.List;
 import java.util.UUID;
 
 import org.springframework.http.HttpStatus;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.lumiere.application.dtos.admin.command.add.AddProductInput;
 import com.lumiere.application.dtos.admin.command.add.AddProductOutput;
+import com.lumiere.application.dtos.admin.command.add.AddProductRequestData;
 import com.lumiere.application.dtos.admin.command.modify.ModifyProductInput;
 import com.lumiere.application.dtos.admin.command.modify.ModifyProductOutput;
 import com.lumiere.application.dtos.admin.command.modify.ModifyProductRequestData;
@@ -59,11 +61,24 @@ public class AdminController {
 
     @ApiVersion("1")
     @PreAuthorize("hasRole('ADMIN') and hasAuthority('PRODUCT_ADD')")
-    @PostMapping(Routes.PRIVATE.ADMIN.ADD_PRODUCT)
-    public ResponseEntity<AddProductOutput> addProduct(@Valid @RequestBody AddProductInput req,
+    @PostMapping(Routes.PRIVATE.ADMIN.ADD_MULTIPLE)
+    public ResponseEntity<AddProductOutput> addProductMultiple(@Valid @RequestBody AddProductInput req,
             HttpServletResponse res) {
 
         AddProductOutput appDTO = addProductUseCase.execute(req);
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body(appDTO);
+    }
+
+    @ApiVersion("1")
+    @PreAuthorize("hasRole('ADMIN') and hasAuthority('PRODUCT_ADD')")
+    @PostMapping(Routes.PRIVATE.ADMIN.ADD_SINGLE)
+    public ResponseEntity<AddProductOutput> addProductSingle(
+            @Valid @RequestBody AddProductRequestData req,
+            HttpServletResponse res) {
+
+        AddProductInput request = new AddProductInput(List.of(req));
+        AddProductOutput appDTO = addProductUseCase.execute(request);
+
         return ResponseEntity.status(HttpStatus.ACCEPTED).body(appDTO);
     }
 

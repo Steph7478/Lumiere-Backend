@@ -1,52 +1,53 @@
 package com.lumiere.application.mappers.admin;
 
+import java.util.List;
 import java.util.UUID;
+import java.util.stream.IntStream;
+
 import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
 
 import com.lumiere.application.dtos.admin.command.add.AddProductInput;
 import com.lumiere.application.dtos.admin.command.add.AddProductOutput;
+import com.lumiere.application.dtos.admin.command.add.AddProductRequestData;
 import com.lumiere.domain.entities.Product;
 import com.lumiere.domain.entities.ProductCategory;
 import com.lumiere.domain.enums.CategoriesEnum;
+import com.lumiere.domain.factories.ProductFactory;
 import com.lumiere.domain.readmodels.ProductDetailReadModel;
 import com.lumiere.domain.services.ProductCategoryService;
-import com.lumiere.domain.services.ProductService;
 import com.lumiere.domain.vo.Money;
 import com.lumiere.domain.vo.Stock;
 
 @Mapper(componentModel = "spring")
 public interface AddProductMapper {
 
-    @Mapping(target = "priceAmount", source = "price.amount")
-    @Mapping(target = "currency", source = "price.currency")
-    @Mapping(target = "stockQuantity", source = "stock.quantity")
-    @Mapping(target = "category", ignore = true)
-    @Mapping(target = "subcategory", ignore = true)
-    AddProductInput toDTO(Product entity);
-
-    default Money mapToMoney(AddProductInput dto) {
-        return new Money(dto.priceAmount(), dto.currency());
+    default Product toEntity(AddProductRequestData dto) {
+        return ProductFactory.create(
+                dto.name(),
+                dto.description(),
+                new Money(dto.priceAmount(), dto.currency()),
+                new Stock(dto.stockQuantity()));
     }
 
-    default Stock mapToStock(AddProductInput dto) {
-        return new Stock(dto.stockQuantity());
+    default List<Product> toEntities(AddProductInput input) {
+        return input.items().stream()
+                .map(this::toEntity)
+                .toList();
     }
 
-    default Product toEntity(AddProductInput dto) {
-        Money price = mapToMoney(dto);
-        Stock stock = mapToStock(dto);
-        return ProductService.createProduct(dto.name(), dto.description(), price, stock);
+    default ProductCategory toProductCategoryEntity(UUID productId, AddProductRequestData dto) {
+        return ProductCategoryService.createProductCategory(
+                productId,
+                dto.category(),
+                dto.subcategory());
     }
 
-    default ProductCategory toProductCategoryEntity(UUID productId, AddProductInput dto) {
-        return ProductCategoryService.createProductCategory(productId, dto.category(), dto.subcategory());
-    }
-
-    default AddProductOutput toOutputDTO(Product product, CategoriesEnum.Category category,
+    default ProductDetailReadModel toReadModel(
+            Product product,
+            CategoriesEnum.Category category,
             CategoriesEnum.SubCategory subCategory) {
 
-        ProductDetailReadModel readModel = new ProductDetailReadModel(
+        return new ProductDetailReadModel(
                 product.getId().toString(),
                 product.getName(),
                 product.getDescription(),
@@ -57,7 +58,21 @@ public interface AddProductMapper {
                 product.getUpdatedAt(),
                 category,
                 subCategory);
+    }
 
-        return new AddProductOutput(readModel);
+    default List<ProductDetailReadModel> toReadModels(
+            List<Product> products,
+            List<AddProductRequestData> items) {
+
+        return IntStream.range(0, products.size())
+                .mapToObj(i -> toReadModel(
+                        products.get(i),
+                        items.get(i).category(),
+                        items.get(i).subcategory()))
+                .toList();
+    }
+
+    default AddProductOutput toOutputDTO(List<ProductDetailReadModel> models) {
+        return new AddProductOutput(models);
     }
 }
