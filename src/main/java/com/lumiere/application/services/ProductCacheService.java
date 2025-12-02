@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -27,8 +28,8 @@ public class ProductCacheService {
             return Map.of();
         }
 
-        Set<java.util.UUID> uuidSet = productIds.stream()
-                .map(java.util.UUID::fromString)
+        Set<UUID> uuidSet = productIds.stream()
+                .map(UUID::fromString)
                 .collect(Collectors.toSet());
 
         List<ProductDetailReadModel> products = productRepo.findAllProductsById(uuidSet);
@@ -42,7 +43,7 @@ public class ProductCacheService {
                     .findFirst()
                     .orElseThrow();
 
-            throw new ProductNotFoundException(java.util.UUID.fromString(missingId));
+            throw new ProductNotFoundException(UUID.fromString(missingId));
         }
 
         return productCache;

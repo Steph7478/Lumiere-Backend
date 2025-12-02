@@ -14,6 +14,7 @@ public interface OrderItemUseCaseMapper {
 
     @Mapping(source = "product.id", target = "productId")
     @Mapping(source = "product.name", target = "name")
+    @Mapping(source = "product.category", target = "category")
     @Mapping(source = "product.price.amount", target = "unitPrice")
     @Mapping(source = "cartItem.quantity", target = "quantity")
     OrderItem toOrderItem(ProductDetailReadModel product, CartItem cartItem, CreateOrderRequestData reqData);
