@@ -37,7 +37,8 @@ public final class SecurityMatcherConfigurator {
                                 Routes.PRIVATE.AUTH.BASE + "/**",
                                 Routes.PRIVATE.USER.BASE + "/**",
                                 Routes.PRIVATE.CART.BASE + "/**",
-                                Routes.PRIVATE.ORDER.BASE + "/**"
+                                Routes.PRIVATE.ORDER.BASE + "/**",
+                                Routes.PRIVATE.COUPON.BASE + "/**",
                 };
 
                 http.authorizeHttpRequests(auth -> {

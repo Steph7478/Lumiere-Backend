@@ -62,5 +62,11 @@ public final class Routes {
             public static final String CANCEL = BASE + "/cancel";
             public static final String GET = BASE;
         }
+
+        public static final class COUPON {
+            public static final String BASE = "/coupon";
+            public static final String AVALIBLE = BASE + "/avalible";
+
+        }
     }
 }
