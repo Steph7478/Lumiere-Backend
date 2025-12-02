@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
 
+import com.lumiere.domain.entities.Coupon;
 import com.lumiere.domain.entities.Order;
 import com.lumiere.domain.entities.User;
 import com.lumiere.domain.enums.CurrencyEnum.CurrencyType;
@@ -19,7 +20,7 @@ public class OrderFactory {
             UUID paymentId,
             BigDecimal total,
             List<OrderItem> items,
-            String coupon, CurrencyType currency) {
+            Coupon coupon, CurrencyType currency) {
 
         return new Order(id, user, status, paymentId, total, items, coupon, currency);
     }
@@ -28,7 +29,7 @@ public class OrderFactory {
             UUID id,
             User user,
             List<OrderItem> items,
-            String coupon, CurrencyType currency) {
+            Coupon coupon, CurrencyType currency) {
 
         BigDecimal calculatedTotal = calculateTotal(items);
 

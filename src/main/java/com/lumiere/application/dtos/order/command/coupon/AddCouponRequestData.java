@@ -1,5 +1,7 @@
 package com.lumiere.application.dtos.order.command.coupon;
 
-public record AddCouponRequestData(String coupon) {
+import java.util.UUID;
+
+public record AddCouponRequestData(UUID couponId) {
 
 }

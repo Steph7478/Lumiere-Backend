@@ -47,8 +47,9 @@ public class OrderJpaEntity extends BaseJpaEntity implements Serializable {
     @Column(nullable = false)
     private BigDecimal total;
 
-    @Column(name = "coupon")
-    private String coupon;
+    @ManyToOne
+    @JoinColumn(name = "coupon_id")
+    private CouponJpaEntity coupon;
 
     @Column(nullable = false)
     private String currency;
@@ -64,7 +65,7 @@ public class OrderJpaEntity extends BaseJpaEntity implements Serializable {
     }
 
     public OrderJpaEntity(UUID id, UserJpaEntity user, Status status, UUID paymentId, BigDecimal total,
-            List<OrderItemJpaEntity> items, String coupon) {
+            List<OrderItemJpaEntity> items, CouponJpaEntity coupon) {
         super(id);
         this.user = user;
         this.status = status;

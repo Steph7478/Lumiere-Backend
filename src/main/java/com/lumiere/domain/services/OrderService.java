@@ -3,6 +3,7 @@ package com.lumiere.domain.services;
 import java.util.List;
 import java.util.UUID;
 
+import com.lumiere.domain.entities.Coupon;
 import com.lumiere.domain.entities.Order;
 import com.lumiere.domain.entities.User;
 import com.lumiere.domain.enums.CurrencyEnum.CurrencyType;
@@ -22,7 +23,8 @@ public abstract class OrderService {
         Order updatedOrder = order;
 
         for (OrderItem item : items) {
-            updatedOrder = updatedOrder.addItem(item.getProductId(), item.getQuantity(), item.getUnitPrice());
+            updatedOrder = updatedOrder.addItem(item.getProductId(), item.getName(), item.getQuantity(),
+                    item.getUnitPrice());
         }
 
         return updatedOrder;
@@ -41,7 +43,7 @@ public abstract class OrderService {
         return updatedOrder;
     }
 
-    public static Order useCoupon(Order order, String coupon) {
+    public static Order useCoupon(Order order, Coupon coupon) {
         return order.useCoupon(coupon);
     }
 

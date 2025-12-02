@@ -6,10 +6,11 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
-
+import java.math.RoundingMode;
 import com.lumiere.domain.entities.base.BaseEntity;
 import com.lumiere.domain.enums.CurrencyEnum.CurrencyType;
 import com.lumiere.domain.enums.StatusEnum.Status;
+import com.lumiere.domain.enums.CouponEnum.Type;
 import com.lumiere.domain.vo.OrderItem;
 
 public class Order extends BaseEntity {
@@ -17,7 +18,7 @@ public class Order extends BaseEntity {
     private final User user;
     private final Status status;
     private final UUID paymentId;
-    private final String coupon;
+    private final Coupon coupon;
     private final BigDecimal total;
     private final CurrencyType currency;
     private final List<OrderItem> items;
@@ -28,7 +29,7 @@ public class Order extends BaseEntity {
     }
 
     public Order(UUID id, User user, Status status, UUID paymentId, BigDecimal total, List<OrderItem> items,
-            String coupon, CurrencyType currency) {
+            Coupon coupon, CurrencyType currency) {
         super(id);
         this.user = Objects.requireNonNull(user, "User cannot be null");
         this.status = status != null ? status : Status.IN_PROGRESS;
@@ -55,7 +56,7 @@ public class Order extends BaseEntity {
         return total;
     }
 
-    public String getCoupon() {
+    public Coupon getCoupon() {
         return coupon;
     }
 
@@ -67,9 +68,30 @@ public class Order extends BaseEntity {
         return items;
     }
 
-    public Order useCoupon(String coupon) {
+    public Order useCoupon(Coupon coupon) {
+        if (coupon == null || !coupon.isValid()) {
+            BigDecimal currentSubtotal = calculateSubtotal(this.items);
+            return new Order(getId(), this.user, this.status, this.paymentId,
+                    currentSubtotal, this.items, null, this.currency);
+        }
+
+        BigDecimal currentSubtotal = calculateSubtotal(this.items);
+        BigDecimal discountValue;
+
+        if (coupon.getType() == Type.PERCENTAGE) {
+            BigDecimal percentage = coupon.getDiscount().divide(new BigDecimal("100"), 2, RoundingMode.HALF_UP);
+            discountValue = currentSubtotal.multiply(percentage).setScale(2, RoundingMode.HALF_UP);
+        } else {
+            discountValue = coupon.getDiscount().setScale(2, RoundingMode.HALF_UP);
+        }
+
+        BigDecimal newTotal = currentSubtotal.subtract(discountValue);
+        if (newTotal.compareTo(BigDecimal.ZERO) < 0) {
+            newTotal = BigDecimal.ZERO;
+        }
+
         return new Order(getId(), this.user, this.status, this.paymentId,
-                this.total, this.items, coupon, this.currency);
+                newTotal, this.items, coupon, this.currency);
     }
 
     public Order markAsPaid(UUID paymentId) {
@@ -77,13 +99,15 @@ public class Order extends BaseEntity {
                 this.total, this.items, this.coupon, this.currency);
     }
 
-    public Order addItem(UUID productId, int quantity, BigDecimal price) {
-        if (productId == null || quantity <= 0 || price == null)
+    public Order addItem(UUID productId, String productName, int quantity, BigDecimal price) {
+        if (productId == null || quantity <= 0 || price == null || productName == null)
             return this;
 
-        return this.updateItem(productId, quantity,
+        Order updatedOrder = this.updateItem(productId, productName, quantity,
                 (current, modification) -> current + modification,
                 true, price);
+
+        return updatedOrder.applyCurrentCoupon();
     }
 
     public Order updateQuantity(UUID productId, int newQuantity) {
@@ -91,11 +115,13 @@ public class Order extends BaseEntity {
             return this;
 
         if (newQuantity == 0)
-            return this.removeItem(productId);
+            return this.removeItem(productId).applyCurrentCoupon();
 
-        return this.updateItem(productId, newQuantity,
+        Order updatedOrder = this.updateItem(productId, null, newQuantity,
                 (current, modification) -> modification,
                 false, null);
+
+        return updatedOrder.applyCurrentCoupon();
     }
 
     public Order removeItem(UUID productId) {
@@ -107,13 +133,13 @@ public class Order extends BaseEntity {
 
         existingItem.ifPresent(newItems::remove);
 
-        BigDecimal newTotal = calculateTotal(newItems);
+        BigDecimal newSubtotal = calculateSubtotal(newItems);
 
         return new Order(getId(), this.user, this.status, this.paymentId,
-                newTotal, newItems, this.coupon, this.currency);
+                newSubtotal, newItems, this.coupon, this.currency);
     }
 
-    private Order updateItem(UUID productId, int modificationQuantity, ItemOperation operation,
+    private Order updateItem(UUID productId, String productName, int modificationQuantity, ItemOperation operation,
             boolean shouldAddifMissing, BigDecimal price) {
         List<OrderItem> newItems = new ArrayList<>(this.items);
 
@@ -130,30 +156,34 @@ public class Order extends BaseEntity {
                 newItems.add(oldItem.withQuantity(newQuantity));
             }
 
-            BigDecimal calculatedTotal = calculateTotal(newItems);
+            BigDecimal calculatedSubtotal = calculateSubtotal(newItems);
 
-            return new Order(getId(), this.user, this.status, this.paymentId, calculatedTotal, newItems, this.coupon,
+            return new Order(getId(), this.user, this.status, this.paymentId, calculatedSubtotal, newItems, this.coupon,
                     this.currency);
+
         } else if (shouldAddifMissing && modificationQuantity > 0) {
-            BigDecimal itemSubtotal = price.multiply(BigDecimal.valueOf(modificationQuantity));
+            newItems.add(new OrderItem(productId, productName, modificationQuantity, price));
 
-            newItems.add(new OrderItem(productId, this.coupon, modificationQuantity, itemSubtotal));
+            BigDecimal calculatedSubtotal = calculateSubtotal(newItems);
 
-            BigDecimal calculatedTotal = calculateTotal(newItems);
-
-            return new Order(getId(), this.user, this.status, this.paymentId, calculatedTotal, newItems, this.coupon,
+            return new Order(getId(), this.user, this.status, this.paymentId, calculatedSubtotal, newItems, this.coupon,
                     this.currency);
         }
 
         return this;
     }
 
-    private static BigDecimal calculateTotal(List<OrderItem> items) {
+    private Order applyCurrentCoupon() {
+        return this.useCoupon(this.coupon);
+    }
+
+    private static BigDecimal calculateSubtotal(List<OrderItem> items) {
         if (items == null || items.isEmpty()) {
             return BigDecimal.ZERO;
         }
         return items.stream()
                 .map(OrderItem::calculateSubtotal)
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
+                .reduce(BigDecimal.ZERO, BigDecimal::add)
+                .setScale(2, RoundingMode.HALF_UP);
     }
 }
