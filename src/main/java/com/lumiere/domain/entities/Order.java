@@ -79,13 +79,14 @@ public class Order extends BaseEntity {
         BigDecimal discountValue;
 
         if (coupon.getType() == Type.PERCENTAGE) {
-            BigDecimal percentage = coupon.getDiscount().divide(new BigDecimal("100"), 2, RoundingMode.HALF_UP);
+            BigDecimal percentage = coupon.getDiscount().divide(new BigDecimal("100"), 4, RoundingMode.HALF_UP);
+
             discountValue = currentSubtotal.multiply(percentage).setScale(2, RoundingMode.HALF_UP);
         } else {
             discountValue = coupon.getDiscount().setScale(2, RoundingMode.HALF_UP);
         }
 
-        BigDecimal newTotal = currentSubtotal.subtract(discountValue);
+        BigDecimal newTotal = currentSubtotal.subtract(discountValue).setScale(2, RoundingMode.HALF_UP);
         if (newTotal.compareTo(BigDecimal.ZERO) < 0) {
             newTotal = BigDecimal.ZERO;
         }
@@ -115,7 +116,7 @@ public class Order extends BaseEntity {
             return this;
 
         if (newQuantity == 0)
-            return this.removeItem(productId).applyCurrentCoupon();
+            return this.removeItem(productId);
 
         Order updatedOrder = this.updateItem(productId, null, newQuantity,
                 (current, modification) -> modification,
@@ -133,10 +134,12 @@ public class Order extends BaseEntity {
 
         existingItem.ifPresent(newItems::remove);
 
-        BigDecimal newSubtotal = calculateSubtotal(newItems);
+        BigDecimal calculatedSubtotal = calculateSubtotal(newItems);
 
-        return new Order(getId(), this.user, this.status, this.paymentId,
-                newSubtotal, newItems, this.coupon, this.currency);
+        Order orderWithoutCouponApplied = new Order(getId(), this.user, this.status, this.paymentId,
+                calculatedSubtotal, newItems, this.coupon, this.currency);
+
+        return orderWithoutCouponApplied.applyCurrentCoupon();
     }
 
     private Order updateItem(UUID productId, String productName, int modificationQuantity, ItemOperation operation,
