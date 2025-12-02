@@ -18,24 +18,24 @@ import com.lumiere.domain.vo.CartItem;
 @Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface CartReadModelMapper {
 
-    @Mapping(target = "items", source = "cart.items")
-    CartReadModel toReadModel(
-            Cart cart,
-            @Context Map<UUID, ProductDetailReadModel> productCache);
+        @Mapping(target = "items", source = "cart.items")
+        CartReadModel toReadModel(
+                        Cart cart,
+                        @Context Map<String, ProductDetailReadModel> productCache);
 
-    List<CartItemReadModel> toCartItemReadModel(
-            Set<CartItem> items,
-            @Context Map<UUID, ProductDetailReadModel> productCache);
+        List<CartItemReadModel> toCartItemReadModel(
+                        Set<CartItem> items,
+                        @Context Map<String, ProductDetailReadModel> productCache);
 
-    @Mapping(target = "quantity", source = "quantity")
-    @Mapping(target = "product", source = "productId")
-    CartItemReadModel toCartItemReadModel(
-            CartItem cartItem,
-            @Context Map<UUID, ProductDetailReadModel> productCache);
+        @Mapping(target = "quantity", source = "quantity")
+        @Mapping(target = "product", source = "productId")
+        CartItemReadModel toCartItemReadModel(
+                        CartItem cartItem,
+                        @Context Map<String, ProductDetailReadModel> productCache);
 
-    default ProductDetailReadModel map(
-            UUID productId,
-            @Context Map<UUID, ProductDetailReadModel> productCache) {
-        return productCache.get(productId);
-    }
+        default ProductDetailReadModel map(
+                        UUID productId,
+                        @Context Map<String, ProductDetailReadModel> productCache) {
+                return productCache.get(productId.toString());
+        }
 }

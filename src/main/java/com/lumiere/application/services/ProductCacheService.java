@@ -10,7 +10,6 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -22,23 +21,28 @@ public class ProductCacheService {
         this.productRepo = productRepo;
     }
 
-    @Cacheable(value = "productJpaList", keyGenerator = "sortedSetKeyGenerator", unless = "#result == null", condition = "#productIds != null && !#productIds.isEmpty()")
-    public Map<UUID, ProductDetailReadModel> loadProductCache(Set<UUID> productIds) {
+    @Cacheable(value = "product_list", keyGenerator = "sortedSetKeyGenerator", unless = "#result == null", condition = "#productIds != null && !#productIds.isEmpty()")
+    public Map<String, ProductDetailReadModel> loadProductCache(Set<String> productIds) {
         if (productIds == null || productIds.isEmpty()) {
             return Map.of();
         }
 
-        List<ProductDetailReadModel> products = productRepo.findAllProductsById(productIds);
+        Set<java.util.UUID> uuidSet = productIds.stream()
+                .map(java.util.UUID::fromString)
+                .collect(Collectors.toSet());
 
-        Map<UUID, ProductDetailReadModel> productCache = products.stream()
-                .collect(Collectors.toMap(ProductDetailReadModel::id, p -> p));
+        List<ProductDetailReadModel> products = productRepo.findAllProductsById(uuidSet);
+
+        Map<String, ProductDetailReadModel> productCache = products.stream()
+                .collect(Collectors.toMap(p -> p.id().toString(), p -> p));
 
         if (productCache.size() != productIds.size()) {
-            UUID missingId = productIds.stream()
+            String missingId = productIds.stream()
                     .filter(id -> !productCache.containsKey(id))
-                    .findFirst().orElseThrow(IllegalArgumentException::new);
+                    .findFirst()
+                    .orElseThrow();
 
-            throw new ProductNotFoundException(missingId);
+            throw new ProductNotFoundException(java.util.UUID.fromString(missingId));
         }
 
         return productCache;

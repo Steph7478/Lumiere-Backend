@@ -60,7 +60,8 @@ public class AddItemOrderUsecase implements IAddItemOrderUsecase {
                                 .filter(Objects::nonNull)
                                 .collect(Collectors.toSet());
 
-                Map<UUID, ProductDetailReadModel> productMap = productCacheService.loadProductCache(productIdsToLoad);
+                Map<String, ProductDetailReadModel> productMap = productCacheService.loadProductCache(
+                                productIdsToLoad.stream().map(UUID::toString).collect(Collectors.toSet()));
 
                 List<OrderItem> itemsToProcess = input.items().items().stream().map(
                                 inputItem -> orderItemAssemblerService.buildOrderItem(order, productMap, inputItem))

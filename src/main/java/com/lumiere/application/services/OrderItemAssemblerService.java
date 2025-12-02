@@ -13,7 +13,7 @@ import com.lumiere.domain.vo.OrderItem;
 
 @Service
 public class OrderItemAssemblerService {
-    public OrderItem buildOrderItem(Order order, Map<UUID, ProductDetailReadModel> productMap,
+    public OrderItem buildOrderItem(Order order, Map<String, ProductDetailReadModel> productMap,
             OrderItemData inputItem) {
         UUID productId = inputItem.productId();
 
@@ -30,7 +30,7 @@ public class OrderItemAssemblerService {
                     existingItem.getUnitPrice(),
                     existingItem.getCategory());
         } else {
-            ProductDetailReadModel product = productMap.get(productId);
+            ProductDetailReadModel product = productMap.get(productId.toString());
             return new OrderItem(
                     productId,
                     product.name(),

@@ -65,14 +65,17 @@ public class AddCartUseCase implements IAddCartUseCase {
                                         .forEach(productIds::add);
                 });
 
-                Map<UUID, ProductDetailReadModel> productCache = productCacheService.loadProductCache(productIds);
+                Map<String, ProductDetailReadModel> productCache = productCacheService
+                                .loadProductCache(productIds.stream()
+                                                .map(UUID::toString)
+                                                .collect(Collectors.toSet()));
 
                 Cart currentCart = existingCartOptional.orElseGet(() -> CartService.createCart(user));
 
                 List<CartItem> cartItems = input.requestData().items()
                                 .stream()
                                 .map(item -> {
-                                        UUID productId = item.productId();
+                                        String productId = item.productId().toString();
                                         ProductDetailReadModel product = productCache.get(productId);
                                         return new CartItem(
                                                         product.id(),
