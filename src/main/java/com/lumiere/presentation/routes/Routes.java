@@ -40,6 +40,7 @@ public final class Routes {
             public static final String INCREASE_STOCK = BASE + "/increase-stock";
             public static final String DECREASE_STOCK = BASE + "/decrease-stock";
             public static final String UPDATE_PRICE = BASE + "/update-price";
+            public static final String GLOBAL_COUPON = BASE + "/global-coupon";
         }
 
         public static final class CART {
