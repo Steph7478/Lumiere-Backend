@@ -2,5 +2,5 @@ package com.lumiere.application.dtos.cart.command.add;
 
 import java.util.UUID;
 
-public record AddCartInput(UUID authId, AddtemsRequestData requestData) {
+public record AddCartInput(UUID authId, AddItemsRequestData requestData) {
 }

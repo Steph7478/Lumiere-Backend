@@ -16,9 +16,9 @@ import com.lumiere.application.interfaces.cart.IGetCartByIdUseCase;
 import com.lumiere.application.mappers.cart.CartReadModelMapper;
 import com.lumiere.application.services.ProductCacheService;
 import com.lumiere.domain.entities.Cart;
-import com.lumiere.domain.entities.Product;
 import com.lumiere.domain.entities.User;
 import com.lumiere.domain.readmodels.CartReadModel;
+import com.lumiere.domain.readmodels.ProductDetailReadModel;
 import com.lumiere.domain.repositories.CartRepository;
 import com.lumiere.domain.repositories.UserRepository;
 import com.lumiere.domain.vo.CartItem;
@@ -59,7 +59,7 @@ public class GetCartByIdUseCase implements IGetCartByIdUseCase {
                 .map(CartItem::getProductId)
                 .collect(Collectors.toSet());
 
-        Map<UUID, Product> productCache = productCacheService.loadProductCache(productIds);
+        Map<UUID, ProductDetailReadModel> productCache = productCacheService.loadProductCache(productIds);
 
         CartReadModel readModel = cartReadModelMapper.toReadModel(finalCart, productCache);
 

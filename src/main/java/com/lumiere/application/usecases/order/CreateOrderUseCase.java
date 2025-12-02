@@ -14,10 +14,10 @@ import com.lumiere.application.exceptions.auth.UserNotFoundException;
 import com.lumiere.application.exceptions.order.OrderAlreadyInProgress;
 import com.lumiere.application.interfaces.order.ICreateOrderUseCase;
 import com.lumiere.domain.entities.Order;
-import com.lumiere.domain.entities.Product;
 import com.lumiere.domain.entities.User;
 import com.lumiere.domain.enums.CurrencyEnum.CurrencyType;
 import com.lumiere.domain.enums.StatusEnum.Status;
+import com.lumiere.domain.readmodels.ProductDetailReadModel;
 import com.lumiere.domain.repositories.OrderRepository;
 import com.lumiere.domain.repositories.UserRepository;
 import com.lumiere.domain.services.OrderService;
@@ -68,7 +68,7 @@ public class CreateOrderUseCase implements ICreateOrderUseCase {
                 .map(itemRequestData -> itemRequestData.getProductId())
                 .collect(Collectors.toSet());
 
-        Map<UUID, Product> productCache = productCacheService.loadProductCache(productIds);
+        Map<UUID, ProductDetailReadModel> productCache = productCacheService.loadProductCache(productIds);
 
         List<OrderItem> orderItems = itemMappingService.mapItemsToDomainVO(
                 input.requestData().items(), productCache, itemRequestData -> itemRequestData.getProductId(),

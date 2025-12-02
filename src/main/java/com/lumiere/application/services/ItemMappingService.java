@@ -1,6 +1,6 @@
 package com.lumiere.application.services;
 
-import com.lumiere.domain.entities.Product;
+import com.lumiere.domain.readmodels.ProductDetailReadModel;
 
 import java.util.List;
 import java.util.Map;
@@ -16,15 +16,16 @@ public class ItemMappingService {
 
     public <I, O> List<O> mapItemsToDomainVO(
             List<I> itemsRequest,
-            Map<UUID, Product> productCache,
+            Map<UUID, ProductDetailReadModel> productCache,
             Function<I, UUID> productIdGetter,
-            BiFunction<Product, I, O> itemMapper) {
+            BiFunction<ProductDetailReadModel, I, O> itemMapper) {
 
         return itemsRequest.stream()
                 .map(itemRequestData -> {
                     UUID productId = productIdGetter.apply(itemRequestData);
-                    Product product = productCache.get(productId);
-                    return itemMapper.apply(product, itemRequestData);
+                    ProductDetailReadModel productDetail = productCache.get(productId);
+
+                    return itemMapper.apply(productDetail, itemRequestData);
                 })
                 .collect(Collectors.toList());
     }

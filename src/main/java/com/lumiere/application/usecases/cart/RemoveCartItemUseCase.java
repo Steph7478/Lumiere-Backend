@@ -14,9 +14,9 @@ import com.lumiere.application.exceptions.cart.CartNotFoundException;
 import com.lumiere.application.interfaces.cart.IRemoveCartUseCase;
 import com.lumiere.application.mappers.cart.CartReadModelMapper;
 import com.lumiere.domain.entities.Cart;
-import com.lumiere.domain.entities.Product;
 import com.lumiere.domain.entities.User;
 import com.lumiere.domain.readmodels.CartReadModel;
+import com.lumiere.domain.readmodels.ProductDetailReadModel;
 import com.lumiere.domain.repositories.CartRepository;
 import com.lumiere.domain.repositories.UserRepository;
 import com.lumiere.domain.services.CartService;
@@ -28,42 +28,43 @@ import jakarta.transaction.Transactional;
 @Service
 public class RemoveCartItemUseCase implements IRemoveCartUseCase {
 
-    private final CartRepository cartRepository;
-    private final UserRepository userRepository;
-    private final CartReadModelMapper cartReadModel;
-    private final ProductCacheService productCacheService;
+        private final CartRepository cartRepository;
+        private final UserRepository userRepository;
+        private final CartReadModelMapper cartReadModel;
+        private final ProductCacheService productCacheService;
 
-    public RemoveCartItemUseCase(
-            CartRepository cartRepository,
-            UserRepository userRepository, CartReadModelMapper cartReadModel, ProductCacheService productCacheService) {
-        this.cartRepository = cartRepository;
-        this.userRepository = userRepository;
-        this.cartReadModel = cartReadModel;
-        this.productCacheService = productCacheService;
-    }
+        public RemoveCartItemUseCase(
+                        CartRepository cartRepository,
+                        UserRepository userRepository, CartReadModelMapper cartReadModel,
+                        ProductCacheService productCacheService) {
+                this.cartRepository = cartRepository;
+                this.userRepository = userRepository;
+                this.cartReadModel = cartReadModel;
+                this.productCacheService = productCacheService;
+        }
 
-    @Override
-    @Transactional
-    public RemoveCartOutput execute(RemoveCartInput input) {
+        @Override
+        @Transactional
+        public RemoveCartOutput execute(RemoveCartInput input) {
 
-        User user = userRepository.findUserByAuthId(input.authId())
-                .orElseThrow(UserNotFoundException::new);
+                User user = userRepository.findUserByAuthId(input.authId())
+                                .orElseThrow(UserNotFoundException::new);
 
-        Cart cart = cartRepository.findCartByUserId(user.getId())
-                .orElseThrow(CartNotFoundException::new);
+                Cart cart = cartRepository.findCartByUserId(user.getId())
+                                .orElseThrow(CartNotFoundException::new);
 
-        Cart updatedCart = CartService.removeProduct(cart, input.requestData().items());
+                Cart updatedCart = CartService.removeProduct(cart, input.requestData().items());
 
-        cartRepository.update(updatedCart);
+                cartRepository.update(updatedCart);
 
-        Set<UUID> productIds = updatedCart.getItems().stream()
-                .map(CartItem::getProductId)
-                .collect(Collectors.toSet());
+                Set<UUID> productIds = updatedCart.getItems().stream()
+                                .map(CartItem::getProductId)
+                                .collect(Collectors.toSet());
 
-        Map<UUID, Product> productCache = productCacheService.loadProductCache(productIds);
+                Map<UUID, ProductDetailReadModel> productCache = productCacheService.loadProductCache(productIds);
 
-        CartReadModel readModel = cartReadModel.toReadModel(updatedCart, productCache);
+                CartReadModel readModel = cartReadModel.toReadModel(updatedCart, productCache);
 
-        return new RemoveCartOutput(readModel);
-    }
+                return new RemoveCartOutput(readModel);
+        }
 }

@@ -1,6 +1,8 @@
 package com.lumiere.application.ports;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 
 import org.springframework.data.domain.Page;
@@ -15,4 +17,6 @@ public interface ProductDetailReadPort {
     Optional<ProductDetailReadModel> findProductDetailById(UUID id);
 
     Page<ProductDetailReadModel> findAllProducts(ProductFindAllCriteria criteria);
+
+    List<ProductDetailReadModel> findAllProductsById(Set<UUID> ids);
 }

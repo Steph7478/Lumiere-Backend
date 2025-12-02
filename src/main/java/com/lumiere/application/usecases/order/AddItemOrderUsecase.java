@@ -18,9 +18,9 @@ import com.lumiere.application.interfaces.order.IAddItemOrderUsecase;
 import com.lumiere.application.services.OrderItemAssemblerService;
 import com.lumiere.application.services.ProductCacheService;
 import com.lumiere.domain.entities.Order;
-import com.lumiere.domain.entities.Product;
 import com.lumiere.domain.entities.User;
 import com.lumiere.domain.enums.StatusEnum.Status;
+import com.lumiere.domain.readmodels.ProductDetailReadModel;
 import com.lumiere.domain.repositories.OrderRepository;
 import com.lumiere.domain.repositories.UserRepository;
 import com.lumiere.domain.services.OrderService;
@@ -60,7 +60,7 @@ public class AddItemOrderUsecase implements IAddItemOrderUsecase {
                                 .filter(Objects::nonNull)
                                 .collect(Collectors.toSet());
 
-                Map<UUID, Product> productMap = productCacheService.loadProductCache(productIdsToLoad);
+                Map<UUID, ProductDetailReadModel> productMap = productCacheService.loadProductCache(productIdsToLoad);
 
                 List<OrderItem> itemsToProcess = input.items().items().stream().map(
                                 inputItem -> orderItemAssemblerService.buildOrderItem(order, productMap, inputItem))

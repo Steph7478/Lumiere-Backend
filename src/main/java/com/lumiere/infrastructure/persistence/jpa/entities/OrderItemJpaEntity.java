@@ -4,6 +4,8 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.UUID;
 
+import com.lumiere.domain.enums.CategoriesEnum.Category;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -44,14 +46,18 @@ public class OrderItemJpaEntity implements Serializable {
     @Column(nullable = false)
     private BigDecimal unitPrice;
 
+    @Column(nullable = false)
+    private Category category;
+
     public OrderItemJpaEntity(UUID id, OrderJpaEntity order, ProductJpaEntity product, String name, int quantity,
-            BigDecimal unitPrice, String currency) {
+            BigDecimal unitPrice, String currency, Category category) {
         this.id = id;
         this.order = order;
         this.product = product;
         this.name = name;
         this.quantity = quantity;
         this.unitPrice = unitPrice;
+        this.category = category;
     }
 
     protected void setOrderReference(OrderJpaEntity order) {

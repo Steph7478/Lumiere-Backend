@@ -10,28 +10,32 @@ import org.mapstruct.Mapping;
 import org.mapstruct.ReportingPolicy;
 
 import com.lumiere.domain.entities.Cart;
-import com.lumiere.domain.entities.Product;
 import com.lumiere.domain.readmodels.CartItemReadModel;
 import com.lumiere.domain.readmodels.CartReadModel;
+import com.lumiere.domain.readmodels.ProductDetailReadModel;
 import com.lumiere.domain.vo.CartItem;
-import com.lumiere.infrastructure.mappers.CartMapper;
-import com.lumiere.infrastructure.mappers.ProductMapper;
 
-@Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE, uses = { ProductMapper.class,
-        CartMapper.class })
+@Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface CartReadModelMapper {
 
     @Mapping(target = "items", source = "cart.items")
-    CartReadModel toReadModel(Cart cart, @Context Map<UUID, Product> productCache);
+    CartReadModel toReadModel(
+            Cart cart,
+            @Context Map<UUID, ProductDetailReadModel> productCache);
 
-    List<CartItemReadModel> toCartItemReadModel(Set<CartItem> items, @Context Map<UUID, Product> productCache);
+    List<CartItemReadModel> toCartItemReadModel(
+            Set<CartItem> items,
+            @Context Map<UUID, ProductDetailReadModel> productCache);
 
     @Mapping(target = "quantity", source = "quantity")
     @Mapping(target = "product", source = "productId")
-    CartItemReadModel toCartItemReadModel(CartItem cartItem, @Context Map<UUID, Product> productCache);
+    CartItemReadModel toCartItemReadModel(
+            CartItem cartItem,
+            @Context Map<UUID, ProductDetailReadModel> productCache);
 
-    default Product map(UUID productId, @Context Map<UUID, Product> productCache) {
+    default ProductDetailReadModel map(
+            UUID productId,
+            @Context Map<UUID, ProductDetailReadModel> productCache) {
         return productCache.get(productId);
     }
-
 }

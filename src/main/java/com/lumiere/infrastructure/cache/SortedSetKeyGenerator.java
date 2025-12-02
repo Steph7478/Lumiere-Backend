@@ -1,10 +1,13 @@
 package com.lumiere.infrastructure.cache;
 
 import org.springframework.cache.interceptor.KeyGenerator;
+import org.springframework.stereotype.Component;
+
 import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.stream.Collectors;
 
+@Component("sortedSetKeyGenerator")
 public class SortedSetKeyGenerator implements KeyGenerator {
 
     @SuppressWarnings("null")
@@ -17,6 +20,6 @@ public class SortedSetKeyGenerator implements KeyGenerator {
                     .sorted()
                     .collect(Collectors.joining("_"));
         }
-        return null;
+        return "no-collection";
     }
 }

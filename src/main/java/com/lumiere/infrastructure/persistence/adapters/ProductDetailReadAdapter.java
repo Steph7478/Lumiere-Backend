@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -41,6 +42,26 @@ public class ProductDetailReadAdapter implements ProductDetailReadPort {
         this.sqlRepository = sqlRepository;
         this.nosqlReadRepository = nosqlReadRepository;
         this.productDetailMapper = productDetailMapper;
+    }
+
+    @Override
+    public List<ProductDetailReadModel> findAllProductsById(Set<UUID> ids) {
+        List<ProductJpaEntity> products = sqlRepository.findAllByIdIn(Objects.requireNonNull(ids));
+
+        List<UUID> productIds = products.stream()
+                .map(ProductJpaEntity::getId)
+                .toList();
+
+        List<ProductCategoryEntity> categories = getCategoriesByIds(productIds);
+
+        Map<UUID, ProductCategoryEntity> categoryMap = categories.stream()
+                .collect(Collectors.toMap(ProductCategoryEntity::getId, Function.identity(), (a, b) -> a));
+
+        return products.stream()
+                .map(jpaEntity -> productDetailMapper.toReadModel(
+                        jpaEntity,
+                        categoryMap.get(jpaEntity.getId())))
+                .toList();
     }
 
     @Override

@@ -13,7 +13,7 @@ import com.lumiere.domain.readmodels.ProductDetailReadModel;
 
 @Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface AddProductMapper {
-    @Mapping(target = "id", expression = "java(product.getId().toString())")
+    @Mapping(target = "id", source = "product.id")
     @Mapping(target = "name", source = "product.name")
     @Mapping(target = "description", source = "product.description")
     @Mapping(target = "price", source = "product.price")

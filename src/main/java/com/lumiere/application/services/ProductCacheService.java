@@ -1,8 +1,8 @@
 package com.lumiere.application.services;
 
 import com.lumiere.application.exceptions.product.ProductNotFoundException;
-import com.lumiere.domain.entities.Product;
-import com.lumiere.domain.repositories.ProductRepository;
+import com.lumiere.application.ports.ProductDetailReadPort;
+import com.lumiere.domain.readmodels.ProductDetailReadModel;
 
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -16,22 +16,22 @@ import java.util.stream.Collectors;
 @Service
 public class ProductCacheService {
 
-    private final ProductRepository productRepo;
+    private final ProductDetailReadPort productRepo;
 
-    public ProductCacheService(ProductRepository productRepo) {
+    public ProductCacheService(ProductDetailReadPort productRepo) {
         this.productRepo = productRepo;
     }
 
     @Cacheable(value = "productJpaList", keyGenerator = "sortedSetKeyGenerator", unless = "#result == null", condition = "#productIds != null && !#productIds.isEmpty()")
-    public Map<UUID, Product> loadProductCache(Set<UUID> productIds) {
+    public Map<UUID, ProductDetailReadModel> loadProductCache(Set<UUID> productIds) {
         if (productIds == null || productIds.isEmpty()) {
             return Map.of();
         }
 
-        List<Product> products = productRepo.findAllByIdIn(productIds);
+        List<ProductDetailReadModel> products = productRepo.findAllProductsById(productIds);
 
-        Map<UUID, Product> productCache = products.stream()
-                .collect(Collectors.toMap(Product::getId, p -> p));
+        Map<UUID, ProductDetailReadModel> productCache = products.stream()
+                .collect(Collectors.toMap(ProductDetailReadModel::id, p -> p));
 
         if (productCache.size() != productIds.size()) {
             UUID missingId = productIds.stream()

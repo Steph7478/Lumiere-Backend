@@ -165,7 +165,7 @@ public class Order extends BaseEntity {
                     this.currency);
 
         } else if (shouldAddifMissing && modificationQuantity > 0) {
-            newItems.add(new OrderItem(productId, productName, modificationQuantity, price));
+            newItems.add(new OrderItem(productId, productName, modificationQuantity, price, null));
 
             BigDecimal calculatedSubtotal = calculateSubtotal(newItems);
 

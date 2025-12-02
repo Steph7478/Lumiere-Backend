@@ -5,6 +5,7 @@ import java.util.Objects;
 import java.util.UUID;
 import java.util.stream.Stream;
 
+import com.lumiere.domain.enums.CategoriesEnum.Category;
 import com.lumiere.domain.vo.base.ValueObject;
 
 public class OrderItem extends ValueObject {
@@ -13,13 +14,14 @@ public class OrderItem extends ValueObject {
     private final String name;
     private final int quantity;
     private final BigDecimal unitPrice;
+    private final Category category;
 
-    public OrderItem(UUID productId, String name, int quantity, BigDecimal unitPrice) {
+    public OrderItem(UUID productId, String name, int quantity, BigDecimal unitPrice, Category category) {
         this.productId = Objects.requireNonNull(productId, "Product ID cannot be null");
         this.name = Objects.requireNonNull(name, "Name cannot be null");
         this.unitPrice = Objects.requireNonNull(unitPrice, "Unit Price cannot be null");
         this.quantity = quantity;
-
+        this.category = category;
         validate();
     }
 
@@ -50,8 +52,12 @@ public class OrderItem extends ValueObject {
         return quantity;
     }
 
+    public Category getCategory() {
+        return category;
+    }
+
     public OrderItem withQuantity(int newQuantity) {
-        return new OrderItem(this.productId, this.name, newQuantity, this.unitPrice);
+        return new OrderItem(this.productId, this.name, newQuantity, this.unitPrice, this.category);
     }
 
     public BigDecimal getUnitPrice() {

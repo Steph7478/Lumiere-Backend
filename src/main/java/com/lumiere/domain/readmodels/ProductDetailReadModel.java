@@ -6,16 +6,17 @@ import com.lumiere.domain.entities.Rating;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 
 public record ProductDetailReadModel(
-                String id,
-                String name,
-                String description,
-                Money price,
-                List<Rating> ratings,
-                int stock,
-                LocalDateTime createdAt,
-                LocalDateTime updatedAt,
-                CategoriesEnum.Category category,
-                CategoriesEnum.SubCategory subCategory) {
+        UUID id,
+        String name,
+        String description,
+        Money price,
+        List<Rating> ratings,
+        int stock,
+        LocalDateTime createdAt,
+        LocalDateTime updatedAt,
+        CategoriesEnum.Category category,
+        CategoriesEnum.SubCategory subCategory) {
 }
