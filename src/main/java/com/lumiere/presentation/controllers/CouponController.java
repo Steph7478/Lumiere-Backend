@@ -25,7 +25,7 @@ public class CouponController {
 
     @ApiVersion("1")
     @GetMapping(Routes.PRIVATE.COUPON.AVALIBLE)
-    @PreAuthorize("hasAnyRole('USER')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     public ResponseEntity<AvalibleCouponsOutput> getAvalibleCoupons(
             @AuthenticationPrincipal UUID userId) {
 
