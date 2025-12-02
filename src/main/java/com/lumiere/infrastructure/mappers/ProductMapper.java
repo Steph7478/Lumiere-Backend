@@ -57,13 +57,4 @@ public interface ProductMapper extends BaseMapper<Product, ProductJpaEntity> {
                                 new Stock(jpaEntity.getStockQuantity()));
         }
 
-        default Product toDomain(ProductDetailReadModel readModel) {
-                return ProductFactory.from(
-                                readModel.id(),
-                                readModel.name(),
-                                readModel.description(),
-                                readModel.price(),
-                                readModel.ratings(),
-                                new Stock(readModel.stock()));
-        }
 }
