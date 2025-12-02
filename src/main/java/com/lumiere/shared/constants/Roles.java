@@ -15,7 +15,8 @@ public enum Roles {
     ADMIN(EnumSet.of(
             Permissions.ADMIN_PRODUCT_ADD,
             Permissions.ADMIN_PRODUCT_DELETE,
-            Permissions.ADMIN_PRODUCT_UPDATE)),
+            Permissions.ADMIN_PRODUCT_UPDATE,
+            Permissions.ADMIN_COUPON_ADD)),
 
     USER(EnumSet.of(Permissions.USER_READ));
 
