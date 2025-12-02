@@ -6,9 +6,11 @@ import java.util.UUID;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.stereotype.Repository;
 
 import com.lumiere.infrastructure.persistence.jpa.entities.CouponJpaEntity;
 
+@Repository
 public interface CouponJpaRepository extends JpaRepository<CouponJpaEntity, UUID> {
 
     @Query(value = "SELECT DISTINCT c FROM CouponJpaEntity c LEFT JOIN FETCH c.user " +

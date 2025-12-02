@@ -4,6 +4,8 @@ import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
 
+import org.springframework.stereotype.Repository;
+
 import com.lumiere.domain.entities.Coupon;
 import com.lumiere.domain.repositories.CouponRepository;
 import com.lumiere.infrastructure.mappers.CouponMapper;
@@ -12,6 +14,7 @@ import com.lumiere.infrastructure.persistence.jpa.repositories.base.BaseReposito
 
 import jakarta.persistence.EntityManager;
 
+@Repository
 public class CouponJpaRepositoryAdapter extends BaseRepositoryAdapter<Coupon, CouponJpaEntity>
         implements CouponRepository {
 
