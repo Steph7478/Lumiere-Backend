@@ -17,6 +17,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.lumiere.application.dtos.admin.command.add.AddProductInput;
 import com.lumiere.application.dtos.admin.command.add.AddProductOutput;
 import com.lumiere.application.dtos.admin.command.add.AddProductRequestData;
+import com.lumiere.application.dtos.admin.command.coupon.GlobalCouponInput;
+import com.lumiere.application.dtos.admin.command.coupon.GlobalCouponOutput;
 import com.lumiere.application.dtos.admin.command.modify.ModifyProductInput;
 import com.lumiere.application.dtos.admin.command.modify.ModifyProductOutput;
 import com.lumiere.application.dtos.admin.command.modify.ModifyProductRequestData;
@@ -31,6 +33,7 @@ import com.lumiere.application.dtos.admin.command.stock.increase.IncreaseStockOu
 import com.lumiere.application.dtos.admin.command.stock.increase.IncreaseStockRequestData;
 import com.lumiere.application.interfaces.admin.IAddProductUseCase;
 import com.lumiere.application.interfaces.admin.IDecreaseStockUseCase;
+import com.lumiere.application.interfaces.admin.IGlobalCouponsUseCase;
 import com.lumiere.application.interfaces.admin.IIncreaseStockUseCase;
 import com.lumiere.application.interfaces.admin.IModifyProductUseCase;
 import com.lumiere.application.interfaces.admin.IUpdatePriceUseCase;
@@ -48,15 +51,17 @@ public class AdminController {
     private final IIncreaseStockUseCase increaseStockUseCase;
     private final IDecreaseStockUseCase decreaseStockUseCase;
     private final IUpdatePriceUseCase updatePriceUseCase;
+    private final IGlobalCouponsUseCase globalCouponsUseCase;
 
     public AdminController(IAddProductUseCase addProductUseCase, IModifyProductUseCase modifyProductUseCase,
             IIncreaseStockUseCase increaseStockUseCase, IDecreaseStockUseCase decreaseStockUseCase,
-            IUpdatePriceUseCase updatePriceUseCase) {
+            IUpdatePriceUseCase updatePriceUseCase, IGlobalCouponsUseCase globalCouponsUseCase) {
         this.addProductUseCase = addProductUseCase;
         this.modifyProductUseCase = modifyProductUseCase;
         this.increaseStockUseCase = increaseStockUseCase;
         this.decreaseStockUseCase = decreaseStockUseCase;
         this.updatePriceUseCase = updatePriceUseCase;
+        this.globalCouponsUseCase = globalCouponsUseCase;
     }
 
     @ApiVersion("1")
@@ -150,6 +155,14 @@ public class AdminController {
         UpdatePriceOutput responseDTO = updatePriceUseCase.execute(appDTO);
 
         return ResponseEntity.status(HttpStatus.ACCEPTED).body(responseDTO);
+    }
+
+    @ApiVersion("1")
+    @PreAuthorize("hasRole('ADMIN') and hasAuthority('COUPON_ADD')")
+    @PostMapping(Routes.PRIVATE.ADMIN.GLOBAL_COUPON)
+    public ResponseEntity<GlobalCouponOutput> addGlobalCoupon(@Valid @RequestBody GlobalCouponInput req) {
+        GlobalCouponOutput response = globalCouponsUseCase.execute(req);
+        return ResponseEntity.ok(response);
     }
 
 }
