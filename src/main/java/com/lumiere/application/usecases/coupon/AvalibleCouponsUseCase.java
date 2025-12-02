@@ -1,6 +1,6 @@
 package com.lumiere.application.usecases.coupon;
 
-import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
@@ -29,7 +29,7 @@ public class AvalibleCouponsUseCase implements IAvalibleCouponsUseCase {
     public AvalibleCouponsOutput execute(AvalibleCouponsInput input) {
         User user = userRepo.findUserByAuthId(input.userId()).orElseThrow(UserNotFoundException::new);
 
-        List<Coupon> coupons = couponRepo.findAvailableCoupons(user.getId(), Instant.now());
+        List<Coupon> coupons = couponRepo.findAvailableCoupons(user.getId(), LocalDateTime.now());
 
         if (coupons == null)
             throw new NoCouponAvalibleException();

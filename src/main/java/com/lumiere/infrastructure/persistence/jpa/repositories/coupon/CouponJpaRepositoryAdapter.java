@@ -1,6 +1,6 @@
 package com.lumiere.infrastructure.persistence.jpa.repositories.coupon;
 
-import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -30,7 +30,7 @@ public class CouponJpaRepositoryAdapter extends BaseRepositoryAdapter<Coupon, Co
     }
 
     @Override
-    public List<Coupon> findAvailableCoupons(UUID userId, Instant now) {
+    public List<Coupon> findAvailableCoupons(UUID userId, LocalDateTime now) {
         return jpaRepository.findAvailableCoupons(userId, now)
                 .stream()
                 .map(mapper::toDomain)
