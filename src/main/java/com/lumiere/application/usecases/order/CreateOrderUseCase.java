@@ -68,7 +68,8 @@ public class CreateOrderUseCase implements ICreateOrderUseCase {
                 .map(itemRequestData -> itemRequestData.getProductId())
                 .collect(Collectors.toSet());
 
-        Map<UUID, ProductDetailReadModel> productCache = productCacheService.loadProductCache(productIds);
+        Map<String, ProductDetailReadModel> productCache = productCacheService
+                .loadProductCache(productIds.stream().map(UUID::toString).collect(Collectors.toSet()));
 
         List<OrderItem> orderItems = itemMappingService.mapItemsToDomainVO(
                 input.requestData().items(), productCache, itemRequestData -> itemRequestData.getProductId(),

@@ -16,14 +16,14 @@ public class ItemMappingService {
 
     public <I, O> List<O> mapItemsToDomainVO(
             List<I> itemsRequest,
-            Map<UUID, ProductDetailReadModel> productCache,
+            Map<String, ProductDetailReadModel> productCache,
             Function<I, UUID> productIdGetter,
             BiFunction<ProductDetailReadModel, I, O> itemMapper) {
 
         return itemsRequest.stream()
                 .map(itemRequestData -> {
                     UUID productId = productIdGetter.apply(itemRequestData);
-                    ProductDetailReadModel productDetail = productCache.get(productId);
+                    ProductDetailReadModel productDetail = productCache.get(productId.toString());
 
                     return itemMapper.apply(productDetail, itemRequestData);
                 })
