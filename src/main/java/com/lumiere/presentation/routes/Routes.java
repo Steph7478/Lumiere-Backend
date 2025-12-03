@@ -61,6 +61,7 @@ public final class Routes {
             public static final String COUPON = BASE + "/add-coupon";
             public static final String CANCEL = BASE + "/cancel";
             public static final String GET = BASE;
+            public static final String IN_PROGRESS = BASE + "/in-progress";
         }
 
         public static final class COUPON {

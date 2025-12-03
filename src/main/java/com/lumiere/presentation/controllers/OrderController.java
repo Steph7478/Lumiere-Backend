@@ -5,6 +5,7 @@ import java.util.UUID;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -23,10 +24,15 @@ import com.lumiere.application.dtos.order.command.create.CreateOrderRequestData;
 import com.lumiere.application.dtos.order.command.remove.RemoveItemOrderInput;
 import com.lumiere.application.dtos.order.command.remove.RemoveItemOutput;
 import com.lumiere.application.dtos.order.command.remove.RemoveItemRequestData;
+import com.lumiere.application.dtos.order.query.GetOrderInProgressOutput;
+import com.lumiere.application.dtos.order.query.GetOrderInput;
+import com.lumiere.application.dtos.order.query.GetOrdersOutput;
 import com.lumiere.application.interfaces.order.IAddCouponOrderUseCase;
 import com.lumiere.application.interfaces.order.IAddItemOrderUsecase;
 import com.lumiere.application.interfaces.order.ICancelOrderUseCase;
 import com.lumiere.application.interfaces.order.ICreateOrderUseCase;
+import com.lumiere.application.interfaces.order.IGetOrderInProgressUseCase;
+import com.lumiere.application.interfaces.order.IGetOrdersUseCase;
 import com.lumiere.application.interfaces.order.IRemoveItemOrderUseCase;
 import com.lumiere.presentation.routes.Routes;
 import com.lumiere.shared.annotations.api.ApiVersion;
@@ -41,15 +47,20 @@ public class OrderController {
     private final IRemoveItemOrderUseCase removeItemOrderUseCase;
     private final IAddCouponOrderUseCase addCouponOrderUseCase;
     private final ICancelOrderUseCase cancelOrderUseCase;
+    private final IGetOrderInProgressUseCase getOrderInProgressUseCase;
+    private final IGetOrdersUseCase getOrdersUseCase;
 
     protected OrderController(ICreateOrderUseCase createOrderUseCase, IAddItemOrderUsecase addItemOrderUsecase,
             IRemoveItemOrderUseCase removeItemOrderUseCase, IAddCouponOrderUseCase addCouponOrderUseCase,
-            ICancelOrderUseCase cancelOrderUseCase) {
+            ICancelOrderUseCase cancelOrderUseCase, IGetOrderInProgressUseCase getOrderInProgressUseCase,
+            IGetOrdersUseCase getOrdersUseCase) {
         this.createOrderUseCase = createOrderUseCase;
         this.addItemOrderUsecase = addItemOrderUsecase;
         this.addCouponOrderUseCase = addCouponOrderUseCase;
         this.removeItemOrderUseCase = removeItemOrderUseCase;
         this.cancelOrderUseCase = cancelOrderUseCase;
+        this.getOrderInProgressUseCase = getOrderInProgressUseCase;
+        this.getOrdersUseCase = getOrdersUseCase;
     }
 
     @ApiVersion("1")
@@ -111,6 +122,28 @@ public class OrderController {
 
         CancelOrderInput request = new CancelOrderInput(userId);
         CancelOrderOutput response = cancelOrderUseCase.execute(request);
+
+        return ResponseEntity.ok(response);
+    }
+
+    @ApiVersion("1")
+    @GetMapping(Routes.PRIVATE.ORDER.BASE)
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
+    public ResponseEntity<GetOrderInProgressOutput> getAllOrders(@AuthenticationPrincipal UUID userId) {
+
+        GetOrderInput request = new GetOrderInput(userId);
+        GetOrderInProgressOutput response = getOrderInProgressUseCase.execute(request);
+
+        return ResponseEntity.ok(response);
+    }
+
+    @ApiVersion("1")
+    @GetMapping(Routes.PRIVATE.ORDER.IN_PROGRESS)
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
+    public ResponseEntity<GetOrdersOutput> getInProgress(@AuthenticationPrincipal UUID userId) {
+
+        GetOrderInput request = new GetOrderInput(userId);
+        GetOrdersOutput response = getOrdersUseCase.execute(request);
 
         return ResponseEntity.ok(response);
     }
