@@ -31,9 +31,8 @@ import com.lumiere.application.interfaces.order.IAddCouponOrderUseCase;
 import com.lumiere.application.interfaces.order.IAddItemOrderUsecase;
 import com.lumiere.application.interfaces.order.ICancelOrderUseCase;
 import com.lumiere.application.interfaces.order.ICreateOrderUseCase;
-import com.lumiere.application.interfaces.order.IGetOrderInProgressUseCase;
-import com.lumiere.application.interfaces.order.IGetOrdersUseCase;
 import com.lumiere.application.interfaces.order.IRemoveItemOrderUseCase;
+import com.lumiere.application.usecases.order.GetOrderUseCase;
 import com.lumiere.presentation.routes.Routes;
 import com.lumiere.shared.annotations.api.ApiVersion;
 
@@ -47,20 +46,17 @@ public class OrderController {
     private final IRemoveItemOrderUseCase removeItemOrderUseCase;
     private final IAddCouponOrderUseCase addCouponOrderUseCase;
     private final ICancelOrderUseCase cancelOrderUseCase;
-    private final IGetOrderInProgressUseCase getOrderInProgressUseCase;
-    private final IGetOrdersUseCase getOrdersUseCase;
+    private final GetOrderUseCase getOrderUseCase;
 
     protected OrderController(ICreateOrderUseCase createOrderUseCase, IAddItemOrderUsecase addItemOrderUsecase,
             IRemoveItemOrderUseCase removeItemOrderUseCase, IAddCouponOrderUseCase addCouponOrderUseCase,
-            ICancelOrderUseCase cancelOrderUseCase, IGetOrderInProgressUseCase getOrderInProgressUseCase,
-            IGetOrdersUseCase getOrdersUseCase) {
+            ICancelOrderUseCase cancelOrderUseCase, GetOrderUseCase getOrderUseCase) {
         this.createOrderUseCase = createOrderUseCase;
         this.addItemOrderUsecase = addItemOrderUsecase;
         this.addCouponOrderUseCase = addCouponOrderUseCase;
         this.removeItemOrderUseCase = removeItemOrderUseCase;
         this.cancelOrderUseCase = cancelOrderUseCase;
-        this.getOrderInProgressUseCase = getOrderInProgressUseCase;
-        this.getOrdersUseCase = getOrdersUseCase;
+        this.getOrderUseCase = getOrderUseCase;
     }
 
     @ApiVersion("1")
@@ -132,7 +128,7 @@ public class OrderController {
     public ResponseEntity<GetOrderInProgressOutput> getAllOrders(@AuthenticationPrincipal UUID userId) {
 
         GetOrderInput request = new GetOrderInput(userId);
-        GetOrderInProgressOutput response = getOrderInProgressUseCase.execute(request);
+        GetOrderInProgressOutput response = getOrderUseCase.getOrderInProgress(request);
 
         return ResponseEntity.ok(response);
     }
@@ -143,7 +139,7 @@ public class OrderController {
     public ResponseEntity<GetOrdersOutput> getInProgress(@AuthenticationPrincipal UUID userId) {
 
         GetOrderInput request = new GetOrderInput(userId);
-        GetOrdersOutput response = getOrdersUseCase.execute(request);
+        GetOrdersOutput response = getOrderUseCase.GetMultipleOrders(request);
 
         return ResponseEntity.ok(response);
     }
