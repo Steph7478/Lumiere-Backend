@@ -14,11 +14,11 @@ import com.lumiere.infrastructure.persistence.jpa.entities.OrderJpaEntity;
 @Repository
 public interface OrderJpaRepository extends JpaRepository<OrderJpaEntity, UUID> {
 
-    @EntityGraph(attributePaths = { "user", "items", "items.product" })
+    @EntityGraph(attributePaths = { "user", "items", "items.product", "coupon" })
     List<OrderJpaEntity> findByUserId(UUID id);
 
     boolean existsByUserIdAndStatus(UUID userId, Status status);
 
-    @EntityGraph(attributePaths = { "user", "items", "items.product" })
+    @EntityGraph(attributePaths = { "user", "items", "items.product", "coupon" })
     Optional<OrderJpaEntity> findByUserIdAndStatus(UUID userId, Status status);
 }

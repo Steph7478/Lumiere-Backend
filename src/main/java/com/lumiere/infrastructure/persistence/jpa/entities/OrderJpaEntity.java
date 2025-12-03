@@ -48,7 +48,7 @@ public class OrderJpaEntity extends BaseJpaEntity implements Serializable {
     @Column(nullable = false)
     private BigDecimal total;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "coupon_id")
     private CouponJpaEntity coupon;
 
