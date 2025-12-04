@@ -1,42 +1,33 @@
 package com.lumiere.infrastructure.storage;
 
-import jakarta.annotation.PostConstruct;
 import org.springframework.stereotype.Service;
+import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.*;
+import java.io.InputStream;
 
 @Service
 public class S3StorageService {
 
     private final S3Client s3Client;
-    private final String bucketName = "product-pictures";
 
     public S3StorageService(S3Client s3Client) {
         this.s3Client = s3Client;
     }
 
-    @PostConstruct
-    public void init() {
-        createBucketIfNotExists();
-    }
+    public String uploadFile(InputStream fileStream, long contentLength, String keyName, String contentType,
+            String bucketName) {
 
-    private void createBucketIfNotExists() {
-        ListBucketsResponse buckets = s3Client.listBuckets();
+        PutObjectRequest putObjectRequest = PutObjectRequest.builder()
+                .bucket(bucketName)
+                .key(keyName)
+                .contentLength(contentLength)
+                .contentType(contentType)
+                .build();
 
-        boolean exists = buckets.buckets().stream()
-                .anyMatch(b -> b.name().equals(bucketName));
+        PutObjectResponse response = s3Client.putObject(putObjectRequest,
+                RequestBody.fromInputStream(fileStream, contentLength));
 
-        if (!exists)
-            s3Client.createBucket(CreateBucketRequest.builder().bucket(bucketName).build());
-
-    }
-
-    public String startMultipartUpload(String keyName) {
-        CreateMultipartUploadRequest createRequest = CreateMultipartUploadRequest.builder().bucket(bucketName)
-                .key(keyName).build();
-
-        CreateMultipartUploadResponse createResponse = s3Client.createMultipartUpload(createRequest);
-
-        return createResponse.uploadId();
+        return response.eTag();
     }
 }
