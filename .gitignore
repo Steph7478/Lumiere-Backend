@@ -17,6 +17,7 @@ target/
 .env*
 *.pem
 dev.db
+/minio_data
 ### IntelliJ IDEA ###
 .idea
 *.iws

@@ -1,6 +1,31 @@
 #!/bin/bash
+
 SPRING_PROFILE="dev"
 ENV_FILE=".env.${SPRING_PROFILE}"
+
+REDIS_PID=
+MINIO_PID=
+
+cleanup() {
+    echo ""
+    echo "=========================================================="
+    echo "🚨 Shutting down background services..."
+    
+    if [ ! -z "$REDIS_PID" ]; then
+        kill "$REDIS_PID"
+        echo "✅ Redis (PID $REDIS_PID) stopped."
+    fi
+
+    if [ ! -z "$MINIO_PID" ]; then
+        kill "$MINIO_PID"
+        echo "✅ MinIO (PID $MINIO_PID) stopped."
+    fi
+    
+    echo "=========================================================="
+    exit 0
+}
+
+trap cleanup SIGINT
 
 echo ""
 echo "=========================================================="
@@ -11,18 +36,29 @@ echo "=========================================================="
 echo ""
 
 set -a
-source "$ENV_FILE"
-set +a
-
-if [ -z "$REDIS_PORT" ]; then
-    echo "[ERROR] REDIS_PORT not found in $ENV_FILE. Please check your file."
+if [ -f "$ENV_FILE" ]; then
+    source "$ENV_FILE"
+else
+    echo "[ERROR] Environment file not found: $ENV_FILE"
     exit 1
 fi
+set +a
+echo "Environment loaded successfully."
 
 echo "-> Starting Redis Server on port $REDIS_PORT..."
-redis-server --port "$REDIS_PORT" --requirepass "$REDIS_PASSWORD"
+redis-server --port "$REDIS_PORT" --requirepass "$REDIS_PASSWORD" &
+REDIS_PID=$!
+
+echo "-> Starting MinIO Server (API: ${MINIO_ENDPOINT_URL}) "
+minio.exe server ./minio_data --console-address ":9001" &
+MINIO_PID=$!
 
 echo ""
-echo "=========================================================="
-echo "APPLICATION FINISHED."
-echo "=========================================================="
+echo "-> Services started. Press [Ctrl + C] to stop all services and exit."
+echo "------------------------------------------------------------"
+
+wait
+
+# echo "-> Starting Spring Boot Application..."
+# export SPRING_PROFILES_ACTIVE="${SPRING_PROFILE}"
+# exec mvn spring-boot:run
