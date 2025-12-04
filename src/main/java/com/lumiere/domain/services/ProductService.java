@@ -1,6 +1,7 @@
 package com.lumiere.domain.services;
 
 import java.util.Optional;
+import java.util.UUID;
 
 import com.lumiere.domain.entities.Product;
 import com.lumiere.domain.factories.ProductFactory;
@@ -12,8 +13,8 @@ public final class ProductService {
     private ProductService() {
     }
 
-    public static Product create(String name, String description, Money price, Stock stock) {
-        return ProductFactory.create(name, description, price, stock);
+    public static Product create(UUID id, String name, String description, Money price, Stock stock, String image) {
+        return ProductFactory.create(id, name, description, price, stock, image);
     }
 
     public static void update(Product product, Optional<String> name, Optional<String> description) {

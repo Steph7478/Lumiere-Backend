@@ -1,5 +1,6 @@
 package com.lumiere.presentation.controllers;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
 
@@ -7,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -69,19 +71,28 @@ public class AdminController {
     @PostMapping(Routes.PRIVATE.ADMIN.ADD_MULTIPLE)
     public ResponseEntity<AddProductOutput> addProductMultiple(@Valid @RequestBody AddProductInput req,
             HttpServletResponse res) {
-
         AddProductOutput appDTO = addProductUseCase.execute(req);
         return ResponseEntity.status(HttpStatus.ACCEPTED).body(appDTO);
     }
 
     @ApiVersion("1")
     @PreAuthorize("hasRole('ADMIN') and hasAuthority('PRODUCT_ADD')")
-    @PostMapping(Routes.PRIVATE.ADMIN.ADD_SINGLE)
+    @PostMapping(path = Routes.PRIVATE.ADMIN.ADD_SINGLE, consumes = { "multipart/form-data" })
     public ResponseEntity<AddProductOutput> addProductSingle(
-            @Valid @RequestBody AddProductRequestData req,
-            HttpServletResponse res) {
+            @Valid @ModelAttribute AddProductRequestData reqForm,
+            HttpServletResponse res) throws IOException {
 
-        AddProductInput request = new AddProductInput(List.of(req));
+        AddProductRequestData itemData = new AddProductRequestData(
+                reqForm.name(),
+                reqForm.description(),
+                reqForm.priceAmount(),
+                reqForm.currency(),
+                reqForm.stockQuantity(),
+                reqForm.category(),
+                reqForm.subcategory(),
+                reqForm.imageFile());
+
+        AddProductInput request = new AddProductInput(List.of(itemData));
         AddProductOutput appDTO = addProductUseCase.execute(request);
 
         return ResponseEntity.status(HttpStatus.ACCEPTED).body(appDTO);

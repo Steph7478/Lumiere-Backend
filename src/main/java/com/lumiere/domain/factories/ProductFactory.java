@@ -11,11 +11,11 @@ import java.util.UUID;
 public class ProductFactory {
 
     public static Product from(UUID id, String name, String description, Money price, List<Rating> ratings,
-            Stock stock) {
-        return new Product(id, name, description, price, ratings, stock);
+            Stock stock, String image) {
+        return new Product(id, name, description, price, ratings, stock, image);
     }
 
-    public static Product create(String name, String description, Money price, Stock stock) {
-        return new Product(null, name, description, price, null, stock);
+    public static Product create(UUID id, String name, String description, Money price, Stock stock, String image) {
+        return new Product(id, name, description, price, null, stock, image);
     }
 }
