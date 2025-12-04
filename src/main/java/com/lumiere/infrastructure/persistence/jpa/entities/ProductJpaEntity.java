@@ -25,7 +25,6 @@ import com.lumiere.infrastructure.persistence.jpa.entities.base.BaseJpaEntity;
 @NoArgsConstructor(access = AccessLevel.PUBLIC)
 public class ProductJpaEntity extends BaseJpaEntity implements Serializable {
 
-    @Column(nullable = false)
     private String imageUrl;
 
     @Column(nullable = false)

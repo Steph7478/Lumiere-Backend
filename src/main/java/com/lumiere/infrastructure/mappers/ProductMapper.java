@@ -54,7 +54,8 @@ public interface ProductMapper extends BaseMapper<Product, ProductJpaEntity> {
                                                 jpaEntity.getPriceAmount(),
                                                 CurrencyType.valueOf(jpaEntity.getPriceCurrency())),
                                 null,
-                                new Stock(jpaEntity.getStockQuantity()));
+                                new Stock(jpaEntity.getStockQuantity()),
+                                jpaEntity.getImageUrl());
         }
 
 }

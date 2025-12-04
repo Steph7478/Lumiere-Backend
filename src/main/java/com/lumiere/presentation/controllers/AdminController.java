@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.UUID;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
@@ -68,16 +69,16 @@ public class AdminController {
 
     @ApiVersion("1")
     @PreAuthorize("hasRole('ADMIN') and hasAuthority('PRODUCT_ADD')")
-    @PostMapping(Routes.PRIVATE.ADMIN.ADD_MULTIPLE)
-    public ResponseEntity<AddProductOutput> addProductMultiple(@Valid @RequestBody AddProductInput req,
-            HttpServletResponse res) {
-        AddProductOutput appDTO = addProductUseCase.execute(req);
-        return ResponseEntity.status(HttpStatus.ACCEPTED).body(appDTO);
+    @PostMapping(path = Routes.PRIVATE.ADMIN.ADD_MULTIPLE, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<AddProductOutput> addProductMultiple(
+            @Valid @ModelAttribute AddProductInput req) {
+        AddProductOutput output = addProductUseCase.execute(req);
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body(output);
     }
 
     @ApiVersion("1")
     @PreAuthorize("hasRole('ADMIN') and hasAuthority('PRODUCT_ADD')")
-    @PostMapping(path = Routes.PRIVATE.ADMIN.ADD_SINGLE, consumes = { "multipart/form-data" })
+    @PostMapping(path = Routes.PRIVATE.ADMIN.ADD_SINGLE, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<AddProductOutput> addProductSingle(
             @Valid @ModelAttribute AddProductRequestData reqForm,
             HttpServletResponse res) throws IOException {

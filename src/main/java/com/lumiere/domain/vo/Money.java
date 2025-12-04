@@ -18,6 +18,10 @@ public class Money extends ValueObject {
         validate();
     }
 
+    public Money(BigDecimal amount, String currency) {
+        this(amount, CurrencyType.valueOf(currency.toUpperCase()));
+    }
+
     @Override
     protected Stream<Object> getAtomicValues() {
         return Stream.of(amount, currency);

@@ -55,32 +55,31 @@ public class AddProductUseCase implements IAddProductUseCase {
         @RequireAdmin
         public AddProductOutput execute(AddProductInput input) {
 
-                List<Product> products = IntStream.range(0, input.items().size())
-                                .mapToObj(i -> {
-                                        AddProductRequestData item = input.items().get(i);
+                List<Product> products = IntStream.range(0, input.items().size()).mapToObj(i -> {
+                        AddProductRequestData item = input.items().get(i);
 
-                                        String imageUrl = null;
-                                        UUID productId = UUID.randomUUID();
+                        String imageUrl = null;
+                        UUID productId = UUID.randomUUID();
 
-                                        if (item.imageFile() != null) {
-                                                imageUrl = imageProcessorService.processAndUpload(
-                                                                productId,
-                                                                item.imageFile(),
-                                                                item.name(),
-                                                                storageService,
-                                                                PRODUCT_BUCKET_NAME);
-                                        }
+                        if (item.imageFile() != null) {
+                                imageUrl = imageProcessorService.processAndUpload(
+                                                productId,
+                                                item.imageFile(),
+                                                item.name(),
+                                                storageService,
+                                                PRODUCT_BUCKET_NAME);
+                        }
 
-                                        Product product = ProductService.create(
-                                                        productId,
-                                                        item.name(),
-                                                        item.description(),
-                                                        new Money(item.priceAmount(), item.currency()),
-                                                        new Stock(item.stockQuantity()),
-                                                        imageUrl);
+                        Product product = ProductService.create(
+                                        productId,
+                                        item.name(),
+                                        item.description(),
+                                        new Money(item.priceAmount(), item.currency()),
+                                        new Stock(item.stockQuantity()),
+                                        imageUrl);
 
-                                        return productRepository.save(product);
-                                })
+                        return productRepository.save(product);
+                })
                                 .toList();
 
                 IntStream.range(0, products.size())
