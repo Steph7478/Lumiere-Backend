@@ -41,34 +41,27 @@ public class ImageProcessorService {
                         MultipartFile file,
                         String productName,
                         S3StorageService storage,
-                        String bucket) {
+                        String bucket) throws IOException {
 
-                try {
-                        String contentType = file.getContentType();
-                        String format = (contentType != null && contentType.startsWith("image/"))
-                                        ? contentType.substring(6)
-                                        : "jpeg";
+                String contentType = file.getContentType();
+                String format = (contentType != null && contentType.startsWith("image/"))
+                                ? contentType.substring(6)
+                                : "jpeg";
 
-                        if (!ALLOWED_FORMATS.contains(format.toLowerCase())) {
-                                format = "jpeg";
-                        }
+                if (!ALLOWED_FORMATS.contains(format.toLowerCase()))
+                        format = "jpeg";
 
-                        OptimizedImage optimized = optimize(file.getInputStream(), format);
+                OptimizedImage optimized = optimize(file.getInputStream(), format);
 
-                        String key = "%s.photo.%s".formatted(productId, format);
+                String key = "%s.photo.%s".formatted(productId, format);
 
-                        storage.uploadFile(
-                                        optimized.stream(),
-                                        optimized.contentLength(),
-                                        key,
-                                        optimized.contentType(),
-                                        bucket);
+                storage.uploadFile(
+                                optimized.stream(),
+                                optimized.contentLength(),
+                                key,
+                                optimized.contentType(),
+                                bucket);
 
-                        return "%s/%s/%s".formatted(minioEndpoint, bucket, key);
-
-                } catch (IOException e) {
-                        throw new RuntimeException(
-                                        "Image processing or upload failed for product: " + productName, e);
-                }
+                return "%s/%s/%s".formatted(minioEndpoint, bucket, key);
         }
 }

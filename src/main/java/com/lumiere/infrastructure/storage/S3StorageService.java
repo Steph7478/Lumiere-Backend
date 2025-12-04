@@ -16,21 +16,6 @@ public class S3StorageService {
         this.s3Client = s3Client;
     }
 
-    private void createBucketIfNotExists(String bucketName) {
-        boolean exists = s3Client
-                .listBuckets()
-                .buckets()
-                .stream()
-                .anyMatch(b -> b.name().equals(bucketName));
-
-        if (!exists) {
-            s3Client.createBucket(
-                    CreateBucketRequest.builder()
-                            .bucket(bucketName)
-                            .build());
-        }
-    }
-
     public String uploadFile(
             InputStream fileStream,
             long contentLength,
@@ -52,5 +37,20 @@ public class S3StorageService {
                 RequestBody.fromInputStream(fileStream, contentLength));
 
         return response.eTag();
+    }
+
+    private void createBucketIfNotExists(String bucketName) {
+        boolean exists = s3Client
+                .listBuckets()
+                .buckets()
+                .stream()
+                .anyMatch(b -> b.name().equals(bucketName));
+
+        if (!exists) {
+            s3Client.createBucket(
+                    CreateBucketRequest.builder()
+                            .bucket(bucketName)
+                            .build());
+        }
     }
 }
