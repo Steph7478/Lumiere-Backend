@@ -49,9 +49,20 @@ echo "-> Starting Redis Server on port $REDIS_PORT..."
 redis-server --port "$REDIS_PORT" --requirepass "$REDIS_PASSWORD" &
 REDIS_PID=$!
 
-echo "-> Starting MinIO Server (API: ${MINIO_ENDPOINT_URL}) "
+echo "-> Starting MinIO Server (API: ${MINIO_ENDPOINT_URL})..."
 minio.exe server ./minio_data --console-address ":9001" &
 MINIO_PID=$!
+
+sleep 5
+
+echo "-> Configuring MinIO bucket policies..."
+mc.exe alias set local http://localhost:9000 "$MINIO_ROOT_USER" "$MINIO_ROOT_PASSWORD"
+
+mc.exe mb --ignore-existing local/product-pictures
+
+mc.exe anonymous set download local/product-pictures
+
+echo "✅ Bucket 'product-pictures' is now PUBLIC."
 
 echo ""
 echo "-> Services started. Press [Ctrl + C] to stop all services and exit."

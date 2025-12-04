@@ -55,7 +55,7 @@ public class ImageProcessorService {
 
                         OptimizedImage optimized = optimize(file.getInputStream(), format);
 
-                        String key = "products/%s/photo.%s".formatted(productId, format);
+                        String key = "%s.photo.%s".formatted(productId, format);
 
                         storage.uploadFile(
                                         optimized.stream(),
