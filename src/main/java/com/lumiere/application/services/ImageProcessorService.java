@@ -4,6 +4,7 @@ import java.io.*;
 import java.util.Set;
 import java.util.UUID;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -15,6 +16,9 @@ import net.coobird.thumbnailator.Thumbnails;
 public class ImageProcessorService {
 
         private static final Set<String> ALLOWED_FORMATS = Set.of("png", "jpg", "jpeg", "webp");
+
+        @Value("${minio.endpoint}")
+        private String minioEndpoint;
 
         public record OptimizedImage(InputStream stream, long contentLength, String contentType) {
         }
@@ -60,7 +64,7 @@ public class ImageProcessorService {
                                         optimized.contentType(),
                                         bucket);
 
-                        return "https://%s.s3.amazonaws.com/%s".formatted(bucket, key);
+                        return "%s/%s/%s".formatted(minioEndpoint, bucket, key);
 
                 } catch (IOException e) {
                         throw new RuntimeException(
