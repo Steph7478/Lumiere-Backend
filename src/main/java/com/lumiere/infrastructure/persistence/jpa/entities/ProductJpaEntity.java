@@ -26,6 +26,9 @@ import com.lumiere.infrastructure.persistence.jpa.entities.base.BaseJpaEntity;
 public class ProductJpaEntity extends BaseJpaEntity implements Serializable {
 
     @Column(nullable = false)
+    private String imageUrl;
+
+    @Column(nullable = false)
     private String name;
 
     @Column(nullable = false, length = 1000)
@@ -49,8 +52,9 @@ public class ProductJpaEntity extends BaseJpaEntity implements Serializable {
             String description,
             BigDecimal priceAmount,
             String priceCurrency,
-            Integer stockQuantity) {
+            Integer stockQuantity, String imageUrl) {
         super(id);
+        this.imageUrl = imageUrl;
         this.name = name;
         this.description = description;
         this.priceAmount = priceAmount;

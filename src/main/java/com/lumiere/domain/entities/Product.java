@@ -8,13 +8,15 @@ import java.util.*;
 
 public class Product extends BaseEntity {
 
+    private String imageUrl;
     private String name;
     private String description;
     private Money price;
     private List<Rating> ratings = new ArrayList<>();
     private Stock stock;
 
-    public Product(UUID id, String name, String description, Money price, List<Rating> ratings, Stock stock) {
+    public Product(UUID id, String name, String description, Money price, List<Rating> ratings, Stock stock,
+            String imageUrl) {
 
         super(id);
         this.name = Objects.requireNonNull(name, "name cannot be null");
@@ -23,6 +25,11 @@ public class Product extends BaseEntity {
         if (ratings != null)
             this.ratings = new ArrayList<>(ratings);
         this.stock = Objects.requireNonNull(stock, "stock cannot be null");
+        this.imageUrl = imageUrl;
+    }
+
+    public String getImageUrl() {
+        return imageUrl;
     }
 
     public String getName() {
