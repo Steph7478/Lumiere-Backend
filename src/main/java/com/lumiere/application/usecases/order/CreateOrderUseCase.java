@@ -23,7 +23,6 @@ import com.lumiere.domain.repositories.UserRepository;
 import com.lumiere.domain.services.OrderService;
 import com.lumiere.domain.vo.OrderItem;
 import com.lumiere.infrastructure.mappers.OrderMapper;
-import com.lumiere.application.services.ItemMappingService;
 import com.lumiere.application.services.ProductCacheService;
 
 import jakarta.transaction.Transactional;
@@ -37,20 +36,18 @@ public class CreateOrderUseCase implements ICreateOrderUseCase {
     private final OrderMapper orderReadModel;
     private final OrderRepository orderRepo;
     private final ProductCacheService productCacheService;
-    private final ItemMappingService itemMappingService;
 
     protected CreateOrderUseCase(
             UserRepository userRepo,
             OrderItemUseCaseMapper orderItemMapper,
             OrderRepository orderRepo,
             OrderMapper orderReadModel,
-            ProductCacheService productCacheService, ItemMappingService itemMappingService) {
+            ProductCacheService productCacheService) {
         this.userRepo = userRepo;
         this.orderItemMapper = orderItemMapper;
         this.orderRepo = orderRepo;
         this.orderReadModel = orderReadModel;
         this.productCacheService = productCacheService;
-        this.itemMappingService = itemMappingService;
     }
 
     @Override
@@ -71,13 +68,17 @@ public class CreateOrderUseCase implements ICreateOrderUseCase {
         Map<String, ProductDetailReadModel> productCache = productCacheService
                 .loadProductCache(productIds.stream().map(UUID::toString).collect(Collectors.toSet()));
 
-        List<OrderItem> orderItems = itemMappingService.mapItemsToDomainVO(
-                input.requestData().items(), productCache, itemRequestData -> itemRequestData.getProductId(),
-                (product, itemRequestData) -> orderItemMapper.toOrderItem(product, itemRequestData, null));
+        List<OrderItem> orderItems = input.requestData().items().stream()
+                .map(itemRequestData -> {
+                    ProductDetailReadModel productDetail = productCache.get(itemRequestData.getProductId().toString());
+                    return orderItemMapper.toOrderItem(productDetail, itemRequestData, null);
+                })
+                .collect(Collectors.toList());
 
         Order order = OrderService.createOrder(user, orderItems, currency);
         orderRepo.save(order);
 
         return new CreateOrderOutput(orderReadModel.toReadModel(order));
     }
+
 }

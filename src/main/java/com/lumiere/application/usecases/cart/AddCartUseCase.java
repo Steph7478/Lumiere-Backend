@@ -6,7 +6,6 @@ import com.lumiere.application.exceptions.auth.UserNotFoundException;
 import com.lumiere.application.interfaces.cart.IAddCartUseCase;
 import com.lumiere.application.mappers.cart.CartReadModelMapper;
 import com.lumiere.application.services.ProductCacheService;
-import com.lumiere.application.services.ItemMappingService;
 import com.lumiere.domain.entities.Cart;
 import com.lumiere.domain.entities.User;
 import com.lumiere.domain.readmodels.CartReadModel;
@@ -38,8 +37,7 @@ public class AddCartUseCase implements IAddCartUseCase {
         public AddCartUseCase(
                         UserRepository userRepo,
                         CartRepository cartRepo,
-                        ProductCacheService productCacheService,
-                        ItemMappingService itemMappingService, CartReadModelMapper cartReadModel) {
+                        ProductCacheService productCacheService, CartReadModelMapper cartReadModel) {
 
                 this.userRepo = userRepo;
                 this.cartRepo = cartRepo;
