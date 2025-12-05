@@ -36,6 +36,12 @@
 	<dependencies>
 
 		<dependency>
+			<groupId>org.redisson</groupId>
+			<artifactId>redisson-spring-boot-starter</artifactId>
+			<version>3.52.0</version>
+		</dependency>
+
+		<dependency>
 			<groupId>net.coobird</groupId>
 			<artifactId>thumbnailator</artifactId>
 			<version>0.4.21</version>
