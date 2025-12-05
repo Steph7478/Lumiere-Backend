@@ -1,6 +1,7 @@
 package com.lumiere.application.services;
 
-import java.io.*;
+import java.io.InputStream;
+import java.io.IOException;
 import java.util.Set;
 import java.util.UUID;
 
@@ -10,8 +11,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.lumiere.infrastructure.storage.S3StorageService;
 
-import net.coobird.thumbnailator.Thumbnails;
-
 @Service
 public class ImageProcessorService {
 
@@ -20,20 +19,13 @@ public class ImageProcessorService {
         @Value("${minio.endpoint}")
         private String minioEndpoint;
 
-        public record OptimizedImage(InputStream stream, long contentLength, String contentType) {
+        private final ImageOptimizer optimizer;
+
+        public ImageProcessorService(ImageOptimizer optimizer) {
+                this.optimizer = optimizer;
         }
 
-        private OptimizedImage optimize(InputStream input, String format) throws IOException {
-                ByteArrayOutputStream out = new ByteArrayOutputStream();
-
-                Thumbnails.of(input)
-                                .width(1200)
-                                .outputFormat(format)
-                                .outputQuality(0.85)
-                                .toOutputStream(out);
-
-                byte[] bytes = out.toByteArray();
-                return new OptimizedImage(new ByteArrayInputStream(bytes), bytes.length, "image/" + format);
+        public record OptimizedImage(InputStream stream, long contentLength, String contentType) {
         }
 
         public String processAndUpload(
@@ -52,7 +44,7 @@ public class ImageProcessorService {
                         if (!ALLOWED_FORMATS.contains(format.toLowerCase()))
                                 format = "jpeg";
 
-                        OptimizedImage optimized = optimize(file.getInputStream(), format);
+                        OptimizedImage optimized = optimizer.optimize(file.getInputStream(), format);
 
                         String key = "%s.photo.%s".formatted(productId, format);
 
@@ -64,8 +56,9 @@ public class ImageProcessorService {
                                         bucket);
 
                         return "%s/%s/%s".formatted(minioEndpoint, bucket, key);
+
                 } catch (IOException e) {
-                        throw new RuntimeException("Error to process the image ");
+                        throw new RuntimeException("Error to process the image for product " + productId);
                 }
         }
 }
