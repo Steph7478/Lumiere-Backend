@@ -19,9 +19,9 @@ public class ImageProcessorService {
         @Value("${minio.endpoint}")
         private String minioEndpoint;
 
-        private final ImageOptimizer optimizer;
+        private final ImageOptimizerService optimizer;
 
-        public ImageProcessorService(ImageOptimizer optimizer) {
+        public ImageProcessorService(ImageOptimizerService optimizer) {
                 this.optimizer = optimizer;
         }
 

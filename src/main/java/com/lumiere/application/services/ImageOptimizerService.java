@@ -11,7 +11,7 @@ import com.lumiere.application.services.ImageProcessorService.OptimizedImage;
 import net.coobird.thumbnailator.Thumbnails;
 
 @Service
-public class ImageOptimizer {
+public class ImageOptimizerService {
 
     public OptimizedImage optimize(InputStream input, String format) throws IOException {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
