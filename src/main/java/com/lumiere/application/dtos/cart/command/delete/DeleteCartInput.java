@@ -2,6 +2,8 @@ package com.lumiere.application.dtos.cart.command.delete;
 
 import java.util.UUID;
 
-public record DeleteCartInput(UUID id) {
+import jakarta.validation.constraints.NotNull;
+
+public record DeleteCartInput(@NotNull UUID id) {
 
 }
