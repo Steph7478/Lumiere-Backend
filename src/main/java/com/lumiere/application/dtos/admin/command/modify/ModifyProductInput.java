@@ -2,5 +2,7 @@ package com.lumiere.application.dtos.admin.command.modify;
 
 import java.util.UUID;
 
-public record ModifyProductInput(UUID id, ModifyProductRequestData requestData) {
+import jakarta.validation.constraints.NotNull;
+
+public record ModifyProductInput(@NotNull UUID id, @NotNull ModifyProductRequestData requestData) {
 }
