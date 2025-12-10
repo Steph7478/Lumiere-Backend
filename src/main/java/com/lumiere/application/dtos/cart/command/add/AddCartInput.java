@@ -2,5 +2,7 @@ package com.lumiere.application.dtos.cart.command.add;
 
 import java.util.UUID;
 
-public record AddCartInput(UUID authId, AddItemsRequestData requestData) {
+import jakarta.validation.constraints.NotNull;
+
+public record AddCartInput(@NotNull UUID authId, @NotNull AddItemsRequestData requestData) {
 }
