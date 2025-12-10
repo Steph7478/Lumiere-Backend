@@ -4,6 +4,8 @@ import java.util.List;
 
 import com.lumiere.domain.entities.Coupon;
 
-public record AvalibleCouponsOutput(List<Coupon> coupons) {
+import jakarta.validation.constraints.NotNull;
+
+public record AvalibleCouponsOutput(@NotNull List<Coupon> coupons) {
 
 }
