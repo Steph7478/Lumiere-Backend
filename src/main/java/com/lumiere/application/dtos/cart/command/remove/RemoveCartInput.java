@@ -2,6 +2,8 @@ package com.lumiere.application.dtos.cart.command.remove;
 
 import java.util.UUID;
 
-public record RemoveCartInput(UUID authId, RemoveMultipleItemsRequestData requestData) {
+import jakarta.validation.constraints.NotNull;
+
+public record RemoveCartInput(@NotNull UUID authId, @NotNull RemoveMultipleItemsRequestData requestData) {
 
 }
