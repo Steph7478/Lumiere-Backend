@@ -4,6 +4,8 @@ import java.util.List;
 
 import com.lumiere.domain.vo.CartItem;
 
-public record RemoveMultipleItemsRequestData(List<CartItem> items) {
+import jakarta.validation.constraints.NotNull;
+
+public record RemoveMultipleItemsRequestData(@NotNull List<CartItem> items) {
 
 }

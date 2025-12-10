@@ -2,6 +2,8 @@ package com.lumiere.application.dtos.cart.command.remove;
 
 import com.lumiere.domain.readmodels.CartReadModel;
 
-public record RemoveCartOutput(CartReadModel cart) {
+import jakarta.validation.constraints.NotNull;
+
+public record RemoveCartOutput(@NotNull CartReadModel cart) {
 
 }
