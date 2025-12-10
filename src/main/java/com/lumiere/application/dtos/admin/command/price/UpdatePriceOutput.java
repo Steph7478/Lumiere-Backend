@@ -4,6 +4,8 @@ import java.util.UUID;
 
 import com.lumiere.domain.vo.Money;
 
-public record UpdatePriceOutput(UUID id, Money price) {
+import jakarta.validation.constraints.NotNull;
+
+public record UpdatePriceOutput(@NotNull UUID id, @NotNull Money price) {
 
 }
