@@ -4,6 +4,8 @@ import java.util.List;
 
 import com.lumiere.domain.readmodels.OrderReadModel;
 
-public record GetOrdersOutput(List<OrderReadModel> order) {
+import jakarta.validation.constraints.NotNull;
+
+public record GetOrdersOutput(@NotNull List<OrderReadModel> order) {
 
 }
