@@ -2,6 +2,8 @@ package com.lumiere.application.dtos.admin.command.stock.decrease;
 
 import java.util.UUID;
 
-public record DecreaseStockInput(UUID id, DecreaseStockRequestData requestData) {
+import jakarta.validation.constraints.NotNull;
+
+public record DecreaseStockInput(@NotNull UUID id, @NotNull DecreaseStockRequestData requestData) {
 
 }

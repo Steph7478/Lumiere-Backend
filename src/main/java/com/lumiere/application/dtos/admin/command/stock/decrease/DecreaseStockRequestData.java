@@ -1,5 +1,7 @@
 package com.lumiere.application.dtos.admin.command.stock.decrease;
 
-public record DecreaseStockRequestData(int quantity) {
+import jakarta.validation.constraints.NotNull;
+
+public record DecreaseStockRequestData(@NotNull int quantity) {
 
 }
