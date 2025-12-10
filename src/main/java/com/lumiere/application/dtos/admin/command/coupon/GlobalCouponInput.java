@@ -6,7 +6,10 @@ import java.time.LocalDateTime;
 import com.lumiere.domain.enums.CategoriesEnum.Category;
 import com.lumiere.domain.enums.CouponEnum.Type;
 
-public record GlobalCouponInput(Category category, Type type, BigDecimal discount, LocalDateTime expiredAt,
-        String code) {
+import jakarta.validation.constraints.*;
+
+public record GlobalCouponInput(@NotNull Category category, @NotNull Type type, @NotNull BigDecimal discount,
+                @NotNull LocalDateTime expiredAt,
+                @NotBlank String code) {
 
 }
