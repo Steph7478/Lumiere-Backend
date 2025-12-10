@@ -1,7 +1,9 @@
 package com.lumiere.application.dtos.product.query;
 
-public record ProductFindAllCriteria(int page,
-        int size,
-        String sortBy) {
+import jakarta.validation.constraints.*;
+
+public record ProductFindAllCriteria(@NotNull int page,
+                @NotNull int size,
+                @NotBlank String sortBy) {
 
 }
