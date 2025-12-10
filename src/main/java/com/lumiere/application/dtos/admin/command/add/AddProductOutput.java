@@ -4,6 +4,8 @@ import java.util.List;
 
 import com.lumiere.domain.readmodels.ProductDetailReadModel;
 
+import jakarta.validation.constraints.NotNull;
+
 public record AddProductOutput(
-                List<ProductDetailReadModel> product) {
+        @NotNull List<ProductDetailReadModel> product) {
 }
