@@ -19,6 +19,12 @@ public final class Routes {
     }
 
     public static final class PRIVATE {
+
+        public static final class WEBHOOKS {
+            public static final String BASE = "/webhooks";
+            public static final String STRIPE = BASE + "/stripe";
+        }
+
         public static final class AUTH {
             public static final String BASE = "/auth";
             public static final String ME = BASE + "/me";
