@@ -4,12 +4,11 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 import com.lumiere.domain.entities.Payment;
-import com.lumiere.domain.entities.Payment.PaymentMethod;
-import com.lumiere.domain.vo.Money;
+import com.lumiere.domain.enums.PaymentMethodEnum;
 
 public class PaymentFactory {
 
-    public static Payment from(UUID id, Money amount, PaymentMethod paymentMethod, LocalDateTime paymentDate) {
-        return new Payment(id, amount, paymentMethod, paymentDate);
+    public static Payment from(UUID id, PaymentMethodEnum paymentMethod, LocalDateTime paymentDate) {
+        return new Payment(id, paymentMethod, paymentDate);
     }
 }
