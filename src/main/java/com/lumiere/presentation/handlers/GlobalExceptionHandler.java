@@ -11,6 +11,7 @@ import com.lumiere.application.exceptions.auth.TokenGenerationException;
 import com.lumiere.application.exceptions.auth.UserNotFoundException;
 import com.lumiere.application.exceptions.cart.CartNotFoundException;
 import com.lumiere.application.exceptions.product.ProductNotFoundException;
+import com.stripe.exception.SignatureVerificationException;
 
 import java.util.Map;
 
@@ -23,6 +24,14 @@ public class GlobalExceptionHandler {
                                 .body(Map.of(
                                                 "error", "EMAIL_EXISTS",
                                                 "message", ex.getMessage()));
+        }
+
+        @ExceptionHandler(SignatureVerificationException.class)
+        public ResponseEntity<Map<String, String>> handleSignatureVerificationError(SignatureVerificationException ex) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                                .body(Map.of(
+                                                "error", "WEBHOOK_SIGNATURE_INVALID",
+                                                "message", "Failed to verify signature: " + ex.getMessage()));
         }
 
         @ExceptionHandler({ UserNotFoundException.class, InvalidCredentialsException.class })
