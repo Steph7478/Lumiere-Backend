@@ -1,4 +1,4 @@
-package com.lumiere.infrastructure.stripe;
+package com.lumiere.infrastructure.stripe.config;
 
 import com.stripe.Stripe;
 
