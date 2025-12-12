@@ -7,8 +7,7 @@ import com.lumiere.domain.entities.Payment;
 import com.lumiere.domain.enums.PaymentMethodEnum;
 
 public class PaymentFactory {
-
-    public static Payment from(UUID id, PaymentMethodEnum paymentMethod, LocalDateTime paymentDate) {
+    public static Payment create(UUID id, PaymentMethodEnum paymentMethod, LocalDateTime paymentDate) {
         return new Payment(id, paymentMethod, paymentDate);
     }
 }
