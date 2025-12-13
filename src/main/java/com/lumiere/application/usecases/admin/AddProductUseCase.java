@@ -10,7 +10,7 @@ import com.lumiere.application.dtos.admin.command.add.AddProductOutput;
 import com.lumiere.application.dtos.admin.command.add.AddProductRequestData;
 import com.lumiere.application.interfaces.admin.IAddProductUseCase;
 import com.lumiere.application.mappers.admin.AddProductMapper;
-import com.lumiere.application.services.ImageProcessorService;
+import com.lumiere.application.services.images.ImageProcessorService;
 import com.lumiere.domain.entities.Product;
 import com.lumiere.domain.entities.ProductCategory;
 import com.lumiere.domain.readmodels.ProductDetailReadModel;

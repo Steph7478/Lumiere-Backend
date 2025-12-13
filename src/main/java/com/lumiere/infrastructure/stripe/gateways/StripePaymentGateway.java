@@ -51,7 +51,8 @@ public class StripePaymentGateway {
                                 .setSuccessUrl(successUrl)
                                 .setCancelUrl(cancelUrl)
                                 .setClientReferenceId(orderId)
-                                .setCustomer(userId)
+                                .putMetadata("userId", userId)
+                                .putMetadata("orderId", orderId)
                                 .build();
 
                 return Session.create(params);

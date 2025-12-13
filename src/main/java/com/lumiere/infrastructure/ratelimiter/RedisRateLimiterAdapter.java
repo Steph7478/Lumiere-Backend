@@ -1,11 +1,12 @@
 package com.lumiere.infrastructure.ratelimiter;
 
-import com.lumiere.application.services.RateLimiterService;
 import org.redisson.api.RRateLimiter;
 import org.redisson.api.RateType;
 import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import com.lumiere.application.services.ratelimiter.RateLimiterService;
 
 import java.time.Duration;
 import java.util.concurrent.ConcurrentHashMap;

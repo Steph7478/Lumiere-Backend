@@ -1,4 +1,4 @@
-package com.lumiere.application.services;
+package com.lumiere.application.services.cache;
 
 import com.lumiere.application.exceptions.product.ProductNotFoundException;
 import com.lumiere.application.ports.ProductDetailReadPort;

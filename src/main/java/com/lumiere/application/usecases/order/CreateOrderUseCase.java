@@ -23,11 +23,11 @@ import com.lumiere.domain.repositories.UserRepository;
 import com.lumiere.domain.services.OrderService;
 import com.lumiere.domain.vo.OrderItem;
 import com.lumiere.infrastructure.mappers.OrderMapper;
-import com.lumiere.application.services.ProductCacheService;
 
 import jakarta.transaction.Transactional;
 
 import com.lumiere.application.mappers.order.OrderItemUseCaseMapper;
+import com.lumiere.application.services.cache.ProductCacheService;
 
 @Service
 public class CreateOrderUseCase implements ICreateOrderUseCase {

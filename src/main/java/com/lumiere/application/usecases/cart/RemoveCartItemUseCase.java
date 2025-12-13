@@ -13,6 +13,7 @@ import com.lumiere.application.exceptions.auth.UserNotFoundException;
 import com.lumiere.application.exceptions.cart.CartNotFoundException;
 import com.lumiere.application.interfaces.cart.IRemoveCartUseCase;
 import com.lumiere.application.mappers.cart.CartReadModelMapper;
+import com.lumiere.application.services.cache.ProductCacheService;
 import com.lumiere.domain.entities.Cart;
 import com.lumiere.domain.entities.User;
 import com.lumiere.domain.readmodels.CartReadModel;
@@ -21,7 +22,6 @@ import com.lumiere.domain.repositories.CartRepository;
 import com.lumiere.domain.repositories.UserRepository;
 import com.lumiere.domain.services.CartService;
 import com.lumiere.domain.vo.CartItem;
-import com.lumiere.application.services.ProductCacheService;
 
 import jakarta.transaction.Transactional;
 

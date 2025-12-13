@@ -1,4 +1,4 @@
-package com.lumiere.application.services;
+package com.lumiere.application.services.images;
 
 import java.io.InputStream;
 import java.io.IOException;

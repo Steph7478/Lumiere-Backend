@@ -1,4 +1,4 @@
-package com.lumiere.application.services;
+package com.lumiere.application.services.assembler;
 
 import java.util.Map;
 import java.util.Objects;

@@ -20,9 +20,9 @@ public class CheckoutSessionCompletedAdapter implements StripeEventAdapter {
         Session session = (Session) event.getDataObjectDeserializer().getObject().orElseThrow();
 
         var data = new HashMap<String, Object>();
-        data.put("status", session.getPaymentStatus());
         data.put("orderId", session.getClientReferenceId());
-        data.put("userId", session.getCustomer());
+        data.put("userId", session.getMetadata().get("userId"));
+        data.put("paymentId", session.getPaymentIntent());
         data.put("createdAt", session.getCreated());
         data.put("paymentMethod", session.getPaymentMethodTypes());
 

@@ -15,8 +15,8 @@ import com.lumiere.application.dtos.order.command.add.AddItemOrderRequestData.Or
 import com.lumiere.application.exceptions.auth.UserNotFoundException;
 import com.lumiere.application.exceptions.order.OrderNotFoundException;
 import com.lumiere.application.interfaces.order.IAddItemOrderUsecase;
-import com.lumiere.application.services.OrderItemAssemblerService;
-import com.lumiere.application.services.ProductCacheService;
+import com.lumiere.application.services.assembler.OrderItemAssemblerService;
+import com.lumiere.application.services.cache.ProductCacheService;
 import com.lumiere.domain.entities.Order;
 import com.lumiere.domain.entities.User;
 import com.lumiere.domain.enums.StatusEnum.Status;

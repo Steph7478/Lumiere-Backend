@@ -3,7 +3,7 @@ package com.lumiere.presentation.ratelimiter;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 
-import com.lumiere.application.services.RateLimiterService;
+import com.lumiere.application.services.ratelimiter.RateLimiterService;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;

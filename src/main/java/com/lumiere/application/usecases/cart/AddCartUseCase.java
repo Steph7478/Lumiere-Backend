@@ -5,7 +5,7 @@ import com.lumiere.application.dtos.cart.command.add.AddCartOuput;
 import com.lumiere.application.exceptions.auth.UserNotFoundException;
 import com.lumiere.application.interfaces.cart.IAddCartUseCase;
 import com.lumiere.application.mappers.cart.CartReadModelMapper;
-import com.lumiere.application.services.ProductCacheService;
+import com.lumiere.application.services.cache.ProductCacheService;
 import com.lumiere.domain.entities.Cart;
 import com.lumiere.domain.entities.User;
 import com.lumiere.domain.readmodels.CartReadModel;

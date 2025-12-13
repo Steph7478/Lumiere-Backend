@@ -1,4 +1,4 @@
-package com.lumiere.application.services;
+package com.lumiere.application.services.images;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -7,7 +7,8 @@ import java.io.InputStream;
 
 import org.springframework.stereotype.Service;
 
-import com.lumiere.application.services.ImageProcessorService.OptimizedImage;
+import com.lumiere.application.services.images.ImageProcessorService.OptimizedImage;
+
 import net.coobird.thumbnailator.Thumbnails;
 
 @Service
