@@ -31,7 +31,7 @@ public class ProductJpaRepositoryAdapter extends BaseRepositoryAdapter<Product, 
             ProductJpaRepository productRepo,
             ProductMapper productMapper,
             EntityManager entityManager) {
-        super(productRepo, productMapper, entityManager, ProductJpaEntity.class);
+        super(productRepo, productMapper, entityManager);
         this.productRepo = productRepo;
         this.productMapper = productMapper;
     }

@@ -19,8 +19,7 @@ public abstract class BaseRepositoryAdapter<D, E> implements BaseReader<D>, Base
     protected BaseRepositoryAdapter(
             JpaRepository<E, UUID> jpaRepository,
             BaseMapper<D, E> mapper,
-            EntityManager entityManager,
-            Class<E> entityClass) {
+            EntityManager entityManager) {
         this.jpaRepository = Objects.requireNonNull(jpaRepository, "jpaRepository cannot be null");
         this.mapper = Objects.requireNonNull(mapper, "mapper cannot be null");
         this.entityManager = Objects.requireNonNull(entityManager, "entityManager cannot be null");

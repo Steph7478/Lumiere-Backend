@@ -24,7 +24,7 @@ public class CartJpaRepositoryAdapter extends BaseRepositoryAdapter<Cart, CartJp
             CartJpaRepository jpaRepository,
             CartMapper mapper,
             EntityManager entityManager) {
-        super(jpaRepository, mapper, entityManager, CartJpaEntity.class);
+        super(jpaRepository, mapper, entityManager);
 
         this.cartJpaRepository = jpaRepository;
         this.cartMapper = mapper;

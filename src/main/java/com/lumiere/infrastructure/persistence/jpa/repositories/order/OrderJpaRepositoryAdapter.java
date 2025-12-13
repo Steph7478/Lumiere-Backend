@@ -23,7 +23,7 @@ public class OrderJpaRepositoryAdapter extends BaseRepositoryAdapter<Order, Orde
 
     protected OrderJpaRepositoryAdapter(OrderJpaRepository jpaRepository,
             OrderMapper mapper, EntityManager entityManager) {
-        super(jpaRepository, mapper, entityManager, OrderJpaEntity.class);
+        super(jpaRepository, mapper, entityManager);
 
         this.orderMapper = mapper;
         this.orderJpaRepository = jpaRepository;

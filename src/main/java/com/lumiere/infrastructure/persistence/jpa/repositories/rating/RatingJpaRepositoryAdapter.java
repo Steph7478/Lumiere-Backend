@@ -16,7 +16,7 @@ public class RatingJpaRepositoryAdapter extends BaseRepositoryAdapter<Rating, Ra
 
     protected RatingJpaRepositoryAdapter(RatingJpaRepository jpaRepository,
             RatingMapper mapper, EntityManager entityManager) {
-        super(jpaRepository, mapper, entityManager, RatingJpaEntity.class);
+        super(jpaRepository, mapper, entityManager);
     }
 
 }

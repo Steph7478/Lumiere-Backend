@@ -26,7 +26,7 @@ public class UserJpaRepositoryAdapter extends BaseRepositoryAdapter<User, UserJp
             AuthJpaRepository authRepo,
             UserMapper userMapper,
             EntityManager entityManager) {
-        super(userRepo, userMapper, entityManager, UserJpaEntity.class);
+        super(userRepo, userMapper, entityManager);
     }
 
     @Override

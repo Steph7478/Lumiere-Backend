@@ -29,7 +29,7 @@ public class AuthJpaRepositoryAdapter extends BaseRepositoryAdapter<Auth, AuthJp
             AuthJpaRepository authRepo,
             AuthMapper authMapper,
             EntityManager entityManager) {
-        super(authRepo, authMapper, entityManager, AuthJpaEntity.class);
+        super(authRepo, authMapper, entityManager);
         this.authMapper = authMapper;
         this.authRepo = authRepo;
     }

@@ -23,7 +23,7 @@ public class CouponJpaRepositoryAdapter extends BaseRepositoryAdapter<Coupon, Co
 
     protected CouponJpaRepositoryAdapter(CouponJpaRepository jpaRepository,
             CouponMapper mapper, EntityManager entityManager) {
-        super(jpaRepository, mapper, entityManager, CouponJpaEntity.class);
+        super(jpaRepository, mapper, entityManager);
 
         this.jpaRepository = jpaRepository;
         this.mapper = mapper;
