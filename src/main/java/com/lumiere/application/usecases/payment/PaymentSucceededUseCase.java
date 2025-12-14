@@ -60,7 +60,7 @@ public class PaymentSucceededUseCase {
         Order paidOrder = order.markAsPaid(paymentId);
         Payment payment = PaymentFactory.create(paymentId, method, paidAt);
 
-        orderRepo.save(paidOrder);
+        orderRepo.update(paidOrder);
         paymentRepo.save(payment);
     }
 }
