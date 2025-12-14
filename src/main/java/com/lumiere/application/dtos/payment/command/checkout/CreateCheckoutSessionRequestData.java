@@ -1,5 +1,7 @@
 package com.lumiere.application.dtos.payment.command.checkout;
 
-public record CreateCheckoutSessionRequestData(String successUrl, String cancelUrl) {
+import jakarta.validation.constraints.NotBlank;
+
+public record CreateCheckoutSessionRequestData(@NotBlank String successUrl, @NotBlank String cancelUrl) {
 
 }
