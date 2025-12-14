@@ -1,5 +1,7 @@
 package com.lumiere.infrastructure.persistence.jpa.repositories.payment;
 
+import org.springframework.stereotype.Repository;
+
 import com.lumiere.domain.entities.Payment;
 import com.lumiere.infrastructure.mappers.PaymentMapper;
 import com.lumiere.infrastructure.persistence.jpa.entities.PaymentJpaEntity;
@@ -7,6 +9,7 @@ import com.lumiere.infrastructure.persistence.jpa.repositories.base.BaseReposito
 
 import jakarta.persistence.EntityManager;
 
+@Repository
 public class PaymentJpaRepositoryAdapter extends BaseRepositoryAdapter<Payment, PaymentJpaEntity> {
 
     protected PaymentJpaRepositoryAdapter(PaymentJpaRepository jpaRepository,
