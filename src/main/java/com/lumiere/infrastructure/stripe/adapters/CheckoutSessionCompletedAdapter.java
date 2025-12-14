@@ -1,14 +1,21 @@
 package com.lumiere.infrastructure.stripe.adapters;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.lumiere.application.webhooks.WebhookEvent;
+import com.lumiere.infrastructure.stripe.dto.StripeCheckoutSessionPayload;
 import com.stripe.model.Event;
-import com.stripe.model.checkout.Session;
 import org.springframework.stereotype.Component;
 
-import java.util.HashMap;
+import java.util.Map;
 
 @Component
 public class CheckoutSessionCompletedAdapter implements StripeEventAdapter {
+
+    private final ObjectMapper mapper;
+
+    public CheckoutSessionCompletedAdapter(ObjectMapper mapper) {
+        this.mapper = mapper;
+    }
 
     @Override
     public boolean supports(String eventType) {
@@ -17,18 +24,32 @@ public class CheckoutSessionCompletedAdapter implements StripeEventAdapter {
 
     @Override
     public WebhookEvent convert(Event event) {
-        Session session = (Session) event.getDataObjectDeserializer().getObject().orElseThrow();
 
-        var data = new HashMap<String, Object>();
-        data.put("orderId", session.getClientReferenceId());
-        data.put("userId", session.getMetadata().get("userId"));
-        data.put("paymentId", session.getPaymentIntent());
-        data.put("createdAt", session.getCreated());
-        data.put("paymentMethod", session.getPaymentMethodTypes());
+        String rawJson = event.getDataObjectDeserializer().getRawJson();
 
-        return new WebhookEvent(
-                "stripe",
-                "payment.succeeded",
-                data);
+        if (rawJson == null) {
+            throw new IllegalArgumentException(
+                    "Stripe webhook has no data.object");
+        }
+
+        try {
+            StripeCheckoutSessionPayload payload = mapper.readValue(
+                    rawJson,
+                    StripeCheckoutSessionPayload.class);
+
+            return new WebhookEvent(
+                    "stripe",
+                    "payment.succeeded",
+                    Map.of(
+                            "orderId", payload.orderId(),
+                            "userId", payload.userId(),
+                            "paymentId", payload.paymentId(),
+                            "createdAt", payload.createdAt(),
+                            "paymentMethod", payload.paymentMethod()));
+
+        } catch (Exception e) {
+            throw new IllegalArgumentException(
+                    "Failed to parse Stripe Checkout Session", e);
+        }
     }
 }

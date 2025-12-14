@@ -32,15 +32,15 @@ public class PaymentSucceededUseCase {
     }
 
     public void execute(WebhookEvent event) {
+
         Map<String, Object> d = event.data();
 
-        UUID paymentId = UUID.fromString(d.get("paymentId").toString());
-
+        String paymentId = d.get("paymentId").toString();
         Order order = orderRepo.findById(
-                UUID.fromString(d.get("orderId").toString())).orElseThrow(OrderNotFoundException::new);
+                UUID.fromString(d.get("orderId").toString()))
+                .orElseThrow(OrderNotFoundException::new);
 
         Object pm = d.get("paymentMethod");
-
         if (!(pm instanceof List<?> list) || list.isEmpty()) {
             throw new IllegalStateException("Invalid payment method");
         }

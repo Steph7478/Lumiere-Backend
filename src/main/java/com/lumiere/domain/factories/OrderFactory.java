@@ -17,7 +17,7 @@ public class OrderFactory {
             UUID id,
             User user,
             Status status,
-            UUID paymentId,
+            String paymentId,
             BigDecimal total,
             List<OrderItem> items,
             Coupon coupon, CurrencyType currency) {

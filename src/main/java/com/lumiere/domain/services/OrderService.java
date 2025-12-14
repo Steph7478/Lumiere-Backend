@@ -64,7 +64,7 @@ public abstract class OrderService {
         return false;
     }
 
-    public static Order markAsPaid(Order order, UUID paymentId) {
+    public static Order markAsPaid(Order order, String paymentId) {
         return order.markAsPaid(paymentId);
     }
 }

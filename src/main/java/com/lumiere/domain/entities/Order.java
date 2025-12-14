@@ -17,7 +17,7 @@ public class Order extends BaseEntity {
 
     private final User user;
     private final Status status;
-    private final UUID paymentId;
+    private final String paymentId;
     private final Coupon coupon;
     private final BigDecimal total;
     private final CurrencyType currency;
@@ -28,7 +28,7 @@ public class Order extends BaseEntity {
         int apply(int currentQuantity, int modificationQuantity);
     }
 
-    public Order(UUID id, User user, Status status, UUID paymentId, BigDecimal total, List<OrderItem> items,
+    public Order(UUID id, User user, Status status, String paymentId, BigDecimal total, List<OrderItem> items,
             Coupon coupon, CurrencyType currency) {
         super(id);
         this.user = Objects.requireNonNull(user, "User cannot be null");
@@ -48,7 +48,7 @@ public class Order extends BaseEntity {
         return status;
     }
 
-    public UUID getPaymentId() {
+    public String getPaymentId() {
         return paymentId;
     }
 
@@ -95,7 +95,7 @@ public class Order extends BaseEntity {
                 newTotal, this.items, coupon, this.currency);
     }
 
-    public Order markAsPaid(UUID paymentId) {
+    public Order markAsPaid(String paymentId) {
         return new Order(getId(), this.user, Status.PAID, Objects.requireNonNull(paymentId, "paymentId cannot be null"),
                 this.total, this.items, this.coupon, this.currency);
     }
