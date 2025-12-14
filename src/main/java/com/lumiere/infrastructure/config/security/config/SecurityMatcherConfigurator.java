@@ -39,6 +39,7 @@ public final class SecurityMatcherConfigurator {
                                 Routes.PRIVATE.CART.BASE + "/**",
                                 Routes.PRIVATE.ORDER.BASE + "/**",
                                 Routes.PRIVATE.COUPON.BASE + "/**",
+                                Routes.PRIVATE.PAYMENT.BASE + "/**",
                                 Routes.PRIVATE.WEBHOOKS.STRIPE
                 };
 

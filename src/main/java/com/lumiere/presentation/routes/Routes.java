@@ -20,6 +20,11 @@ public final class Routes {
 
     public static final class PRIVATE {
 
+        public static final class PAYMENT {
+            public static final String BASE = "/payments";
+            public static final String PAY = BASE + "/pay";
+        }
+
         public static final class WEBHOOKS {
             public static final String BASE = "/webhooks";
             public static final String STRIPE = BASE + "/stripe";
