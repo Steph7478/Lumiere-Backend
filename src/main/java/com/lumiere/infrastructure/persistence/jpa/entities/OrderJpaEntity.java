@@ -36,7 +36,7 @@ public class OrderJpaEntity extends BaseJpaEntity implements Serializable {
     private UserJpaEntity user;
 
     @Column(name = "payment_id")
-    private UUID paymentId;
+    private String paymentId;
 
     @Setter(AccessLevel.NONE)
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
@@ -65,7 +65,7 @@ public class OrderJpaEntity extends BaseJpaEntity implements Serializable {
         }
     }
 
-    public OrderJpaEntity(UUID id, UserJpaEntity user, Status status, UUID paymentId, BigDecimal total,
+    public OrderJpaEntity(UUID id, UserJpaEntity user, Status status, String paymentId, BigDecimal total,
             List<OrderItemJpaEntity> items, CouponJpaEntity coupon) {
         super(id);
         this.user = user;
