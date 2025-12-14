@@ -3,12 +3,11 @@ package com.lumiere.presentation.controllers;
 import com.lumiere.application.ports.WebhookPort;
 import com.lumiere.application.webhooks.WebhookEvent;
 import com.lumiere.infrastructure.stripe.dispatcher.StripeWebhookEventDispatcher;
+import com.lumiere.infrastructure.stripe.services.StripeEventConstructorService;
 import com.lumiere.presentation.routes.Routes;
 import com.lumiere.shared.annotations.api.ApiVersion;
 import com.stripe.exception.SignatureVerificationException;
 import com.stripe.model.Event;
-import com.stripe.net.Webhook;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,15 +16,15 @@ public class StripeWebhookController {
 
     private final StripeWebhookEventDispatcher dispatcher;
     private final WebhookPort webhookPort;
-
-    @Value("${STRIPE_WEBHOOK_SECRET}")
-    private String webhookSecret;
+    private final StripeEventConstructorService eventConstructorService;
 
     public StripeWebhookController(
             StripeWebhookEventDispatcher dispatcher,
-            WebhookPort webhookPort) {
+            WebhookPort webhookPort,
+            StripeEventConstructorService eventConstructorService) {
         this.dispatcher = dispatcher;
         this.webhookPort = webhookPort;
+        this.eventConstructorService = eventConstructorService;
     }
 
     @ApiVersion("1")
@@ -34,13 +33,13 @@ public class StripeWebhookController {
             @RequestBody String payload,
             @RequestHeader("Stripe-Signature") String signature) throws SignatureVerificationException {
 
-        Event event = Webhook.constructEvent(payload, signature, webhookSecret);
+        Event event = eventConstructorService.constructEvent(payload, signature);
+
         WebhookEvent internal = dispatcher.dispatch(event);
 
         if (internal != null)
             webhookPort.handle(internal);
 
         return ResponseEntity.ok().build();
-
     }
 }
