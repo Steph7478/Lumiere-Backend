@@ -123,9 +123,9 @@ public class OrderController {
     }
 
     @ApiVersion("1")
-    @GetMapping(Routes.PRIVATE.ORDER.BASE)
+    @GetMapping(Routes.PRIVATE.ORDER.IN_PROGRESS)
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
-    public ResponseEntity<GetOrderInProgressOutput> getAllOrders(@AuthenticationPrincipal UUID userId) {
+    public ResponseEntity<GetOrderInProgressOutput> getInProgress(@AuthenticationPrincipal UUID userId) {
 
         GetOrderInput request = new GetOrderInput(userId);
         GetOrderInProgressOutput response = getOrderUseCase.getOrderInProgress(request);
@@ -134,9 +134,9 @@ public class OrderController {
     }
 
     @ApiVersion("1")
-    @GetMapping(Routes.PRIVATE.ORDER.IN_PROGRESS)
+    @GetMapping(Routes.PRIVATE.ORDER.BASE)
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
-    public ResponseEntity<GetOrdersOutput> getInProgress(@AuthenticationPrincipal UUID userId) {
+    public ResponseEntity<GetOrdersOutput> getAllOrders(@AuthenticationPrincipal UUID userId) {
 
         GetOrderInput request = new GetOrderInput(userId);
         GetOrdersOutput response = getOrderUseCase.GetMultipleOrders(request);
