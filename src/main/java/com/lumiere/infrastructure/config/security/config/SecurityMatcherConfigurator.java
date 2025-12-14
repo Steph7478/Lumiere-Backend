@@ -26,7 +26,8 @@ public final class SecurityMatcherConfigurator {
                                 Routes.PUBLIC.AUTH.REGISTER,
                                 Routes.PUBLIC.AUTH.LOGIN,
                                 Routes.PUBLIC.PRODUCTS.BASE + "/**",
-                                Routes.PUBLIC.PRODUCTS.FILTER + "/**"
+                                Routes.PUBLIC.PRODUCTS.FILTER + "/**",
+                                Routes.PUBLIC.WEBHOOKS.STRIPE
                 };
 
                 String[] adminEndpoints = {
@@ -40,7 +41,6 @@ public final class SecurityMatcherConfigurator {
                                 Routes.PRIVATE.ORDER.BASE + "/**",
                                 Routes.PRIVATE.COUPON.BASE + "/**",
                                 Routes.PRIVATE.PAYMENT.BASE + "/**",
-                                Routes.PRIVATE.WEBHOOKS.STRIPE
                 };
 
                 http.authorizeHttpRequests(auth -> {

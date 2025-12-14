@@ -11,6 +11,8 @@ import com.stripe.param.checkout.SessionCreateParams.LineItem.PriceData.ProductD
 
 import org.springframework.stereotype.Component;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -29,8 +31,13 @@ public class StripePaymentGateway {
 
                 List<LineItem> lineItems = order.getItems().stream().map(item -> {
 
+                        long unitAmountInCents = item.getUnitPrice()
+                                        .multiply(new BigDecimal("100"))
+                                        .setScale(0, RoundingMode.HALF_UP)
+                                        .longValueExact();
+
                         PriceData priceData = PriceData.builder()
-                                        .setUnitAmountDecimal(item.getUnitPrice())
+                                        .setUnitAmount(unitAmountInCents)
                                         .setCurrency(targetCurrencyCode)
                                         .setProductData(
                                                         ProductData.builder()

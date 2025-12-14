@@ -13,7 +13,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@ApiVersion("1")
 public class StripeWebhookController {
 
     private final StripeWebhookEventDispatcher dispatcher;
@@ -29,7 +28,8 @@ public class StripeWebhookController {
         this.webhookPort = webhookPort;
     }
 
-    @PostMapping(Routes.PRIVATE.WEBHOOKS.STRIPE)
+    @ApiVersion("1")
+    @PostMapping(Routes.PUBLIC.WEBHOOKS.STRIPE)
     public ResponseEntity<Void> handle(
             @RequestBody String payload,
             @RequestHeader("Stripe-Signature") String signature) throws SignatureVerificationException {
