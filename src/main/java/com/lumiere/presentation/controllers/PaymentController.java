@@ -3,6 +3,7 @@ package com.lumiere.presentation.controllers;
 import java.util.UUID;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -27,6 +28,7 @@ public class PaymentController {
 
     @ApiVersion("1")
     @PostMapping(Routes.PRIVATE.PAYMENT.PAY)
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     public ResponseEntity<CreateCheckoutSessionOutput> payment(@AuthenticationPrincipal UUID userId,
             @RequestBody @Valid CreateCheckoutSessionRequestData reqData) {
         CreateCheckoutSessionInput request = new CreateCheckoutSessionInput(userId, reqData);
