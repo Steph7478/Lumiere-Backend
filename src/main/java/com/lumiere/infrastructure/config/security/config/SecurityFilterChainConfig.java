@@ -17,7 +17,8 @@ public class SecurityFilterChainConfig {
         private final SecurityHeadersConfig securityHeadersConfig;
         private final CorsConfigurationSource corsConfigurationSource;
 
-        public SecurityFilterChainConfig(SecurityHeadersConfig securityHeadersConfig,
+        public SecurityFilterChainConfig(
+                        SecurityHeadersConfig securityHeadersConfig,
                         CorsConfigurationSource corsConfigurationSource) {
                 this.securityHeadersConfig = securityHeadersConfig;
                 this.corsConfigurationSource = corsConfigurationSource;
@@ -30,11 +31,14 @@ public class SecurityFilterChainConfig {
                 http
                                 .cors(cors -> cors.configurationSource(corsConfigurationSource))
                                 .csrf(csrf -> csrf.disable())
+                                .securityContext(securityContext -> securityContext
+                                                .requireExplicitSave(false))
+                                .servletApi(servletApi -> servletApi.disable())
                                 .addFilterBefore(new JwtAuthenticationFilter(),
                                                 UsernamePasswordAuthenticationFilter.class);
+
                 SecurityMatcherConfigurator.configure(http);
 
                 return http.build();
         }
-
 }

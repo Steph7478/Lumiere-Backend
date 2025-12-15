@@ -1,6 +1,7 @@
 package com.lumiere.presentation.controllers;
 
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -20,23 +21,25 @@ import jakarta.validation.Valid;
 
 @RestController
 public class PaymentController {
-    private ICreateCheckoutSessionUseCase createCheckoutSessionUseCase;
 
-    protected PaymentController(ICreateCheckoutSessionUseCase createCheckoutSessionUseCase) {
+    private final ICreateCheckoutSessionUseCase createCheckoutSessionUseCase;
+
+    public PaymentController(ICreateCheckoutSessionUseCase createCheckoutSessionUseCase) {
         this.createCheckoutSessionUseCase = createCheckoutSessionUseCase;
     }
 
     @ApiVersion("1")
-    @PostMapping(Routes.PRIVATE.PAYMENT.PAY)
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
-    public ResponseEntity<CreateCheckoutSessionOutput> payment(
+    @PostMapping(Routes.PRIVATE.PAYMENT.PAY)
+    public CompletableFuture<ResponseEntity<CreateCheckoutSessionOutput>> payment(
             @AuthenticationPrincipal UUID userId,
             @RequestBody @Valid CreateCheckoutSessionRequestData reqData) {
 
         CreateCheckoutSessionInput request = new CreateCheckoutSessionInput(userId, reqData);
 
-        CreateCheckoutSessionOutput response = createCheckoutSessionUseCase.execute(request).block();
+        return createCheckoutSessionUseCase.execute(request)
+                .map(ResponseEntity::ok)
+                .toFuture();
 
-        return ResponseEntity.ok(response);
     }
 }
