@@ -1,0 +1,76 @@
+version: '3.8'
+
+services:
+  redis:
+    image: redis:latest
+    container_name: lumiere-redis
+    restart: always
+    ports:
+      - "${REDIS_PORT:-6379}:${REDIS_PORT:-6379}"
+    env_file:
+      - ${COMPOSE_ENV_FILE:-.env.dev}
+    environment:
+      REDIS_PASSWORD: ${REDIS_PASSWORD:-password}
+    command: redis-server --requirepass ${REDIS_PASSWORD:-password} --port ${REDIS_PORT:-6379}
+
+  minio:
+    image: minio/minio:latest
+    container_name: lumiere-minio
+    restart: always
+    ports:
+      - "${MINIO_API_PORT:-9000}:${MINIO_API_PORT:-9000}"
+      - "${MINIO_CONSOLE_PORT:-9001}:${MINIO_CONSOLE_PORT:-9001}"
+    env_file:
+      - ${COMPOSE_ENV_FILE:-.env.dev}
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER:-DEV_MINIO_USER}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-DEV_MINIO_SECRET_123}
+    command: server /data --console-address ":${MINIO_CONSOLE_PORT:-9001}"
+    volumes:
+      - ./minio_data:/data
+  
+  minio-config:
+    image: minio/mc:latest
+    container_name: lumiere-minio-config
+    depends_on:
+      minio:
+        condition: service_started
+    env_file:
+      - ${COMPOSE_ENV_FILE:-.env.dev}
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER:-DEV_MINIO_USER}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-DEV_MINIO_SECRET_123}
+      MINIO_API_PORT: ${MINIO_API_PORT:-9000}
+      MINIO_BUCKET_NAME: ${MINIO_BUCKET_NAME:-product-pictures}
+    entrypoint: >
+      /bin/sh -c "
+      /usr/bin/mc alias set local http://minio:${MINIO_API_PORT:-9000} ${MINIO_ROOT_USER} ${MINIO_ROOT_PASSWORD};
+      /usr/bin/mc mb --ignore-existing local/${MINIO_BUCKET_NAME};
+      /usr/bin/mc policy set download local/${MINIO_BUCKET_NAME};
+      "
+
+  app:
+    build: .
+    container_name: lumiere-app
+    volumes:
+      - ./pkey.pem:/app/pkey.pem:ro
+      - ./dev.db:/app/dev.db
+    ports:
+      - "${APP_PORT:-8080}:${APP_PORT:-8080}"
+    depends_on:
+      redis:
+        condition: service_started
+      minio-config:
+        condition: service_completed_successfully
+    env_file:
+      - ${COMPOSE_ENV_FILE:-.env.dev}
+    environment:
+      SPRING_PROFILES_ACTIVE: ${SPRING_PROFILE:-dev}
+      REDIS_HOST: redis 
+      REDIS_PORT: ${REDIS_PORT:-6379}
+      REDIS_PASSWORD: ${REDIS_PASSWORD:-password}
+      MINIO_ENDPOINT_URL: http://minio:${MINIO_API_PORT:-9000}
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER:-DEV_MINIO_USER}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-DEV_MINIO_SECRET_123}
+      MINIO_BUCKET_NAME: ${MINIO_BUCKET_NAME:-product-pictures}
+      MINIO_REGION: ${MINIO_REGION:-us-east-1}
