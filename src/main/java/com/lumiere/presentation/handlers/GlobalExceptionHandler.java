@@ -10,8 +10,11 @@ import com.lumiere.application.exceptions.auth.InvalidCredentialsException;
 import com.lumiere.application.exceptions.auth.TokenGenerationException;
 import com.lumiere.application.exceptions.auth.UserNotFoundException;
 import com.lumiere.application.exceptions.cart.CartNotFoundException;
+import com.lumiere.application.exceptions.payment.PaymentGatewayException;
 import com.lumiere.application.exceptions.product.ProductNotFoundException;
 import com.stripe.exception.SignatureVerificationException;
+
+import io.github.resilience4j.circuitbreaker.CallNotPermittedException;
 
 import java.util.Map;
 
@@ -50,20 +53,36 @@ public class GlobalExceptionHandler {
                                                 "message", ex.getMessage()));
         }
 
-        @ExceptionHandler({ ProductNotFoundException.class })
+        @ExceptionHandler(ProductNotFoundException.class)
         public ResponseEntity<Map<String, String>> handleProductErrors(ProductNotFoundException ex) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                                 .body(Map.of(
-                                                "error", "INVALID_PRODUCT", "message",
-                                                ex.getMessage()));
+                                                "error", "INVALID_PRODUCT",
+                                                "message", ex.getMessage()));
         }
 
-        @ExceptionHandler({ CartNotFoundException.class })
-        public ResponseEntity<Map<String, String>> handleCartErrors(ProductNotFoundException ex) {
+        @ExceptionHandler(CartNotFoundException.class)
+        public ResponseEntity<Map<String, String>> handleCartErrors(CartNotFoundException ex) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                                 .body(Map.of(
-                                                "error", "INVALID_Cart", "message",
-                                                ex.getMessage()));
+                                                "error", "INVALID_CART",
+                                                "message", ex.getMessage()));
+        }
+
+        @ExceptionHandler(PaymentGatewayException.class)
+        public ResponseEntity<Map<String, String>> handlePaymentGateway(PaymentGatewayException ex) {
+                return ResponseEntity.status(HttpStatus.BAD_GATEWAY)
+                                .body(Map.of(
+                                                "error", "PAYMENT_SERVICE_UNAVAILABLE",
+                                                "message", "Payment service temporarily unavailable"));
+        }
+
+        @ExceptionHandler(CallNotPermittedException.class)
+        public ResponseEntity<Map<String, String>> handleCircuitBreakerOpen(CallNotPermittedException ex) {
+                return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE)
+                                .body(Map.of(
+                                                "error", "CIRCUIT_BREAKER_OPEN",
+                                                "message", "Payment service temporarily unavailable"));
         }
 
         @ExceptionHandler(IllegalArgumentException.class)
