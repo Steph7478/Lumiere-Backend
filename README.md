@@ -16,6 +16,7 @@ This project is a technical portfolio piece, demonstrating proficiency in design
 | Capability | Advanced Implementation Detail |
 | :--- | :--- |
 | **Architectural Governance** | Strict, code-enforced separation (via packages) of the business domain from infrastructure concerns. |
+| **Client-Oriented Design** | Implementation of **Backend for Frontend (BFF)** patterns, abstracting IDs and complex data models from the UI. |
 | **Resilience & Performance** | Application of distributed caching (Redis) and defensive mechanisms (AOP Rate Limiting). |
 | **Security Engineering** | Implementation of asymmetric JWT signing (RSA) and sophisticated authorization guards (`@RequireAdmin`). |
 | **Data Optimization** | **N+1 prevention** using **`@EntityGraph`** and **database indexing** for fast query execution. |
@@ -41,7 +42,7 @@ The system is rigorously structured into independent layers, ensuring the core d
 | **`domain`** | **Business Source of Truth.** Defines core entities (`Order`, `Cart`) and Value Objects (`Money`, `Stock`) with validation logic encapsulated inside. | Domain Layer, Value Objects, Repository Interfaces. |
 | **`application`** | **Transaction & Workflow Manager.** Implements **Ports** (`I...UseCase`) and **Use Cases**, acting as the primary transaction boundary. | Command/Query Separation (CQRS DTOs), Ports & Adapters (Hexagonal). |
 | **`infrastructure`** | **Implementation Adapters.** Contains all technical details. Decouples persistence (JPA, NoSQL) and external APIs (Stripe, S3) from the core logic. | Adapter Pattern, Service Implementation. |
-| **`presentation`** | **External Interface & Routing.** Handles HTTP concerns, versioning, and security filtering. | REST Controllers, API Versioning (`@ApiVersion`), Global Exception Handling. |
+| **`presentation`** | **External Interface & Routing (BFF).** Handles HTTP concerns, versioning, and security filtering. **Designed as a Backend for Frontend**, simplifying interactions for UI clients (e.g., abstracting away complex database IDs). | REST Controllers, API Versioning (`@ApiVersion`), Global Exception Handling. |
 
 ### 2. 🛡️ Advanced Security Engineering (JWT, Spring Security, RSA)
 
