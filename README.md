@@ -17,7 +17,7 @@ This project is a technical portfolio piece, demonstrating proficiency in design
 | :--- | :--- |
 | **Architectural Governance** | Strict, code-enforced separation (via packages) of the business domain from infrastructure concerns. |
 | **Client-Oriented Design** | Implementation of **Backend for Frontend (BFF)** patterns, abstracting IDs and complex data models from the UI. |
-| **Resilience & Performance** | Application of distributed caching (Redis) and defensive mechanisms (AOP Rate Limiting). |
+| **Resilience & Performance** | Application of distributed caching (Redis) and defensive mechanisms (AOP Rate Limiting, **Circuit Breaker**). |
 | **Security Engineering** | Implementation of asymmetric JWT signing (RSA) and sophisticated authorization guards (`@RequireAdmin`). |
 | **Data Optimization** | **N+1 prevention** using **`@EntityGraph`** and **database indexing** for fast query execution. |
 | **Decoupling** | Use of the Adapter pattern to switch between persistence models (JPA, NoSQL) and external services (Stripe, S3) without affecting the Domain. |
@@ -27,15 +27,13 @@ This project is a technical portfolio piece, demonstrating proficiency in design
 
 This project is **actively in progress**. The architecture is stable, with current work focusing on performance tuning and advanced feature completion.
 
-## ✨ Technical Deep Dive: Advanced Implementation
+## ✅ Technical Deep Dive: Advanced Implementation
 
 The Lumière Backend is built upon a foundation of best-in-class patterns and technologies:
 
 ### 1. 🏛️ Architectural Foundation (DDD & Clean Architecture)
 
 The system is rigorously structured into independent layers, ensuring the core domain remains immutable and testable.
-
-
 
 | Layer (Package) | Advanced Role | Key Design Patterns |
 | :--- | :--- | :--- |
@@ -52,16 +50,15 @@ The authentication system is designed for high security and scalability:
 * **Role-Based Authorization Guards:** Authorization is handled declaratively through custom Spring Security annotations like `@RequireAdmin`, with `RequireAdminValidator.java` enforcing business rules at the **Use Case** boundary, not just the Controller layer.
 * **Filter Chain Configuration:** `JwtAuthenticationFilter.java` manages authentication seamlessly, integrated with `SecurityFilterChainConfig.java` to enforce security headers and policies across all endpoints.
 
-
-
 ### 3. ⚡ Resilience and Observability
 
-Mechanisms are implemented to ensure the application remains stable and auditable under high load.
+Mechanisms are implemented to ensure the application remains stable and auditable under high load, and to gracefully handle failures in external services.
 
 | Feature | Design and Implementation |
 | :--- | :--- |
 | **AOP Logging for Observability** | Utilizes **Aspect-Oriented Programming (AOP)** with the custom `@Loggable` annotation to inject cross-cutting *logging* logic (timing, parameters) into both `Controller`s and critical `UseCases`, providing deep insights into runtime performance and flow without code pollution. |
 | **Distributed Rate Limiting** | Implemented using a high-throughput **Redis** adapter (`RedisRateLimiterAdapter.java`) and a Presentation layer interceptor (`RateLimitInterceptor.java`) to defensively prevent resource exhaustion from abusive traffic. |
+| **Fault Tolerance (Circuit Breaker)** | Implements the **Circuit Breaker** and **Retry** patterns via **Resilience4j** on the critical `CreateCheckoutSessionUseCase`. This prevents cascading failures and ensures stability when the **Stripe Payment Gateway** experiences latency or downtime, using a `fallbackMethod` for graceful error handling. |
 | **Strategic Caching** | Dedicated `ProductCacheService.java` manages Redis distributed cache, implementing a read-through strategy for frequently accessed product data, significantly improving read latency. |
 
 ### 4. 🗄️ Persistence and External Integrations
@@ -85,6 +82,7 @@ The infrastructure is designed for maximum flexibility and compliance with cloud
 | **Language** | **Java** | JDK 17+ |
 | **Framework** | **Spring Boot 3.x** | Core framework, IoC, Web, and Data. |
 | **Security** | **Spring Security** | JWT, RSA Asymmetric Keys, Custom Filters. |
+| **Resilience** | **Resilience4j** | Circuit Breaker and Retry patterns. |
 | **Caching/Resilience** | **Redis** | Distributed Caching and Rate Limiting. |
 | **Database** | **PostgreSQL** | Primary relational store (via Spring Data JPA). |
 | **Object Storage** | **MinIO & AWS S3 SDK** | Cloud-native storage implementation. |
@@ -95,34 +93,31 @@ The infrastructure is designed for maximum flexibility and compliance with cloud
 
 ### Prerequisites
 
-1.  **JDK (Java Development Kit) 17+**
-2.  **Maven**
-3.  **Docker** and **Docker Compose** (Required for the PostgreSQL, Redis, and MinIO infrastructure).
+1.  **Docker** and **Docker Compose** (Required to run the infrastructure and the application).
+2.  (Optional) **JDK 17+** and **Maven** (Only if you wish to run the application natively outside Docker).
 
-### Steps
+### Steps (Via Docker Compose)
 
-1.  **Clone the repository:**
+This is the recommended way to run the application, as it automatically provisions the entire stack (PostgreSQL, Redis, MinIO) and the API.
+
+1.  **Clone the repository:**
     ```bash
     git clone [https://github.com/Steph7478/Lumiere-Backend.git](https://github.com/Steph7478/Lumiere-Backend.git)
     cd Lumiere-Backend
     ```
 
-2.  **Environment Configuration (`.env`):**
-    Create a `.env` file and populate it with the necessary credentials. The application utilizes a custom `DotenvLoader.java` for environment setup.
+2.  **Environment Configuration (`.env`):**
+    Create a `.env` file in the project root and populate it with the necessary credentials. Docker Compose will automatically use this file.
 
-3.  **Start Infrastructure Services (Docker):**
-    Launch the required database, cache, and storage services:
+3.  **Start All Services:**
+    Build and launch the application backend along with the infrastructure services in a single command:
     ```bash
-    docker-compose up -d
+    docker-compose --env-file .env up --build -d
     ```
 
-4.  **Run the Project Locally:**
-    Start the Spring Boot application:
-    ```bash
-    ./mvnw spring-boot:run
-    ```
+**Status:** The application will be available at `http://localhost:8080`.
 
-The application will be available at `http://localhost:8080`.
+---
 
 ## 🧭 API Endpoints
 
@@ -142,4 +137,4 @@ All endpoints follow API versioning standards (`@ApiVersion`). The documentation
 
 ## 🛑 Disclaimer
 
-This project is developed solely for **learning, practice, and portfolio demonstration purposes**. It is intended to showcase proficiency in advanced software architecture, security, and performance patterns (DDD, Clean Architecture, AOP, RSA, Caching). It is not a live or production-ready commercial application.
+This project is developed solely for **learning, practice, and portfolio demonstration purposes**. It is intended to showcase proficiency in advanced software architecture, security, and performance patterns (DDD, Clean Architecture, AOP, RSA, Caching, **Resilience4j**). It is not a live or production-ready commercial application.
