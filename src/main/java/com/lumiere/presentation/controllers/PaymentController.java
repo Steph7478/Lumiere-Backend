@@ -29,11 +29,13 @@ public class PaymentController {
     @ApiVersion("1")
     @PostMapping(Routes.PRIVATE.PAYMENT.PAY)
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
-    public ResponseEntity<CreateCheckoutSessionOutput> payment(@AuthenticationPrincipal UUID userId,
+    public ResponseEntity<CreateCheckoutSessionOutput> payment(
+            @AuthenticationPrincipal UUID userId,
             @RequestBody @Valid CreateCheckoutSessionRequestData reqData) {
+
         CreateCheckoutSessionInput request = new CreateCheckoutSessionInput(userId, reqData);
 
-        CreateCheckoutSessionOutput response = createCheckoutSessionUseCase.execute(request);
+        CreateCheckoutSessionOutput response = createCheckoutSessionUseCase.execute(request).block();
 
         return ResponseEntity.ok(response);
     }

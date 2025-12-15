@@ -1,6 +1,9 @@
 package com.lumiere.application.usecases.payment;
 
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Mono;
+import reactor.core.scheduler.Schedulers;
+
 import com.lumiere.application.dtos.payment.command.checkout.CreateCheckoutSessionInput;
 import com.lumiere.application.dtos.payment.command.checkout.CreateCheckoutSessionOutput;
 import com.lumiere.application.exceptions.auth.UserNotFoundException;
@@ -16,6 +19,9 @@ import com.lumiere.infrastructure.stripe.gateways.StripePaymentGateway;
 import com.stripe.exception.StripeException;
 import com.stripe.model.checkout.Session;
 
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+import io.github.resilience4j.retry.annotation.Retry;
+
 @Service
 public class CreateCheckoutSessionUseCase implements ICreateCheckoutSessionUseCase {
 
@@ -23,7 +29,9 @@ public class CreateCheckoutSessionUseCase implements ICreateCheckoutSessionUseCa
     private final OrderRepository orderRepo;
     private final UserRepository userRepo;
 
-    protected CreateCheckoutSessionUseCase(StripePaymentGateway gateway, OrderRepository orderRepo,
+    protected CreateCheckoutSessionUseCase(
+            StripePaymentGateway gateway,
+            OrderRepository orderRepo,
             UserRepository userRepo) {
         this.gateway = gateway;
         this.orderRepo = orderRepo;
@@ -31,25 +39,36 @@ public class CreateCheckoutSessionUseCase implements ICreateCheckoutSessionUseCa
     }
 
     @Override
-    public CreateCheckoutSessionOutput execute(CreateCheckoutSessionInput input) {
-        User user = userRepo.findUserByAuthId(input.userId()).orElseThrow(UserNotFoundException::new);
+    @Retry(name = "paymentServiceRetry")
+    @CircuitBreaker(name = "paymentServiceCB", fallbackMethod = "fallbackExecute")
+    public Mono<CreateCheckoutSessionOutput> execute(CreateCheckoutSessionInput input) {
 
-        Order order = orderRepo.findByUserIdAndStatus(user.getId(), Status.IN_PROGRESS)
-                .orElseThrow(OrderNotFoundException::new);
+        Mono<Order> orderMono = Mono.fromCallable(() -> {
+            User user = userRepo.findUserByAuthId(input.userId())
+                    .orElseThrow(UserNotFoundException::new);
 
-        Session stripeSession;
+            return orderRepo.findByUserIdAndStatus(user.getId(), Status.IN_PROGRESS)
+                    .orElseThrow(OrderNotFoundException::new);
+        });
 
-        try {
-            stripeSession = gateway.createCustomCheckoutSession(
+        Mono<CreateCheckoutSessionOutput> paymentMono = orderMono.flatMap(order -> Mono.fromCallable(() -> {
+            Session session = gateway.createCustomCheckoutSession(
                     order,
                     input.data().successUrl(),
                     input.data().cancelUrl());
-        } catch (StripeException e) {
-            throw new PaymentGatewayException();
-        }
+            return new CreateCheckoutSessionOutput(session.getUrl());
+        })).onErrorMap(StripeException.class, e -> new PaymentGatewayException());
 
-        String checkoutUrl = stripeSession.getUrl();
+        return paymentMono.subscribeOn(Schedulers.boundedElastic());
+    }
 
-        return new CreateCheckoutSessionOutput(checkoutUrl);
+    public Mono<CreateCheckoutSessionOutput> fallbackExecute(
+            CreateCheckoutSessionInput input,
+            Throwable t) {
+
+        if (t instanceof UserNotFoundException || t instanceof OrderNotFoundException)
+            return Mono.error(t);
+
+        return Mono.error(PaymentGatewayException::new);
     }
 }
