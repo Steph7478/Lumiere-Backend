@@ -40,7 +40,7 @@ The system is rigorously structured into independent layers, ensuring the core d
 | **`domain`** | **Business Source of Truth.** Defines core entities (`Order`, `Cart`) and Value Objects (`Money`, `Stock`) with validation logic encapsulated inside. | Domain Layer, Value Objects, Repository Interfaces. |
 | **`application`** | **Transaction & Workflow Manager.** Implements **Ports** (`I...UseCase`) and **Use Cases**, acting as the primary transaction boundary. | Command/Query Separation (CQRS DTOs), Ports & Adapters (Hexagonal). |
 | **`infrastructure`** | **Implementation Adapters.** Contains all technical details. Decouples persistence (JPA, NoSQL) and external APIs (Stripe, S3) from the core logic. | Adapter Pattern, Service Implementation. |
-| **`presentation`** | **External Interface & Routing (BFF).** Handles HTTP concerns, versioning, and security filtering. **Designed as a Backend for Frontend**, simplifying interactions for UI clients (e.g., abstracting away complex database IDs). | REST Controllers, API Versioning (`@ApiVersion`), Global Exception Handling. |
+| **`presentation`** | **External Interface & Routing (BFF).** Handles HTTP concerns, versioning, and security filtering. **Designed as a Backend for Frontend**, simplifying interactions for UI clients (e.g., abstracting away complex database IDs). | REST Controllers, API Versioning (`@ApiVersion`), Global Exception Handling, **OpenAPI/Swagger UI**. |
 
 ### 2. 🛡️ Advanced Security Engineering (JWT, Spring Security, RSA)
 
@@ -60,7 +60,7 @@ Mechanisms are implemented to ensure the application remains stable and auditabl
 | **AOP Logging for Observability** | Utilizes **Aspect-Oriented Programming (AOP)** with the custom `@Loggable` annotation to inject cross-cutting *logging* logic (timing, parameters) into both `Controller`s and critical `UseCases`, providing deep insights into runtime performance and flow without code pollution. |
 | **Distributed Rate Limiting** | Implemented using a high-throughput **Redis** adapter (`RedisRateLimiterAdapter.java`) and a Presentation layer interceptor (`RateLimitInterceptor.java`) to defensively prevent resource exhaustion from abusive traffic. |
 | **Asynchronous & Reactive Processing** | The `PaymentController` and `CreateCheckoutSessionUseCase` use **Project Reactor (`Mono`)** and **`CompletableFuture`** to handle the external Stripe API call asynchronously (`subscribeOn(Schedulers.boundedElastic())`). This prevents blocking the main server thread, enhancing overall API responsiveness and concurrency.
-| **Fault Tolerance (Circuit Breaker)** | Implements the **Circuit Breaker** and **Retry** patterns via **Resilience4j** (`@CircuitBreaker`, `@Retry`) on the critical `CreateCheckoutSessionUseCase`. This prevents cascading failures and ensures stability when the **Stripe Payment Gateway** experiences latency or downtime, using a `fallbackMethod` for graceful error handling.  |
+| **Fault Tolerance (Circuit Breaker)** | Implements the **Circuit Breaker** and **Retry** patterns via **Resilience4j** (`@CircuitBreaker`, `@Retry`) on the critical `CreateCheckoutSessionUseCase`. This prevents cascading failures and ensures stability when the **Stripe Payment Gateway** experiences latency or downtime, using a `fallbackMethod` for graceful error handling. |
 | **Strategic Caching** | Dedicated `ProductCacheService.java` manages Redis distributed cache, implementing a read-through strategy for frequently accessed product data, significantly improving read latency. |
 
 ### 4. 🗄️ Persistence and External Integrations
@@ -73,7 +73,7 @@ The infrastructure is designed for maximum flexibility and compliance with cloud
     * **SQL Indexing:** Proper database indexing is applied to frequently queried fields to ensure sub-millisecond read times.
     * **NoSQL Adapters:** For flexible schema data (e.g., product categories) via `infrastructure.persistence.nosql`.
 * **Efficient Paginated Reads (Hybrid Data):** The `ProductDetailReadAdapter` implements complex pagination and filtering by efficiently combining data from **PostgreSQL (SQL)** and **MongoDB (NoSQL)** in a single query path.
-* **Cloud-Native Storage:** `S3StorageService.java` is implemented against the **official AWS S3 SDK**. This choice is strategic, ensuring the system é instantly compatible with cloud services like AWS S3 and self-hosted solutions like **MinIO**, guaranteeing minimal refactoring during environment migration.
+* **Cloud-Native Storage:** `S3StorageService.java` is implemented against the **official AWS S3 SDK**. This choice is strategic, ensuring the system is instantly compatible with cloud services like AWS S3 and self-hosted solutions like **MinIO**, guaranteeing minimal refactoring during environment migration.
 * **Resilient Payment Webhooks:** `StripeWebhookEventDispatcher.java` and specialized adapters manage the asynchronous and idempotent processing of payment events, ensuring system state consistency even in the face of network failures.
 
 ---
@@ -84,6 +84,7 @@ The infrastructure is designed for maximum flexibility and compliance with cloud
 | :--- | :--- | :--- |
 | **Language** | **Java** | JDK 17+ |
 | **Framework** | **Spring Boot 3.x** | Core framework, IoC, Web, and Data. |
+| **API Documentation** | **OpenAPI / Swagger UI** | Industry-standard documentation for all endpoints. |
 | **Security** | **Spring Security** | JWT, RSA Asymmetric Keys, Custom Filters. |
 | **Resilience** | **Resilience4j** | Circuit Breaker and Retry patterns. |
 | **Caching/Resilience** | **Redis** | Distributed Caching and Rate Limiting. |
@@ -97,7 +98,9 @@ The infrastructure is designed for maximum flexibility and compliance with cloud
 ### Prerequisites
 
 1.  **Docker** and **Docker Compose** (Required to run the infrastructure and the application).
+</br>
 2.  **RSA Key Pair:** Generate an RSA key pair, naming the private key file **`pkey.pem`**, and place it in the configured location (default is project root). **This is required for JWT authentication.**
+</br>
 3.  (Optional) **JDK 17+** and **Maven** (Only if you wish to run the application natively outside Docker).
 
 ### Steps (Via Docker Compose)
@@ -125,7 +128,9 @@ This is the recommended way to run the application, as it automatically provisio
 
 ## 🧭 API Endpoints
 
-All endpoints follow API versioning standards (`@ApiVersion`). The documentation for all available endpoints (Swagger/OpenAPI) is pending development.
+All endpoints follow API versioning standards (`@ApiVersion`).
+
+* **Documentation (Swagger UI):** Interactive documentation is available at: `http://localhost:8080/api/v1/swagger-ui`
 
 | Module | Example Controller | Functionality |
 | :--- | :--- | :--- |
