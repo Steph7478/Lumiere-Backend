@@ -72,7 +72,8 @@ public abstract class BaseRepositoryAdapter<D, E> implements BaseReader<D>, Base
     @Override
     @Transactional
     public void deleteAllById(List<UUID> ids) {
-        Objects.requireNonNull(ids, "id cannot be null");
-        jpaRepository.deleteAllById(ids);
+        Objects.requireNonNull(ids, "ids cannot be null");
+        jpaRepository.deleteAllByIdInBatch(ids);
+
     }
 }
