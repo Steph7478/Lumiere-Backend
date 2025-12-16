@@ -9,6 +9,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -28,6 +29,9 @@ import com.lumiere.application.dtos.admin.command.modify.ModifyProductRequestDat
 import com.lumiere.application.dtos.admin.command.price.UpdatePriceInput;
 import com.lumiere.application.dtos.admin.command.price.UpdatePriceOutput;
 import com.lumiere.application.dtos.admin.command.price.UpdatePriceRequestData;
+import com.lumiere.application.dtos.admin.command.remove.RemoveProductInput;
+import com.lumiere.application.dtos.admin.command.remove.RemoveProductOutput;
+import com.lumiere.application.dtos.admin.command.remove.RemoveSingleProductInput;
 import com.lumiere.application.dtos.admin.command.stock.decrease.DecreaseStockInput;
 import com.lumiere.application.dtos.admin.command.stock.decrease.DecreaseStockOutput;
 import com.lumiere.application.dtos.admin.command.stock.decrease.DecreaseStockRequestData;
@@ -39,6 +43,7 @@ import com.lumiere.application.interfaces.admin.IDecreaseStockUseCase;
 import com.lumiere.application.interfaces.admin.IGlobalCouponsUseCase;
 import com.lumiere.application.interfaces.admin.IIncreaseStockUseCase;
 import com.lumiere.application.interfaces.admin.IModifyProductUseCase;
+import com.lumiere.application.interfaces.admin.IRemoveProductUseCase;
 import com.lumiere.application.interfaces.admin.IUpdatePriceUseCase;
 import com.lumiere.presentation.routes.Routes;
 import com.lumiere.shared.annotations.api.ApiVersion;
@@ -55,16 +60,19 @@ public class AdminController {
     private final IDecreaseStockUseCase decreaseStockUseCase;
     private final IUpdatePriceUseCase updatePriceUseCase;
     private final IGlobalCouponsUseCase globalCouponsUseCase;
+    private final IRemoveProductUseCase removeProductUseCase;
 
     public AdminController(IAddProductUseCase addProductUseCase, IModifyProductUseCase modifyProductUseCase,
             IIncreaseStockUseCase increaseStockUseCase, IDecreaseStockUseCase decreaseStockUseCase,
-            IUpdatePriceUseCase updatePriceUseCase, IGlobalCouponsUseCase globalCouponsUseCase) {
+            IUpdatePriceUseCase updatePriceUseCase, IGlobalCouponsUseCase globalCouponsUseCase,
+            IRemoveProductUseCase removeProductUseCase) {
         this.addProductUseCase = addProductUseCase;
         this.modifyProductUseCase = modifyProductUseCase;
         this.increaseStockUseCase = increaseStockUseCase;
         this.decreaseStockUseCase = decreaseStockUseCase;
         this.updatePriceUseCase = updatePriceUseCase;
         this.globalCouponsUseCase = globalCouponsUseCase;
+        this.removeProductUseCase = removeProductUseCase;
     }
 
     @ApiVersion("1")
@@ -174,6 +182,23 @@ public class AdminController {
     @PostMapping(Routes.PRIVATE.ADMIN.GLOBAL_COUPON)
     public ResponseEntity<GlobalCouponOutput> addGlobalCoupon(@Valid @RequestBody GlobalCouponInput req) {
         GlobalCouponOutput response = globalCouponsUseCase.execute(req);
+        return ResponseEntity.ok(response);
+    }
+
+    @ApiVersion("1")
+    @PreAuthorize("hasRole('ADMIN') and hasAuthority('PRODUCT_DELETE')")
+    @DeleteMapping(Routes.PRIVATE.ADMIN.DELETE_PRODUCTS)
+    public ResponseEntity<RemoveProductOutput> deleteProduct(@Valid @RequestBody RemoveProductInput req) {
+        RemoveProductOutput response = removeProductUseCase.execute(req);
+        return ResponseEntity.ok(response);
+    }
+
+    @ApiVersion("1")
+    @PreAuthorize("hasRole('ADMIN') and hasAuthority('PRODUCT_DELETE')")
+    @DeleteMapping(Routes.PRIVATE.ADMIN.DELETE_PRODUCT)
+    public ResponseEntity<RemoveProductOutput> deleteProduct(@Valid @RequestBody RemoveSingleProductInput req) {
+        RemoveProductInput request = new RemoveProductInput(List.of(req.productId()));
+        RemoveProductOutput response = removeProductUseCase.execute(request);
         return ResponseEntity.ok(response);
     }
 
