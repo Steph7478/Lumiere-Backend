@@ -23,13 +23,15 @@ import com.lumiere.application.interfaces.auth.IUpdateUser;
 import com.lumiere.infrastructure.http.cookies.CookieFactory;
 import com.lumiere.presentation.routes.Routes;
 import com.lumiere.shared.annotations.api.ApiVersion;
+
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 
 import java.util.UUID;
-
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -51,7 +53,8 @@ public class AuthController {
             ILoginUseCase loginUseCase,
             IGetMeUseCase getMeUseCase,
             IUpdateUser updateUser,
-            ILogoutUseCase logoutUseCase, IDeleteUserUseCase deleteUserUseCase) {
+            ILogoutUseCase logoutUseCase,
+            IDeleteUserUseCase deleteUserUseCase) {
         this.createUserUseCase = createUserUseCase;
         this.loginUseCase = loginUseCase;
         this.getMeUseCase = getMeUseCase;
@@ -60,10 +63,9 @@ public class AuthController {
         this.deleteUserUseCase = deleteUserUseCase;
     }
 
-    // GET
-
     @ApiVersion("1")
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
+    @Operation(summary = "Get authenticated user profile", security = @SecurityRequirement(name = "cookieAuth"))
     @GetMapping(Routes.PRIVATE.AUTH.ME)
     public ResponseEntity<GetMeOutput> getMe(@AuthenticationPrincipal UUID userId) {
         GetMeInput request = new GetMeInput(userId);
@@ -73,6 +75,7 @@ public class AuthController {
 
     @ApiVersion("1")
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
+    @Operation(summary = "Logout authenticated user", security = @SecurityRequirement(name = "cookieAuth"))
     @PostMapping(Routes.PRIVATE.AUTH.LOGOUT)
     public ResponseEntity<LogoutOutput> logout(HttpServletRequest req, HttpServletResponse res) {
         LogoutHandler result = logoutUseCase.execute(req);
@@ -82,13 +85,11 @@ public class AuthController {
         }
 
         LogoutOutput body = new LogoutOutput();
-
         return ResponseEntity.ok(body);
     }
 
-    // POST
-
     @ApiVersion("1")
+    @Operation(summary = "Register a new user")
     @PostMapping(Routes.PUBLIC.AUTH.REGISTER)
     public ResponseEntity<CreateUserOutput> registerUser(
             @Valid @RequestBody CreateUserInput requestDTO,
@@ -100,14 +101,15 @@ public class AuthController {
         response.addCookie(CookieFactory.createRefreshTokenCookie(responseDTO.refreshToken()));
 
         CreateUserOutput body = new CreateUserOutput(responseDTO.name(), responseDTO.role());
-
         return ResponseEntity.status(HttpStatus.CREATED).body(body);
     }
 
     @ApiVersion("1")
+    @Operation(summary = "Authenticate user and create session")
     @PostMapping(Routes.PUBLIC.AUTH.LOGIN)
     public ResponseEntity<CreateUserOutput> loginUser(
-            @Valid @RequestBody LoginInput requestDTO, HttpServletResponse response) {
+            @Valid @RequestBody LoginInput requestDTO,
+            HttpServletResponse response) {
 
         LoginHandler responseDTO = loginUseCase.execute(requestDTO);
 
@@ -115,16 +117,15 @@ public class AuthController {
         response.addCookie(CookieFactory.createRefreshTokenCookie(responseDTO.refreshToken()));
 
         CreateUserOutput body = new CreateUserOutput(responseDTO.name(), responseDTO.role());
-
         return ResponseEntity.status(HttpStatus.ACCEPTED).body(body);
     }
 
-    // PUT
-
     @ApiVersion("1")
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
+    @Operation(summary = "Update authenticated user completely", security = @SecurityRequirement(name = "cookieAuth"))
     @PutMapping(Routes.PRIVATE.AUTH.UPDATE)
-    public ResponseEntity<UpdateUserOutput> updatePutUser(@AuthenticationPrincipal UUID userId,
+    public ResponseEntity<UpdateUserOutput> updatePutUser(
+            @AuthenticationPrincipal UUID userId,
             @Valid @RequestBody UpdateUserRequestData requestDTO,
             HttpServletResponse response) {
 
@@ -135,15 +136,14 @@ public class AuthController {
         UpdateUserOutput responseDTO = updateUser.execute(appDTO);
 
         return ResponseEntity.status(HttpStatus.ACCEPTED).body(responseDTO);
-
     }
-
-    // PATCH
 
     @ApiVersion("1")
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
+    @Operation(summary = "Update authenticated user partially", security = @SecurityRequirement(name = "cookieAuth"))
     @PatchMapping(Routes.PRIVATE.AUTH.UPDATE)
-    public ResponseEntity<UpdateUserOutput> updatePatchUser(@AuthenticationPrincipal UUID userId,
+    public ResponseEntity<UpdateUserOutput> updatePatchUser(
+            @AuthenticationPrincipal UUID userId,
             @Valid @RequestBody UpdateUserRequestData requestDTO,
             HttpServletResponse response) {
 
@@ -156,10 +156,9 @@ public class AuthController {
         return ResponseEntity.status(HttpStatus.ACCEPTED).body(responseDTO);
     }
 
-    // DELETE
-
     @ApiVersion("1")
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
+    @Operation(summary = "Delete authenticated user account", security = @SecurityRequirement(name = "cookieAuth"))
     @DeleteMapping(Routes.PRIVATE.AUTH.DELETE)
     public ResponseEntity<DeleteUserOutput> deleteUser(@AuthenticationPrincipal UUID userId) {
 

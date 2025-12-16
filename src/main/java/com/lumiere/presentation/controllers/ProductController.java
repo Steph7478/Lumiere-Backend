@@ -1,14 +1,10 @@
 package com.lumiere.presentation.controllers;
 
+import io.swagger.v3.oas.annotations.Operation;
 import java.math.BigDecimal;
 import java.util.UUID;
-
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
+import org.springframework.web.bind.annotation.*;
 import com.lumiere.application.dtos.product.query.ProductDetailsOutput;
 import com.lumiere.application.dtos.product.query.ProductFindAllCriteria;
 import com.lumiere.application.dtos.product.query.ProductSearchCriteria;
@@ -30,14 +26,17 @@ public class ProductController {
     }
 
     @ApiVersion("1")
+    @Operation(summary = "Get product details by ID")
     @GetMapping(Routes.PUBLIC.PRODUCTS.BASE + "/{id}")
-    public ResponseEntity<ProductDetailReadModel> getProductDetailById(@PathVariable UUID id) {
+    public ResponseEntity<ProductDetailReadModel> getProductDetailById(
+            @PathVariable UUID id) {
         return productReadUseCase.findDetailById(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
 
     @ApiVersion("1")
+    @Operation(summary = "Search products by criteria")
     @GetMapping(Routes.PUBLIC.PRODUCTS.FILTER)
     public ResponseEntity<ProductDetailsOutput> findProductsByCriteria(
             @RequestParam(required = false) String name,
@@ -50,30 +49,21 @@ public class ProductController {
             @RequestParam(defaultValue = "name") String sortBy) {
 
         ProductSearchCriteria criteria = new ProductSearchCriteria(
-                name,
-                category,
-                subCategory,
-                priceMin,
-                priceMax,
-                page,
-                size,
-                sortBy);
+                name, category, subCategory, priceMin, priceMax, page, size, sortBy);
 
         ProductDetailsOutput output = productReadUseCase.findByCriteria(criteria);
         return ResponseEntity.ok(output);
     }
 
     @ApiVersion("1")
+    @Operation(summary = "Get all products")
     @GetMapping(Routes.PUBLIC.PRODUCTS.BASE)
     public ResponseEntity<ProductDetailsOutput> findAllProducts(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "name") String sortBy) {
-        ProductFindAllCriteria criteria = new ProductFindAllCriteria(
-                page,
-                size,
-                sortBy);
 
+        ProductFindAllCriteria criteria = new ProductFindAllCriteria(page, size, sortBy);
         ProductDetailsOutput output = productReadUseCase.findAllProducts(criteria);
         return ResponseEntity.ok(output);
     }

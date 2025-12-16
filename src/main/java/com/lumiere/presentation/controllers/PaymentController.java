@@ -16,7 +16,9 @@ import com.lumiere.application.dtos.payment.command.checkout.CreateCheckoutSessi
 import com.lumiere.application.interfaces.payment.ICreateCheckoutSessionUseCase;
 import com.lumiere.shared.annotations.api.ApiVersion;
 import com.lumiere.presentation.routes.Routes;
-
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 
 @RestController
@@ -30,6 +32,8 @@ public class PaymentController {
 
     @ApiVersion("1")
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
+    @Operation(summary = "Create a checkout session for payment", security = @SecurityRequirement(name = "cookieAuth"))
+    @ApiResponse(responseCode = "200", description = "Checkout session created successfully")
     @PostMapping(Routes.PRIVATE.PAYMENT.PAY)
     public CompletableFuture<ResponseEntity<CreateCheckoutSessionOutput>> payment(
             @AuthenticationPrincipal UUID userId,
@@ -40,6 +44,5 @@ public class PaymentController {
         return createCheckoutSessionUseCase.execute(request)
                 .map(ResponseEntity::ok)
                 .toFuture();
-
     }
 }

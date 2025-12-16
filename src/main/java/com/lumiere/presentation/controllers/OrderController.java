@@ -35,7 +35,8 @@ import com.lumiere.application.interfaces.order.IRemoveItemOrderUseCase;
 import com.lumiere.application.usecases.order.GetOrderUseCase;
 import com.lumiere.presentation.routes.Routes;
 import com.lumiere.shared.annotations.api.ApiVersion;
-
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 
 @RestController
@@ -48,9 +49,13 @@ public class OrderController {
     private final ICancelOrderUseCase cancelOrderUseCase;
     private final GetOrderUseCase getOrderUseCase;
 
-    protected OrderController(ICreateOrderUseCase createOrderUseCase, IAddItemOrderUsecase addItemOrderUsecase,
-            IRemoveItemOrderUseCase removeItemOrderUseCase, IAddCouponOrderUseCase addCouponOrderUseCase,
-            ICancelOrderUseCase cancelOrderUseCase, GetOrderUseCase getOrderUseCase) {
+    protected OrderController(
+            ICreateOrderUseCase createOrderUseCase,
+            IAddItemOrderUsecase addItemOrderUsecase,
+            IRemoveItemOrderUseCase removeItemOrderUseCase,
+            IAddCouponOrderUseCase addCouponOrderUseCase,
+            ICancelOrderUseCase cancelOrderUseCase,
+            GetOrderUseCase getOrderUseCase) {
         this.createOrderUseCase = createOrderUseCase;
         this.addItemOrderUsecase = addItemOrderUsecase;
         this.addCouponOrderUseCase = addCouponOrderUseCase;
@@ -60,87 +65,90 @@ public class OrderController {
     }
 
     @ApiVersion("1")
-    @PostMapping(Routes.PRIVATE.ORDER.CREATE)
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
+    @Operation(summary = "Create a new order for authenticated user", security = @SecurityRequirement(name = "cookieAuth"))
+    @PostMapping(Routes.PRIVATE.ORDER.CREATE)
     public ResponseEntity<CreateOrderOutput> createOrder(
             @AuthenticationPrincipal UUID userId,
             @RequestBody @Valid CreateOrderRequestData requestWrapper) {
 
         CreateOrderInput request = new CreateOrderInput(userId, requestWrapper);
         CreateOrderOutput response = createOrderUseCase.execute(request);
-
         return ResponseEntity.ok(response);
-
     }
 
     @ApiVersion("1")
-    @PostMapping(Routes.PRIVATE.ORDER.ADD)
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
+    @Operation(summary = "Add an item to the current order", security = @SecurityRequirement(name = "cookieAuth"))
+    @PostMapping(Routes.PRIVATE.ORDER.ADD)
     public ResponseEntity<AddItemOrderOutput> addItemToOrder(
             @AuthenticationPrincipal UUID userId,
             @RequestBody @Valid AddItemOrderRequestData requestData) {
 
         AddItemOrderInput request = new AddItemOrderInput(userId, requestData);
         AddItemOrderOutput response = addItemOrderUsecase.execute(request);
-
         return ResponseEntity.ok(response);
-
     }
 
     @ApiVersion("1")
-    @PostMapping(Routes.PRIVATE.ORDER.REMOVE)
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
-    public ResponseEntity<RemoveItemOutput> removeItemOrder(@AuthenticationPrincipal UUID userId,
+    @Operation(summary = "Remove an item from the current order", security = @SecurityRequirement(name = "cookieAuth"))
+    @PostMapping(Routes.PRIVATE.ORDER.REMOVE)
+    public ResponseEntity<RemoveItemOutput> removeItemOrder(
+            @AuthenticationPrincipal UUID userId,
             @RequestBody @Valid RemoveItemRequestData reqData) {
 
         RemoveItemOrderInput request = new RemoveItemOrderInput(userId, reqData);
         RemoveItemOutput response = removeItemOrderUseCase.execute(request);
-
         return ResponseEntity.ok(response);
     }
 
     @ApiVersion("1")
-    @PostMapping(Routes.PRIVATE.ORDER.COUPON)
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
-    public ResponseEntity<AddCouponOutput> removeItemOrder(@AuthenticationPrincipal UUID userId,
+    @Operation(summary = "Apply a coupon to the current order", security = @SecurityRequirement(name = "cookieAuth"))
+    @PostMapping(Routes.PRIVATE.ORDER.COUPON)
+    public ResponseEntity<AddCouponOutput> addCouponToOrder(
+            @AuthenticationPrincipal UUID userId,
             @RequestBody @Valid AddCouponRequestData reqData) {
 
         AddCouponInput request = new AddCouponInput(userId, reqData);
         AddCouponOutput response = addCouponOrderUseCase.execute(request);
-
         return ResponseEntity.ok(response);
     }
 
     @ApiVersion("1")
-    @PostMapping(Routes.PRIVATE.ORDER.CANCEL)
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
-    public ResponseEntity<CancelOrderOutput> removeItemOrder(@AuthenticationPrincipal UUID userId) {
+    @Operation(summary = "Cancel the current order", security = @SecurityRequirement(name = "cookieAuth"))
+    @PostMapping(Routes.PRIVATE.ORDER.CANCEL)
+    public ResponseEntity<CancelOrderOutput> cancelOrder(
+            @AuthenticationPrincipal UUID userId) {
 
         CancelOrderInput request = new CancelOrderInput(userId);
         CancelOrderOutput response = cancelOrderUseCase.execute(request);
-
         return ResponseEntity.ok(response);
     }
 
     @ApiVersion("1")
-    @GetMapping(Routes.PRIVATE.ORDER.IN_PROGRESS)
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
-    public ResponseEntity<GetOrderInProgressOutput> getInProgress(@AuthenticationPrincipal UUID userId) {
+    @Operation(summary = "Get the current order in progress", security = @SecurityRequirement(name = "cookieAuth"))
+    @GetMapping(Routes.PRIVATE.ORDER.IN_PROGRESS)
+    public ResponseEntity<GetOrderInProgressOutput> getInProgress(
+            @AuthenticationPrincipal UUID userId) {
 
         GetOrderInput request = new GetOrderInput(userId);
         GetOrderInProgressOutput response = getOrderUseCase.getOrderInProgress(request);
-
         return ResponseEntity.ok(response);
     }
 
     @ApiVersion("1")
-    @GetMapping(Routes.PRIVATE.ORDER.BASE)
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
-    public ResponseEntity<GetOrdersOutput> getAllOrders(@AuthenticationPrincipal UUID userId) {
+    @Operation(summary = "Get all orders for authenticated user", security = @SecurityRequirement(name = "cookieAuth"))
+    @GetMapping(Routes.PRIVATE.ORDER.BASE)
+    public ResponseEntity<GetOrdersOutput> getAllOrders(
+            @AuthenticationPrincipal UUID userId) {
 
         GetOrderInput request = new GetOrderInput(userId);
         GetOrdersOutput response = getOrderUseCase.GetMultipleOrders(request);
-
         return ResponseEntity.ok(response);
     }
 }

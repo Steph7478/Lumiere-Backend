@@ -14,6 +14,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+
 import com.lumiere.application.dtos.cart.command.add.AddCartInput;
 import com.lumiere.application.dtos.cart.command.add.AddCartOuput;
 import com.lumiere.application.dtos.cart.command.add.AddItemsRequestData;
@@ -45,8 +48,11 @@ public class CartController {
     private final IGetCartByIdUseCase getCartByIdUseCase;
     private final IDeleteCartUseCase deleteCartUseCase;
 
-    protected CartController(IAddCartUseCase addCartUseCase, IRemoveCartUseCase removeCartUseCase,
-            IGetCartByIdUseCase getCartByIdUseCase, IDeleteCartUseCase deleteCartUseCase) {
+    protected CartController(
+            IAddCartUseCase addCartUseCase,
+            IRemoveCartUseCase removeCartUseCase,
+            IGetCartByIdUseCase getCartByIdUseCase,
+            IDeleteCartUseCase deleteCartUseCase) {
         this.addCartUseCase = addCartUseCase;
         this.removeCartUseCase = removeCartUseCase;
         this.getCartByIdUseCase = getCartByIdUseCase;
@@ -55,77 +61,88 @@ public class CartController {
 
     @ApiVersion("1")
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
+    @Operation(summary = "Delete authenticated user's cart", security = @SecurityRequirement(name = "cookieAuth"))
     @DeleteMapping(Routes.PRIVATE.CART.DELETE_CART)
     public ResponseEntity<DeleteCartOutput> deleteCart(@AuthenticationPrincipal UUID id) {
         DeleteCartInput request = new DeleteCartInput(id);
         DeleteCartOutput response = deleteCartUseCase.execute(request);
-
         return ResponseEntity.ok(response);
     }
 
     @ApiVersion("1")
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
+    @Operation(summary = "Get authenticated user's active cart", security = @SecurityRequirement(name = "cookieAuth"))
     @GetMapping(Routes.PRIVATE.CART.GET_CART)
     public ResponseEntity<GetCartByIdOutput> getCartForUser(@AuthenticationPrincipal UUID userId) {
         GetCartByIdInput request = new GetCartByIdInput(userId, Optional.empty());
         GetCartByIdOutput response = getCartByIdUseCase.execute(request);
-
         return ResponseEntity.ok(response);
     }
 
     @ApiVersion("1")
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
+    @Operation(summary = "Get cart by cart ID for authenticated user", security = @SecurityRequirement(name = "cookieAuth"))
     @GetMapping(Routes.PRIVATE.CART.GET_CART + "/{cartId}")
-    public ResponseEntity<GetCartByIdOutput> getCartById(@AuthenticationPrincipal UUID userId,
+    public ResponseEntity<GetCartByIdOutput> getCartById(
+            @AuthenticationPrincipal UUID userId,
             @PathVariable UUID cartId) {
+
         GetCartByIdInput request = new GetCartByIdInput(userId, Optional.of(cartId));
         GetCartByIdOutput response = getCartByIdUseCase.execute(request);
-
         return ResponseEntity.ok(response);
     }
 
     @ApiVersion("1")
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
+    @Operation(summary = "Add multiple items to cart", security = @SecurityRequirement(name = "cookieAuth"))
     @PostMapping(Routes.PRIVATE.CART.ADD_MULTIPLE)
-    public ResponseEntity<AddCartOuput> addToCartMultiple(@AuthenticationPrincipal UUID id,
-            @Valid @RequestBody AddItemsRequestData requestData, HttpServletResponse res) {
+    public ResponseEntity<AddCartOuput> addToCartMultiple(
+            @AuthenticationPrincipal UUID id,
+            @Valid @RequestBody AddItemsRequestData requestData,
+            HttpServletResponse res) {
+
         AddCartInput request = new AddCartInput(id, requestData);
         AddCartOuput response = addCartUseCase.execute(request);
-
         return ResponseEntity.ok(response);
     }
 
     @ApiVersion("1")
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
+    @Operation(summary = "Add a single item to cart", security = @SecurityRequirement(name = "cookieAuth"))
     @PostMapping(Routes.PRIVATE.CART.ADD_SINGLE)
-    public ResponseEntity<AddCartOuput> addToCartSingle(@AuthenticationPrincipal UUID id,
-            @Valid @RequestBody InnerAddItemsRequestData requestData, HttpServletResponse res) {
+    public ResponseEntity<AddCartOuput> addToCartSingle(
+            @AuthenticationPrincipal UUID id,
+            @Valid @RequestBody InnerAddItemsRequestData requestData,
+            HttpServletResponse res) {
 
         AddItemsRequestData data = new AddItemsRequestData(List.of(requestData));
-
         AddCartInput request = new AddCartInput(id, data);
-
         AddCartOuput response = addCartUseCase.execute(request);
-
         return ResponseEntity.ok(response);
     }
 
     @ApiVersion("1")
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
+    @Operation(summary = "Remove multiple items from cart", security = @SecurityRequirement(name = "cookieAuth"))
     @PostMapping(Routes.PRIVATE.CART.REMOVE_MULTIPLE)
-    public ResponseEntity<RemoveCartOutput> removeToCartMultiple(@AuthenticationPrincipal UUID id,
-            @Valid @RequestBody RemoveMultipleItemsRequestData requestData, HttpServletResponse res) {
+    public ResponseEntity<RemoveCartOutput> removeToCartMultiple(
+            @AuthenticationPrincipal UUID id,
+            @Valid @RequestBody RemoveMultipleItemsRequestData requestData,
+            HttpServletResponse res) {
+
         RemoveCartInput request = new RemoveCartInput(id, requestData);
         RemoveCartOutput response = removeCartUseCase.execute(request);
-
         return ResponseEntity.ok(response);
     }
 
     @ApiVersion("1")
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
+    @Operation(summary = "Remove a single item from cart", security = @SecurityRequirement(name = "cookieAuth"))
     @PostMapping(Routes.PRIVATE.CART.REMOVE_SINGLE)
-    public ResponseEntity<RemoveCartOutput> removeToCartSingle(@AuthenticationPrincipal UUID id,
-            @Valid @RequestBody RemoveSingleItemRequestData requestData, HttpServletResponse res) {
+    public ResponseEntity<RemoveCartOutput> removeToCartSingle(
+            @AuthenticationPrincipal UUID id,
+            @Valid @RequestBody RemoveSingleItemRequestData requestData,
+            HttpServletResponse res) {
 
         CartItem singleCartItem = new CartItem(
                 requestData.productId(),
@@ -136,7 +153,6 @@ public class CartController {
                 new RemoveMultipleItemsRequestData(List.of(singleCartItem)));
 
         RemoveCartOutput response = removeCartUseCase.execute(request);
-
         return ResponseEntity.ok(response);
     }
 }

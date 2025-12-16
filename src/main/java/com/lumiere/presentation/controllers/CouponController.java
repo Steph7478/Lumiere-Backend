@@ -13,6 +13,8 @@ import com.lumiere.application.dtos.coupon.query.AvalibleCouponsOutput;
 import com.lumiere.application.interfaces.coupon.IAvalibleCouponsUseCase;
 import com.lumiere.presentation.routes.Routes;
 import com.lumiere.shared.annotations.api.ApiVersion;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 
 @RestController
 public class CouponController {
@@ -24,8 +26,9 @@ public class CouponController {
     }
 
     @ApiVersion("1")
-    @GetMapping(Routes.PRIVATE.COUPON.AVALIBLE)
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
+    @Operation(summary = "Get available coupons for authenticated user", security = @SecurityRequirement(name = "cookieAuth"))
+    @GetMapping(Routes.PRIVATE.COUPON.AVALIBLE)
     public ResponseEntity<AvalibleCouponsOutput> getAvalibleCoupons(
             @AuthenticationPrincipal UUID userId) {
 
@@ -33,6 +36,5 @@ public class CouponController {
         AvalibleCouponsOutput response = avalibleCouponsUseCase.execute(request);
 
         return ResponseEntity.ok(response);
-
     }
 }

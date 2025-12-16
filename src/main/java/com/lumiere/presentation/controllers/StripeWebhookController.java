@@ -8,9 +8,13 @@ import com.lumiere.presentation.routes.Routes;
 import com.lumiere.shared.annotations.api.ApiVersion;
 import com.stripe.exception.SignatureVerificationException;
 import com.stripe.model.Event;
+
+import io.swagger.v3.oas.annotations.Hidden;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+@Hidden
 @RestController
 public class StripeWebhookController {
 
