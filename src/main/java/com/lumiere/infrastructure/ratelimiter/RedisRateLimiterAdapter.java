@@ -5,10 +5,14 @@ import org.redisson.api.RateType;
 import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 import com.lumiere.application.services.ratelimiter.RateLimiterService;
+import com.lumiere.infrastructure.config.security.config.SecurityMatcherConfigurator;
 
 import java.time.Duration;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -28,20 +32,24 @@ public class RedisRateLimiterAdapter implements RateLimiterService {
 
     private RRateLimiter getOrCreateRateLimiter(String key) {
         return rateLimiters.computeIfAbsent(key, k -> {
-            RRateLimiter rateLimiter = redissonClient.getRateLimiter("ratelimiter:" + k);
-
-            rateLimiter.trySetRate(
-                    RateType.OVERALL,
-                    LIMIT,
-                    DURATION);
-
-            return rateLimiter;
+            RRateLimiter limiter = redissonClient.getRateLimiter("ratelimiter:" + k);
+            limiter.trySetRate(RateType.OVERALL, LIMIT, DURATION);
+            return limiter;
         });
     }
 
     @Override
     public boolean isAllowed(String key) {
-        RRateLimiter rateLimiter = getOrCreateRateLimiter(key);
-        return rateLimiter.tryAcquire(1);
+        String uri = Optional.ofNullable(RequestContextHolder.getRequestAttributes())
+                .map(r -> ((ServletRequestAttributes) r).getRequest().getRequestURI())
+                .orElse("");
+
+        for (String endpoint : SecurityMatcherConfigurator.SWAGGER_ENDPOINTS) {
+            if (uri.startsWith(endpoint.replace("/**", ""))) {
+                return true;
+            }
+        }
+
+        return getOrCreateRateLimiter(key).tryAcquire(1);
     }
 }
