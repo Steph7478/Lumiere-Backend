@@ -68,4 +68,11 @@ public abstract class BaseRepositoryAdapter<D, E> implements BaseReader<D>, Base
         Objects.requireNonNull(id, "id cannot be null");
         jpaRepository.deleteById(id);
     }
+
+    @Override
+    @Transactional
+    public void deleteAllById(List<UUID> ids) {
+        Objects.requireNonNull(ids, "id cannot be null");
+        jpaRepository.deleteAllById(ids);
+    }
 }
