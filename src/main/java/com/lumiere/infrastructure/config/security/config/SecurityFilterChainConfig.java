@@ -6,7 +6,6 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.web.cors.CorsConfigurationSource;
 
 import com.lumiere.infrastructure.config.security.filters.JwtAuthenticationFilter;
 
@@ -14,31 +13,40 @@ import com.lumiere.infrastructure.config.security.filters.JwtAuthenticationFilte
 @EnableMethodSecurity(securedEnabled = true, prePostEnabled = true)
 public class SecurityFilterChainConfig {
 
-        private final SecurityHeadersConfig securityHeadersConfig;
-        private final CorsConfigurationSource corsConfigurationSource;
-
-        public SecurityFilterChainConfig(
-                        SecurityHeadersConfig securityHeadersConfig,
-                        CorsConfigurationSource corsConfigurationSource) {
-                this.securityHeadersConfig = securityHeadersConfig;
-                this.corsConfigurationSource = corsConfigurationSource;
+        @Bean
+        public SecurityFilterChain swaggerChain(HttpSecurity http) throws Exception {
+                http.securityMatcher(SecurityMatcherConfigurator.SWAGGER_ENDPOINTS)
+                                .csrf(csrf -> csrf.disable())
+                                .authorizeHttpRequests(auth -> auth.anyRequest().permitAll());
+                return http.build();
         }
 
         @Bean
-        public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-                securityHeadersConfig.applyHeaders(http);
-
-                http
-                                .cors(cors -> cors.configurationSource(corsConfigurationSource))
+        public SecurityFilterChain publicChain(HttpSecurity http) throws Exception {
+                http.securityMatcher(SecurityMatcherConfigurator.PUBLIC_ENDPOINTS)
                                 .csrf(csrf -> csrf.disable())
-                                .securityContext(securityContext -> securityContext
-                                                .requireExplicitSave(false))
-                                .servletApi(servletApi -> servletApi.disable())
-                                .addFilterBefore(new JwtAuthenticationFilter(),
-                                                UsernamePasswordAuthenticationFilter.class);
-
-                SecurityMatcherConfigurator.configure(http);
-
+                                .authorizeHttpRequests(auth -> auth.anyRequest().permitAll());
                 return http.build();
         }
+
+        @Bean
+        public SecurityFilterChain userChain(HttpSecurity http) throws Exception {
+                http.securityMatcher(SecurityMatcherConfigurator.USER_ENDPOINTS)
+                                .csrf(csrf -> csrf.disable())
+                                .authorizeHttpRequests(auth -> auth.anyRequest().authenticated())
+                                .addFilterBefore(new JwtAuthenticationFilter(),
+                                                UsernamePasswordAuthenticationFilter.class);
+                return http.build();
+        }
+
+        @Bean
+        public SecurityFilterChain adminChain(HttpSecurity http) throws Exception {
+                http.securityMatcher(SecurityMatcherConfigurator.ADMIN_ENDPOINTS)
+                                .csrf(csrf -> csrf.disable())
+                                .authorizeHttpRequests(auth -> auth.anyRequest().hasRole("ADMIN"))
+                                .addFilterBefore(new JwtAuthenticationFilter(),
+                                                UsernamePasswordAuthenticationFilter.class);
+                return http.build();
+        }
+
 }
