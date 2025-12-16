@@ -47,6 +47,7 @@ The system is rigorously structured into independent layers, ensuring the core d
 The authentication system is designed for high security and scalability:
 
 * **Asymmetric Token Signing (RSA):** The implementation utilizes **RSA asymmetric key pairs** for signing JSON Web Tokens (JWT). This is superior to symmetric signing (HMAC) as it ensures only the server with the private key can issue valid tokens, while any external service (or client) can verify the token using the public key.
+* **RSA Key Requirement:** For the authentication system to function, a **`pkey.pem`** file (containing the RSA private key in PKCS8 format) must be generated and correctly configured. The application uses a custom `KeyLoader.java` to derive the public key from this private key at runtime.
 * **Role-Based Authorization Guards:** Authorization is handled declaratively through custom Spring Security annotations like `@RequireAdmin`, with `RequireAdminValidator.java` enforcing business rules at the **Use Case** boundary, not just the Controller layer.
 * **Filter Chain Configuration:** `JwtAuthenticationFilter.java` manages authentication seamlessly, integrated with `SecurityFilterChainConfig.java` to enforce security headers and policies across all endpoints.
 
@@ -58,7 +59,8 @@ Mechanisms are implemented to ensure the application remains stable and auditabl
 | :--- | :--- |
 | **AOP Logging for Observability** | Utilizes **Aspect-Oriented Programming (AOP)** with the custom `@Loggable` annotation to inject cross-cutting *logging* logic (timing, parameters) into both `Controller`s and critical `UseCases`, providing deep insights into runtime performance and flow without code pollution. |
 | **Distributed Rate Limiting** | Implemented using a high-throughput **Redis** adapter (`RedisRateLimiterAdapter.java`) and a Presentation layer interceptor (`RateLimitInterceptor.java`) to defensively prevent resource exhaustion from abusive traffic. |
-| **Fault Tolerance (Circuit Breaker)** | Implements the **Circuit Breaker** and **Retry** patterns via **Resilience4j** on the critical `CreateCheckoutSessionUseCase`. This prevents cascading failures and ensures stability when the **Stripe Payment Gateway** experiences latency or downtime, using a `fallbackMethod` for graceful error handling. |
+| **Asynchronous & Reactive Processing** | The `PaymentController` and `CreateCheckoutSessionUseCase` use **Project Reactor (`Mono`)** and **`CompletableFuture`** to handle the external Stripe API call asynchronously (`subscribeOn(Schedulers.boundedElastic())`). This prevents blocking the main server thread, enhancing overall API responsiveness and concurrency.
+| **Fault Tolerance (Circuit Breaker)** | Implements the **Circuit Breaker** and **Retry** patterns via **Resilience4j** (`@CircuitBreaker`, `@Retry`) on the critical `CreateCheckoutSessionUseCase`. This prevents cascading failures and ensures stability when the **Stripe Payment Gateway** experiences latency or downtime, using a `fallbackMethod` for graceful error handling.  |
 | **Strategic Caching** | Dedicated `ProductCacheService.java` manages Redis distributed cache, implementing a read-through strategy for frequently accessed product data, significantly improving read latency. |
 
 ### 4. 🗄️ Persistence and External Integrations
@@ -67,10 +69,11 @@ The infrastructure is designed for maximum flexibility and compliance with cloud
 
 * **Hybrid Persistence:** Utilizes an Adapter pattern to decouple the Domain's Repository interfaces from the specific persistence technology:
     * **JPA Adapters:** For transactional, relational data (Orders, Users).
-    * **Data Optimization:** Prevention of the **N+1 Selects problem** in JPA repositories using the **`@EntityGraph`** annotation, drastically reducing the number of database queries required for complex object graphs.
+    * **Data Optimization (N+1 Prevention):** Prevention of the **N+1 Selects problem** in JPA repositories using the **`@EntityGraph`** annotation, drastically reducing the number of database queries required for complex object graphs.
     * **SQL Indexing:** Proper database indexing is applied to frequently queried fields to ensure sub-millisecond read times.
     * **NoSQL Adapters:** For flexible schema data (e.g., product categories) via `infrastructure.persistence.nosql`.
-* **Cloud-Native Storage:** `S3StorageService.java` is implemented against the **official AWS S3 SDK**. This choice is strategic, ensuring the system is instantly compatible with cloud services like AWS S3 and self-hosted solutions like **MinIO**, guaranteeing minimal refactoring during environment migration.
+* **Efficient Paginated Reads (Hybrid Data):** The `ProductDetailReadAdapter` implements complex pagination and filtering by efficiently combining data from **PostgreSQL (SQL)** and **MongoDB (NoSQL)** in a single query path.
+* **Cloud-Native Storage:** `S3StorageService.java` is implemented against the **official AWS S3 SDK**. This choice is strategic, ensuring the system é instantly compatible with cloud services like AWS S3 and self-hosted solutions like **MinIO**, guaranteeing minimal refactoring during environment migration.
 * **Resilient Payment Webhooks:** `StripeWebhookEventDispatcher.java` and specialized adapters manage the asynchronous and idempotent processing of payment events, ensuring system state consistency even in the face of network failures.
 
 ---
@@ -94,7 +97,8 @@ The infrastructure is designed for maximum flexibility and compliance with cloud
 ### Prerequisites
 
 1.  **Docker** and **Docker Compose** (Required to run the infrastructure and the application).
-2.  (Optional) **JDK 17+** and **Maven** (Only if you wish to run the application natively outside Docker).
+2.  **RSA Key Pair:** Generate an RSA key pair, naming the private key file **`pkey.pem`**, and place it in the configured location (default is project root). **This is required for JWT authentication.**
+3.  (Optional) **JDK 17+** and **Maven** (Only if you wish to run the application natively outside Docker).
 
 ### Steps (Via Docker Compose)
 
@@ -127,10 +131,10 @@ All endpoints follow API versioning standards (`@ApiVersion`). The documentation
 | :--- | :--- | :--- |
 | **Admin** | `AdminController.java` | Product/Stock/Price/Coupon management (Requires `@RequireAdmin`). |
 | **Auth** | `AuthController.java` | User Registration, Login, Token Management (`CreateUserUseCase`, `LoginUseCase`). |
-| **Product** | `ProductController.java` | Product search, listing, and detail retrieval (`ProductReadUseCase`). |
+| **Product** | `ProductController.java` | Product search, listing, and detail retrieval **(with Pagination and Hybrid Filtering)** (`ProductReadUseCase`). |
 | **Coupon** | `CouponController.java` | Listing and checking available coupons (`AvalibleCouponsUseCase`). |
 | **Order/Cart**| `OrderController.java`, `CartController.java` | Cart manipulation, Order creation, Coupon application. |
-| **Payment**| `PaymentController.java` | Initiating the payment process (e.g., Stripe Checkout session creation). |
+| **Payment**| `PaymentController.java` | Initiating the payment process (e.g., Stripe Checkout session creation) **Asynchronously**. |
 | **Webhooks** | `StripeWebhookController.java` | Asynchronous handling of payment status updates from Stripe (`PaymentSucceededUseCase`). |
 
 ---
