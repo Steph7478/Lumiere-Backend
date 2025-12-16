@@ -6,6 +6,8 @@ import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.*;
 
 import java.io.InputStream;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class S3StorageService {
@@ -52,5 +54,27 @@ public class S3StorageService {
                             .bucket(bucketName)
                             .build());
         }
+    }
+
+    public boolean deleteObjectsByKeys(String bucketName, List<String> keys) {
+        if (keys.isEmpty())
+            return false;
+
+        List<ObjectIdentifier> objects = keys.stream()
+                .map(key -> ObjectIdentifier.builder().key(key).build())
+                .collect(Collectors.toList());
+
+        Delete delete = Delete.builder()
+                .objects(objects)
+                .build();
+
+        DeleteObjectsRequest deleteObjectsRequest = DeleteObjectsRequest.builder()
+                .bucket(bucketName)
+                .delete(delete)
+                .build();
+
+        DeleteObjectsResponse response = s3Client.deleteObjects(deleteObjectsRequest);
+
+        return response.errors().isEmpty();
     }
 }
