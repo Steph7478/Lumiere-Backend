@@ -18,7 +18,6 @@ public final class SecurityMatcherConfigurator {
         }
 
         public static final String[] SWAGGER_ENDPOINTS = prefixEndpoints("/api/v1", new String[] {
-                        "/swagger-ui.html",
                         "/swagger-ui/**",
                         "/api-docs/**"
         });
