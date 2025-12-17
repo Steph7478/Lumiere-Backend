@@ -17,7 +17,7 @@ This project is a technical portfolio piece, demonstrating proficiency in design
 | :--- | :--- |
 | **Architectural Governance** | Strict, code-enforced separation (via packages) of the business domain from infrastructure concerns. |
 | **Client-Oriented Design** | Implementation of **Backend for Frontend (BFF)** patterns, abstracting IDs and complex data models from the UI. |
-| **Resilience & Performance** | Application of distributed caching (Redis) and defensive mechanisms (AOP Rate Limiting, **Circuit Breaker**). |
+| **Resilience & Performance** | Application of distributed caching (Redis), **HTTP Caching**, and defensive mechanisms (AOP Rate Limiting, **Circuit Breaker**). |
 | **Security Engineering** | Implementation of asymmetric JWT signing (RSA) and sophisticated authorization guards (`@RequireAdmin`). |
 | **Data Optimization** | **N+1 prevention** using **`@EntityGraph`** and **database indexing** for fast query execution. |
 | **Decoupling** | Use of the Adapter pattern to switch between persistence models (JPA, NoSQL) and external services (Stripe, S3) without affecting the Domain. |
@@ -46,35 +46,31 @@ The system is rigorously structured into independent layers, ensuring the core d
 
 The authentication system is designed for high security and scalability:
 
-* **Asymmetric Token Signing (RSA):** The implementation utilizes **RSA asymmetric key pairs** for signing JSON Web Tokens (JWT). This is superior to symmetric signing (HMAC) as it ensures only the server with the private key can issue valid tokens, while any external service (or client) can verify the token using the public key.
-* **RSA Key Requirement:** For the authentication system to function, a **`pkey.pem`** file (containing the RSA private key in PKCS8 format) must be generated and correctly configured. The application uses a custom `KeyLoader.java` to derive the public key from this private key at runtime.
-* **Role-Based Authorization Guards:** Authorization is handled declaratively through custom Spring Security annotations like `@RequireAdmin`, with `RequireAdminValidator.java` enforcing business rules at the **Use Case** boundary, not just the Controller layer.
-* **Filter Chain Configuration:** `JwtAuthenticationFilter.java` manages authentication seamlessly, integrated with `SecurityFilterChainConfig.java` to enforce security headers and policies across all endpoints.
+* **Asymmetric Token Signing (RSA):** The implementation utilizes **RSA asymmetric key pairs** for signing JSON Web Tokens (JWT). This ensures only the server with the private key can issue valid tokens, while any external service can verify them using the public key.
+* **RSA Key Requirement:** For the authentication system to function, a **`pkey.pem`** file (RSA private key in PKCS8 format) must be generated and correctly configured.
+* **Role-Based Authorization Guards:** Authorization is handled declaratively through custom Spring Security annotations like `@RequireAdmin`.
+* **Filter Chain Configuration:** `JwtAuthenticationFilter.java` manages authentication seamlessly, integrated with `SecurityFilterChainConfig.java` to enforce security headers and policies.
 
-### 3. ⚡ Resilience and Observability
+### 3. ⚡ Resilience, Observability & Dual-Strategy Caching
 
-Mechanisms are implemented to ensure the application remains stable and auditable under high load, and to gracefully handle failures in external services.
+Mechanisms are implemented to ensure the application remains stable and performs optimally under high load.
 
 | Feature | Design and Implementation |
 | :--- | :--- |
-| **AOP Logging for Observability** | Utilizes **Aspect-Oriented Programming (AOP)** with the custom `@Loggable` annotation to inject cross-cutting *logging* logic (timing, parameters) into both `Controller`s and critical `UseCases`, providing deep insights into runtime performance and flow without code pollution. |
-| **Distributed Rate Limiting** | Implemented using a high-throughput **Redis** adapter (`RedisRateLimiterAdapter.java`) and a Presentation layer interceptor (`RateLimitInterceptor.java`) to defensively prevent resource exhaustion from abusive traffic. |
-| **Asynchronous & Reactive Processing** | The `PaymentController` and `CreateCheckoutSessionUseCase` use **Project Reactor (`Mono`)** and **`CompletableFuture`** to handle the external Stripe API call asynchronously (`subscribeOn(Schedulers.boundedElastic())`). This prevents blocking the main server thread, enhancing overall API responsiveness and concurrency.
-| **Fault Tolerance (Circuit Breaker)** | Implements the **Circuit Breaker** and **Retry** patterns via **Resilience4j** (`@CircuitBreaker`, `@Retry`) on the critical `CreateCheckoutSessionUseCase`. This prevents cascading failures and ensures stability when the **Stripe Payment Gateway** experiences latency or downtime, using a `fallbackMethod` for graceful error handling. |
-| **Strategic Caching** | Dedicated `ProductCacheService.java` manages Redis distributed cache, implementing a read-through strategy for frequently accessed product data, significantly improving read latency. |
+| **AOP Logging for Observability** | Utilizes **Aspect-Oriented Programming (AOP)** via `@Loggable` to inject cross-cutting logging logic (timing, parameters) without code pollution. |
+| **Distributed Rate Limiting** | Implemented using a high-throughput **Redis** adapter and a Presentation layer interceptor to prevent resource exhaustion. |
+| **Asynchronous Processing** | Uses **Project Reactor (`Mono`)** and **`CompletableFuture`** to handle external Stripe API calls asynchronously, preventing main thread blocking. |
+| **Fault Tolerance (Circuit Breaker)** | Implements **Resilience4j** (`@CircuitBreaker`, `@Retry`) on critical checkout use cases to prevent cascading failures. |
+| **Dual-Strategy Caching** | **Public Routes:** Implements **HTTP Caching** (ETags/Cache-Control) to reduce bandwidth and server load for static-like data. <br> **Private Data:** Uses **Redis** for distributed caching of sensitive or frequently accessed session data. |
+
+
 
 ### 4. 🗄️ Persistence and External Integrations
 
-The infrastructure is designed for maximum flexibility and compliance with cloud standards.
-
-* **Hybrid Persistence:** Utilizes an Adapter pattern to decouple the Domain's Repository interfaces from the specific persistence technology:
-    * **JPA Adapters:** For transactional, relational data (Orders, Users).
-    * **Data Optimization (N+1 Prevention):** Prevention of the **N+1 Selects problem** in JPA repositories using the **`@EntityGraph`** annotation, drastically reducing the number of database queries required for complex object graphs.
-    * **SQL Indexing:** Proper database indexing is applied to frequently queried fields to ensure sub-millisecond read times.
-    * **NoSQL Adapters:** For flexible schema data (e.g., product categories) via `infrastructure.persistence.nosql`.
-* **Efficient Paginated Reads (Hybrid Data):** The `ProductDetailReadAdapter` implements complex pagination and filtering by efficiently combining data from **PostgreSQL (SQL)** and **MongoDB (NoSQL)** in a single query path.
-* **Cloud-Native Storage:** `S3StorageService.java` is implemented against the **official AWS S3 SDK**. This choice is strategic, ensuring the system is instantly compatible with cloud services like AWS S3 and self-hosted solutions like **MinIO**, guaranteeing minimal refactoring during environment migration.
-* **Resilient Payment Webhooks:** `StripeWebhookEventDispatcher.java` and specialized adapters manage the asynchronous and idempotent processing of payment events, ensuring system state consistency even in the face of network failures.
+* **Hybrid Persistence:** Decouples Domain Repositories from specific technologies (PostgreSQL for transactional data, MongoDB for flexible product schemas).
+* **Data Optimization:** Prevents **N+1 Selects** using **`@EntityGraph`** and strategic database indexing for sub-millisecond read times.
+* **Efficient Paginated Reads:** The `ProductDetailReadAdapter` implements complex **Hybrid Pagination**, combining and filtering data from both PostgreSQL and MongoDB in a single query path.
+* **Cloud-Native Storage:** `S3StorageService.java` uses the **official AWS S3 SDK**, ensuring compatibility with AWS S3 and self-hosted solutions like **MinIO**.
 
 ---
 
@@ -84,40 +80,32 @@ The infrastructure is designed for maximum flexibility and compliance with cloud
 | :--- | :--- | :--- |
 | **Language** | **Java** | JDK 17+ |
 | **Framework** | **Spring Boot 3.x** | Core framework, IoC, Web, and Data. |
-| **API Documentation** | **OpenAPI / Swagger UI** | Industry-standard documentation for all endpoints. |
+| **API Documentation** | **OpenAPI / Swagger UI** | Industry-standard interactive documentation. |
 | **Security** | **Spring Security** | JWT, RSA Asymmetric Keys, Custom Filters. |
 | **Resilience** | **Resilience4j** | Circuit Breaker and Retry patterns. |
-| **Caching/Resilience** | **Redis** | Distributed Caching and Rate Limiting. |
-| **Database** | **PostgreSQL** | Primary relational store (via Spring Data JPA). |
+| **Caching** | **Redis & HTTP Cache** | Distributed Caching and Browser-level caching. |
+| **Database** | **PostgreSQL & MongoDB** | Hybrid Relational and NoSQL storage. |
 | **Object Storage** | **MinIO & AWS S3 SDK** | Cloud-native storage implementation. |
-| **Patterns** | **AOP, DDD, Ports & Adapters** | Aspect-Oriented Programming for cross-cutting concerns. |
-| **Payment Gateway** | **Stripe** | Checkout and Webhook processing. |
+
+---
 
 ## ⚙️ Installation and Running
 
 ### Prerequisites
 
-1.  **Docker** and **Docker Compose** (Required to run the infrastructure and the application).
-</br>
-2.  **RSA Key Pair:** Generate an RSA key pair, naming the private key file **`pkey.pem`**, and place it in the configured location (default is project root). **This is required for JWT authentication.**
-</br>
-3.  (Optional) **JDK 17+** and **Maven** (Only if you wish to run the application natively outside Docker).
+1.  **Docker & Docker Compose**: Required for infrastructure and the application.
+2.  **RSA Key Pair**: Generate a private key file named **`pkey.pem`** and place it in the project root. **Required for JWT.**
+3.  (Optional) **JDK 17+ & Maven**: To run the application natively.
 
-### Steps (Via Docker Compose)
+### Steps
 
-This is the recommended way to run the application, as it automatically provisions the entire stack (PostgreSQL, Redis, MinIO) and the API.
-
-1.  **Clone the repository:**
+1.  **Clone the repository:**
     ```bash
     git clone [https://github.com/Steph7478/Lumiere-Backend.git](https://github.com/Steph7478/Lumiere-Backend.git)
     cd Lumiere-Backend
     ```
-
-2.  **Environment Configuration (`.env`):**
-    Create a `.env` file in the project root and populate it with the necessary credentials. Docker Compose will automatically use this file.
-
-3.  **Start All Services:**
-    Build and launch the application backend along with the infrastructure services in a single command:
+2.  **Environment Configuration:** Create a `.env` file in the project root with the necessary credentials.
+3.  **Start All Services:**
     ```bash
     docker-compose --env-file .env up --build -d
     ```
@@ -130,20 +118,18 @@ This is the recommended way to run the application, as it automatically provisio
 
 All endpoints follow API versioning standards (`@ApiVersion`).
 
-* **Documentation (Swagger UI):** Interactive documentation is available at: `http://localhost:8080/api/v1/swagger-ui`
+* **Documentation (Swagger UI):** Interactive docs at `http://localhost:8080/api/v1/swagger-ui`
 
 | Module | Example Controller | Functionality |
 | :--- | :--- | :--- |
-| **Admin** | `AdminController.java` | Product/Stock/Price/Coupon management (Requires `@RequireAdmin`). |
-| **Auth** | `AuthController.java` | User Registration, Login, Token Management (`CreateUserUseCase`, `LoginUseCase`). |
-| **Product** | `ProductController.java` | Product search, listing, and detail retrieval **(with Pagination and Hybrid Filtering)** (`ProductReadUseCase`). |
-| **Coupon** | `CouponController.java` | Listing and checking available coupons (`AvalibleCouponsUseCase`). |
-| **Order/Cart**| `OrderController.java`, `CartController.java` | Cart manipulation, Order creation, Coupon application. |
-| **Payment**| `PaymentController.java` | Initiating the payment process (e.g., Stripe Checkout session creation) **Asynchronously**. |
-| **Webhooks** | `StripeWebhookController.java` | Asynchronous handling of payment status updates from Stripe (`PaymentSucceededUseCase`). |
+| **Admin** | `AdminController.java` | Product/Stock management (Requires `@RequireAdmin`). |
+| **Auth** | `AuthController.java` | RSA-signed JWT Login and Registration. |
+| **Product** | `ProductController.java` | **Hybrid Pagination** & Search (Public/Cached). |
+| **Payment** | `PaymentController.java` | **Asynchronous** Stripe Checkout session creation. |
+| **Webhooks** | `StripeWebhookController.java` | Idempotent handling of payment status updates. |
 
 ---
 
 ## 🛑 Disclaimer
 
-This project is developed solely for **learning, practice, and portfolio demonstration purposes**. It is intended to showcase proficiency in advanced software architecture, security, and performance patterns (DDD, Clean Architecture, AOP, RSA, Caching, **Resilience4j**). It is not a live or production-ready commercial application.
+This project is developed solely for **learning and portfolio demonstration purposes**. It showcases proficiency in advanced software architecture and performance patterns. It is not a live commercial application.
