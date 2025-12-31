@@ -50,7 +50,6 @@ import com.lumiere.shared.annotations.api.ApiVersion;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
-import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 
 @Validated
@@ -91,8 +90,8 @@ public class AdminController {
     @PreAuthorize("hasRole('ADMIN') and hasAuthority('PRODUCT_ADD')")
     @Operation(summary = "Add a single product", security = @SecurityRequirement(name = "cookieAuth"))
     @PostMapping(path = Routes.PRIVATE.ADMIN.ADD_SINGLE, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<AddProductOutput> addProductSingle(@Valid @ModelAttribute AddProductRequestData reqForm,
-            HttpServletResponse res) throws IOException {
+    public ResponseEntity<AddProductOutput> addProductSingle(@Valid @ModelAttribute AddProductRequestData reqForm)
+            throws IOException {
 
         AddProductRequestData itemData = new AddProductRequestData(reqForm.name(), reqForm.description(),
                 reqForm.priceAmount(), reqForm.currency(), reqForm.stockQuantity(), reqForm.category(),
@@ -109,7 +108,7 @@ public class AdminController {
     @Operation(summary = "Update an existing product completely", security = @SecurityRequirement(name = "cookieAuth"))
     @PutMapping(Routes.PRIVATE.ADMIN.UPDATE_PRODUCT + "/{id}")
     public ResponseEntity<ModifyProductOutput> putProduct(@PathVariable UUID id,
-            @Valid @RequestBody ModifyProductRequestData req, HttpServletResponse res) {
+            @Valid @RequestBody ModifyProductRequestData req) {
         if (!req.isCompleteUpdate())
             return ResponseEntity.badRequest().build();
 
@@ -124,7 +123,7 @@ public class AdminController {
     @Operation(summary = "Update an existing product partially", security = @SecurityRequirement(name = "cookieAuth"))
     @PatchMapping(Routes.PRIVATE.ADMIN.UPDATE_PRODUCT + "/{id}")
     public ResponseEntity<ModifyProductOutput> patchProduct(@PathVariable UUID id,
-            @Valid @RequestBody ModifyProductRequestData req, HttpServletResponse res) {
+            @Valid @RequestBody ModifyProductRequestData req) {
 
         if (!req.hasUpdates())
             return ResponseEntity.badRequest().build();
@@ -140,7 +139,7 @@ public class AdminController {
     @Operation(summary = "Increase stock quantity of a product", security = @SecurityRequirement(name = "cookieAuth"))
     @PatchMapping(Routes.PRIVATE.ADMIN.INCREASE_STOCK + "/{id}")
     public ResponseEntity<IncreaseStockOutput> increaseStock(@PathVariable UUID id,
-            @Valid @RequestBody IncreaseStockRequestData req, HttpServletResponse res) {
+            @Valid @RequestBody IncreaseStockRequestData req) {
 
         IncreaseStockInput appDTO = new IncreaseStockInput(id, req);
         IncreaseStockOutput responseDTO = increaseStockUseCase.execute(appDTO);
@@ -153,7 +152,7 @@ public class AdminController {
     @Operation(summary = "Decrease stock quantity of a product", security = @SecurityRequirement(name = "cookieAuth"))
     @PatchMapping(Routes.PRIVATE.ADMIN.DECREASE_STOCK + "/{id}")
     public ResponseEntity<DecreaseStockOutput> decreaseStock(@PathVariable UUID id,
-            @Valid @RequestBody DecreaseStockRequestData req, HttpServletResponse res) {
+            @Valid @RequestBody DecreaseStockRequestData req) {
 
         DecreaseStockInput appDTO = new DecreaseStockInput(id, req);
         DecreaseStockOutput responseDTO = decreaseStockUseCase.execute(appDTO);
@@ -166,7 +165,7 @@ public class AdminController {
     @Operation(summary = "Update the price of a product", security = @SecurityRequirement(name = "cookieAuth"))
     @PatchMapping(Routes.PRIVATE.ADMIN.UPDATE_PRICE + "/{id}")
     public ResponseEntity<UpdatePriceOutput> updatePrice(@PathVariable UUID id,
-            @Valid @RequestBody UpdatePriceRequestData req, HttpServletResponse res) {
+            @Valid @RequestBody UpdatePriceRequestData req) {
 
         UpdatePriceInput appDTO = new UpdatePriceInput(id, req);
         UpdatePriceOutput responseDTO = updatePriceUseCase.execute(appDTO);

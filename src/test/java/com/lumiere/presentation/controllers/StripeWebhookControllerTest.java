@@ -1,11 +1,10 @@
-package com.lumiere.presentation;
+package com.lumiere.presentation.controllers;
 
 import com.lumiere.application.ports.WebhookPort;
 import com.lumiere.application.services.ratelimiter.RateLimiterService;
 import com.lumiere.application.webhooks.WebhookEvent;
 import com.lumiere.infrastructure.stripe.dispatcher.StripeWebhookEventDispatcher;
 import com.lumiere.infrastructure.stripe.services.StripeEventConstructorService;
-import com.lumiere.presentation.controllers.StripeWebhookController;
 import com.lumiere.presentation.routes.Routes;
 import com.stripe.exception.SignatureVerificationException;
 import com.stripe.model.Event;
